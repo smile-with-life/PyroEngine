@@ -17,7 +17,6 @@ workspace "PyroEngine" --工作区
 		"MultiProcessorCompile" --多处理器并行编译
 	}
 
-
 outputDir = "%{prj.name}/Build/%{cfg.system}/{cfg.buildcfg}" --输出目录
 
 project "Engine" --项目
