@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Platform\Platform.h" />
+    <ClInclude Include="Source\Platform\Windows\WindowsPlatform.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{DBC7D3B0-C769-FE86-B024-12DB9C6585D7}</ProjectGuid>
