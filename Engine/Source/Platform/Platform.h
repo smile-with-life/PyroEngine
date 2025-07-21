@@ -104,6 +104,21 @@
     #error The platform is not supported!
 #endif
 
+// ================== 平台构建定义 ==================​​
+#ifdef BUILD_CONFIG_TEST
+    #define BUILD_CONFIG_TEST 0
+    #define BUILD_CONFIG BUILD_CONFIG_TEST
+#elif BUILD_CONFIG_DEBUG
+    #define BUILD_CONFIG_DEBUG 1
+    #define BUILD_CONFIG BUILD_CONFIG_DEBUG
+#elif BUILD_CONFIG_RELEASE
+    #define BUILD_CONFIG_RELEASE 2
+    #define BUILD_CONFIG BUILD_CONFIG_RELEASE
+#elif BUILD_CONFIG_DIST
+    #define BUILD_CONFIG_DIST 3
+    #define BUILD_CONFIG BUILD_CONFIG_DIST
+#endif
+
 // ================== 平台类型定义 ==================
 #include <cstdint>
 #include <cstddef>

@@ -2,6 +2,11 @@
 
 #include "Core/Core.h"
 
+struct ApplicationInfo
+{
+    
+};
+
 class Application
 {
 public:
@@ -19,6 +24,9 @@ public:
 
     // 运行
     int32 Run();
+
+    // 关于
+    ApplicationInfo About();
 private:
     // 退出标志
     bool m_isQuit = false;
