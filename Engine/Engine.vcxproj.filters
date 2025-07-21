@@ -15,16 +15,22 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Platform\Platform.h">
+      <Filter>Platform</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Platform\Windows\WindowsPlatform.h">
       <Filter>Platform\Windows</Filter>
     </ClInclude>
     <ClInclude Include="Source\pch.h" />
+    <ClInclude Include="Source\Core\Core.h" />
+    <ClInclude Include="Source\Application\Application.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Launch\Windows\WindowsLaunch.cpp">
       <Filter>Launch\Windows</Filter>
     </ClCompile>
     <ClCompile Include="Source\pch.cpp" />
+    <ClCompile Include="Source\Application\Application.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Launch\Windows\WindowsExport.def">

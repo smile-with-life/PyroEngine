@@ -65,6 +65,6 @@ project "Engine" --项目
 
 		defines --预定义宏
 		{
-			"PYRO_PLATFORM_WINDOWS",
-			"PYRO_BUILD_DLL"
+			"PLATFORM_WINDOWS",
+			"BUILD_EXPORT_DLL"
 		}
