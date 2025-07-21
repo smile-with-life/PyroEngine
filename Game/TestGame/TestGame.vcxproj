@@ -68,29 +68,29 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\..\TestGame\Build\windows\{cfg.buildcfg}\Bin\</OutDir>
-    <IntDir>..\..\TestGame\Build\windows\{cfg.buildcfg}\Obj\Test\</IntDir>
+    <OutDir>Build\Windows\Test\Bin\</OutDir>
+    <IntDir>Build\Windows\Test\Obj\</IntDir>
     <TargetName>TestGame</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\..\TestGame\Build\windows\{cfg.buildcfg}\Bin\</OutDir>
-    <IntDir>..\..\TestGame\Build\windows\{cfg.buildcfg}\Obj\Debug\</IntDir>
+    <OutDir>Build\Windows\Debug\Bin\</OutDir>
+    <IntDir>Build\Windows\Debug\Obj\</IntDir>
     <TargetName>TestGame</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\..\TestGame\Build\windows\{cfg.buildcfg}\Bin\</OutDir>
-    <IntDir>..\..\TestGame\Build\windows\{cfg.buildcfg}\Obj\Release\</IntDir>
+    <OutDir>Build\Windows\Release\Bin\</OutDir>
+    <IntDir>Build\Windows\Release\Obj\</IntDir>
     <TargetName>TestGame</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\..\TestGame\Build\windows\{cfg.buildcfg}\Bin\</OutDir>
-    <IntDir>..\..\TestGame\Build\windows\{cfg.buildcfg}\Obj\Dist\</IntDir>
+    <OutDir>Build\Windows\Dist\Bin\</OutDir>
+    <IntDir>Build\Windows\Dist\Obj\</IntDir>
     <TargetName>TestGame</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
@@ -105,13 +105,13 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions>/MDd %(AdditionalOptions)</AdditionalOptions>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>StarEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>PyroEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -125,13 +125,13 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions>/MDd %(AdditionalOptions)</AdditionalOptions>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>StarEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>PyroEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -147,14 +147,14 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions>/MD %(AdditionalOptions)</AdditionalOptions>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>StarEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>PyroEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
@@ -170,14 +170,14 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions>/MD %(AdditionalOptions)</AdditionalOptions>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>StarEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>PyroEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

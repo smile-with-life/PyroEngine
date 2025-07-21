@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Launch">
+      <UniqueIdentifier>{E06644C0-CC08-6F96-B5C3-82EAA104F6E6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Launch\Windows">
+      <UniqueIdentifier>{1AF13ACC-06BF-2ED2-EF52-9FF8DBBF0A37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform">
+      <UniqueIdentifier>{2AC788B4-1694-E3BF-3FAD-D1672BD9184E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform\Windows">
+      <UniqueIdentifier>{64FBD71A-50F4-F66C-7926-DCF1657ED678}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Platform\Windows\WindowsPlatform.h">
+      <Filter>Platform\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\pch.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Launch\Windows\WindowsLaunch.cpp">
+      <Filter>Launch\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\pch.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Source\Launch\Windows\WindowsExport.def">
+      <Filter>Launch\Windows</Filter>
+    </None>
+  </ItemGroup>
+</Project>

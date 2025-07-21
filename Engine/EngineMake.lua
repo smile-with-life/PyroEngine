@@ -1,25 +1,25 @@
 project "Engine" --项目
-    location "Engine" --项目文件的目录
     kind "SharedLib" --生成类型
     language "C++" --语言
     cppdialect "C++23" --C++标准
-    staticruntime "on" --是否将运行时库静态链接运行时库（dll属性的文件需要关闭）
-
-    targetdir (outputDir .. "/Bin") --输出目录
-    objdir (outputDir .. "/Obj}") --中间目录
 
     pchheader "pch.h" --预编译头文件
-    pchsource "pch.cpp" --VS下的预编译文件-
+    pchsource "Source/pch.cpp" --VS下的预编译文件
+
+    outputDir = "Build/" .. SystemName[_TARGET_OS] .. "/%{cfg.buildcfg}"
+
+    targetdir (outputDir .. "/Bin") --输出目录
+    objdir (outputDir .. "/Obj") --中间目录
 
     files --将文件添加到项目中
     {
-        --"%{prj.name}/Source/starpch.h",
-        --"%{prj.name}/Source/starpch.cpp",
+        "Source/pch.h",
+        "Source/pch.cpp",
     }
 
     includedirs --指定文件搜索路径
     {
-        --"%{prj.name}/Source",
+        "Source",
     }
 
     libdirs --库搜索路径
@@ -31,6 +31,13 @@ project "Engine" --项目
     {
 
     }
+
+    include "Source/Platform/PlatformMake.lua" --平台层
+    include "Source/Core/CoreMake.lua" --核心层
+    include "Source/Function/FunctionMake.lua" --功能层
+    include "Source/Server/ServerMake.lua" --服务层
+    include "Source/Application/ApplicationMake.lua" --应用程序层
+    include "Source/Launch/LaunchMake.lua" --入口层
 
     filter "configurations:Test" --Test模式
 	    defines "PYRO_TEST"
@@ -60,10 +67,4 @@ project "Engine" --项目
 		{
 			"PYRO_PLATFORM_WINDOWS",
 			"PYRO_BUILD_DLL"
-		}
-
-		postbuildcommands --编译完成后执行
-		{
-			-- ("{MKDIR} %[bin/" .. outputDir .. "/TestGame]"),
-			-- ("{COPYFILE} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/TestGame")
 		}

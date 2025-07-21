@@ -1,13 +1,12 @@
 project "TestGame"
-    location "Game/TestGame"
     kind "windowedapp"
     language "C++"
     cppdialect "C++23"
+
+    outputDir = "Build/" .. SystemName[_TARGET_OS] .. "/%{cfg.buildcfg}"
     
     targetdir (outputDir .. "/Bin")
     objdir (outputDir .. "/Obj")
-
-    debugdir "." -- 工作目录
     
     files
     {
@@ -58,3 +57,8 @@ project "TestGame"
             "PYRO_PLATFORM_WINDOWS",
             "PYRO_BUILD_DLL"
         }
+
+        postbuildcommands --编译完成后执行
+		{
+			
+		}
