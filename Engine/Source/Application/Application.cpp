@@ -4,7 +4,7 @@
 
 int32 Application::Init()
 {
-
+    return 0;
 }
 
 void Application::Tick()
