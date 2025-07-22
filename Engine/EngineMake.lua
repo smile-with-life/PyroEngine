@@ -40,22 +40,22 @@ project "Engine" --项目
     include "Source/Launch/LaunchMake.lua" --入口层
 
     filter "configurations:Test" --Test模式
-	    defines "PYRO_TEST"
+	    defines "BUILD_CONFIG_TEST"
 		buildoptions "/MDd"
 		symbols "On"
 
     filter "configurations:Debug" --Debug模式
-	    defines "PYRO_DEBUG"
+	    defines "BUILD_CONFIG_DEBUG"
 		buildoptions "/MDd"
 		symbols "On"
 
 	filter "configurations:Release" --Release模式
-	    defines "PYRO_RELEASE"
+	    defines "BUILD_CONFIG_RELEASE"
 		buildoptions "/MD"
 		optimize "On"
 
 	filter "configurations:Dist" --Dist模式
-	    defines "PYRO_DIST"
+	    defines "BUILD_CONFIG_DIST"
 		buildoptions "/MD"
 		optimize "On"
 
@@ -65,6 +65,6 @@ project "Engine" --项目
 
 		defines --预定义宏
 		{
-			"PYRO_PLATFORM_WINDOWS",
-			"PYRO_BUILD_DLL"
+			"PLATFORM_WINDOWS",
+			"BUILD_EXPORT_DLL"
 		}

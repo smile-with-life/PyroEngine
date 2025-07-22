@@ -1,6 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <Filter Include="Application">
+      <UniqueIdentifier>{D9DE78AF-4594-F1A4-CE88-EB7B3A3DE8A8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\Console">
+      <UniqueIdentifier>{FBBE7ADF-6720-58ED-F08D-9E9F5CEE8EAC}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Launch">
       <UniqueIdentifier>{E06644C0-CC08-6F96-B5C3-82EAA104F6E6}</UniqueIdentifier>
     </Filter>
@@ -15,8 +21,17 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Application\Application.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Application\Console\Console.h">
+      <Filter>Application\Console</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Platform\Platform.h">
       <Filter>Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\Windows\WindowsConsole.h">
+      <Filter>Platform\Windows</Filter>
     </ClInclude>
     <ClInclude Include="Source\Platform\Windows\WindowsPlatform.h">
       <Filter>Platform\Windows</Filter>
@@ -24,8 +39,17 @@
     <ClInclude Include="Source\pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Application\Application.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Application\Console\Console.cpp">
+      <Filter>Application\Console</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Launch\Windows\WindowsLaunch.cpp">
       <Filter>Launch\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\Windows\WindowsConsole.cpp">
+      <Filter>Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="Source\pch.cpp" />
   </ItemGroup>

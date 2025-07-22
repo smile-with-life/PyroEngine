@@ -10,12 +10,12 @@ project "TestGame"
     
     files
     {
-
+        "game.cpp"
     }
     
     includedirs
     {
-
+        "Source",
     }
 
     libdirs 
