@@ -3,24 +3,27 @@ project "TestGame"
     language "C++"
     cppdialect "C++23"
 
-    outputDir = "Build/" .. SystemName[_TARGET_OS] .. "/%{cfg.buildcfg}"
+    -- 变量定义
+    local outputDir = "Build/" .. SystemName[_TARGET_OS] .. "/%{cfg.buildcfg}"
+    local EngineSourcePath = WorkPath .. EnginePath .. "Source"
     
     targetdir (outputDir .. "/Bin")
     objdir (outputDir .. "/Obj")
     
     files
     {
-        "game.cpp"
+        "Source/game.cpp"
     }
     
     includedirs
     {
         "Source",
+        EngineSourcePath,
     }
 
     libdirs 
     {
-
+        
     }
     
     links
@@ -54,11 +57,11 @@ project "TestGame"
             
         defines
         {
-            "PYRO_PLATFORM_WINDOWS",
-            "PYRO_BUILD_DLL"
+            "PLATFORM_WINDOWS"
         }
 
         postbuildcommands --编译完成后执行
 		{
-			
+			'{MKDIR} "%{targetdir}"', -- 确保目标目录存在
+            '{COPY} "' .. EnginePath .. "Build/Windwos/Debug/Bin" .. '/PyroEngine.dll" "%{targetdir}/PyroEngine.dll"'
 		}

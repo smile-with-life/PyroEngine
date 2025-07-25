@@ -2,14 +2,14 @@ project "Engine" --项目
     kind "SharedLib" --生成类型
     language "C++" --语言
     cppdialect "C++23" --C++标准
-
     pchheader "pch.h" --预编译头文件
     pchsource "Source/pch.cpp" --VS下的预编译文件
 
-    outputDir = "Build/" .. SystemName[_TARGET_OS] .. "/%{cfg.buildcfg}"
+    -- 变量定义
+    outputDir = "Build/" .. SystemName[_TARGET_OS] .. "/%{cfg.buildcfg}" -- 输出目录
 
-    targetdir (outputDir .. "/Bin") --输出目录
-    objdir (outputDir .. "/Obj") --中间目录
+    targetdir (outputDir .. "/Bin") --引擎库文件目录
+    objdir (outputDir .. "/Obj") --中间文件目录
 
     files --将文件添加到项目中
     {
@@ -41,23 +41,23 @@ project "Engine" --项目
 
     filter "configurations:Test" --Test模式
 	    defines "BUILD_CONFIG_TEST"
-		buildoptions "/MDd"
+		runtime "Debug"
 		symbols "On"
 
     filter "configurations:Debug" --Debug模式
 	    defines "BUILD_CONFIG_DEBUG"
-		buildoptions "/MDd"
+		runtime "Debug"
 		symbols "On"
 
 	filter "configurations:Release" --Release模式
 	    defines "BUILD_CONFIG_RELEASE"
-		buildoptions "/MD"
+		runtime "Release"
 		optimize "On"
 
 	filter "configurations:Dist" --Dist模式
 	    defines "BUILD_CONFIG_DIST"
-		buildoptions "/MD"
-		optimize "On"
+		runtime "Release"
+		optimize "Full"
 
     filter "system:Windows" --当系统是Windows时
 		staticruntime "On"

@@ -1,0 +1,4 @@
+files
+{
+	"Core.h"
+}

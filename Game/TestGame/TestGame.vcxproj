@@ -98,8 +98,8 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>STAR_Test;PYRO_PLATFORM_WINDOWS;PYRO_BUILD_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>STAR_Test;PLATFORM_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>Source;..\..\Engine\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -114,13 +114,17 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>PyroEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>IF NOT EXIST "function: 02F0EC60" (mkdir "function: 02F0EC60")
+IF EXIST "Engine\Build\Windwos\Debug\Bin\PyroEngine.dll"\ (xcopy /Q /E /Y /I "Engine\Build\Windwos\Debug\Bin\PyroEngine.dll" "function: 02F0EC60\PyroEngine.dll" &gt; nul) ELSE (xcopy /Q /Y /I "Engine\Build\Windwos\Debug\Bin\PyroEngine.dll" "function: 02F0EC60\PyroEngine.dll" &gt; nul)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>STAR_DEBUG;PYRO_PLATFORM_WINDOWS;PYRO_BUILD_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>STAR_DEBUG;PLATFORM_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>Source;..\..\Engine\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -135,13 +139,17 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>PyroEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>IF NOT EXIST "function: 02F0EC60" (mkdir "function: 02F0EC60")
+IF EXIST "Engine\Build\Windwos\Debug\Bin\PyroEngine.dll"\ (xcopy /Q /E /Y /I "Engine\Build\Windwos\Debug\Bin\PyroEngine.dll" "function: 02F0EC60\PyroEngine.dll" &gt; nul) ELSE (xcopy /Q /Y /I "Engine\Build\Windwos\Debug\Bin\PyroEngine.dll" "function: 02F0EC60\PyroEngine.dll" &gt; nul)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>STAR_RELEASE;PYRO_PLATFORM_WINDOWS;PYRO_BUILD_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>STAR_RELEASE;PLATFORM_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>Source;..\..\Engine\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -159,13 +167,17 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>PyroEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>IF NOT EXIST "function: 02F0EC60" (mkdir "function: 02F0EC60")
+IF EXIST "Engine\Build\Windwos\Debug\Bin\PyroEngine.dll"\ (xcopy /Q /E /Y /I "Engine\Build\Windwos\Debug\Bin\PyroEngine.dll" "function: 02F0EC60\PyroEngine.dll" &gt; nul) ELSE (xcopy /Q /Y /I "Engine\Build\Windwos\Debug\Bin\PyroEngine.dll" "function: 02F0EC60\PyroEngine.dll" &gt; nul)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>STAR_DIST;PYRO_PLATFORM_WINDOWS;PYRO_BUILD_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>STAR_DIST;PLATFORM_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>Source;..\..\Engine\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -183,6 +195,10 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>PyroEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>IF NOT EXIST "function: 02F0EC60" (mkdir "function: 02F0EC60")
+IF EXIST "Engine\Build\Windwos\Debug\Bin\PyroEngine.dll"\ (xcopy /Q /E /Y /I "Engine\Build\Windwos\Debug\Bin\PyroEngine.dll" "function: 02F0EC60\PyroEngine.dll" &gt; nul) ELSE (xcopy /Q /Y /I "Engine\Build\Windwos\Debug\Bin\PyroEngine.dll" "function: 02F0EC60\PyroEngine.dll" &gt; nul)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\game.cpp" />
