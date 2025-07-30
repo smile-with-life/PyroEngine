@@ -4,40 +4,52 @@
 
 void WindowsConsole::Init()
 {
-    // 获取控制台窗口句柄
-    m_hwnd = GetConsoleWindow();
-    if (!m_hwnd)
+    // 尝试附加到父进程控制台（若存在）
+    if (AttachConsole(ATTACH_PARENT_PROCESS)) 
     {
-        AllocConsole();// 创建控制台窗口
         m_hwnd = GetConsoleWindow();
+        m_handle = GetStdHandle(STD_OUTPUT_HANDLE);
+        m_isAttached = true;
+    }
+    else 
+    {
+        // 附加失败时创建新控制台
+        if (!GetConsoleWindow() && AllocConsole()) 
+        {
+            m_hwnd = GetConsoleWindow();
+            m_handle = GetStdHandle(STD_OUTPUT_HANDLE);
+        }
+        else 
+        {
+            DWORD err = GetLastError();
+            // 处理控制台创建失败错误（例如日志记录/返回错误码）
+        }
     }
 
-    // 获取控制台句柄
-    m_handle = GetStdHandle(STD_OUTPUT_HANDLE);
-    if (m_handle == INVALID_HANDLE_VALUE) {
-        DWORD err = GetLastError();
-        // 处理错误[2](@ref)
-    }
-
-    // 设置控制台窗口标题
-    SetConsoleTitle(TEXT("调试控制台"));
-
-    // 支持Unicode输出
-    setlocale(LC_ALL, "chs");// 解决中文乱码
-
-    // 重定向标准流
+    // 统一重定向标准流
     FILE* fp;
     freopen_s(&fp, "CONIN$", "r", stdin);
     freopen_s(&fp, "CONOUT$", "w", stdout);
     freopen_s(&fp, "CONOUT$", "w", stderr);
 
-    // 当前构建配置大于 Debug 时，隐藏控制台窗口，将标准输出流重定向到外部文件
+    // Unicode支持
+    setlocale(LC_ALL, "chs");
+
+    // 非Debug配置隐藏控制台并重定向到文件
     #if BUILD_CONFIG > BUILD_CONFIG_DEBUG
-        Hide();
-        HANDLE file = CreateFile("consoleLog.txt", GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-        SetStdHandle(STD_OUTPUT_HANDLE, file);  // 重定向
-        HANDLE m_handle = GetStdHandle(STD_OUTPUT_HANDLE);  // 获取重定向后的句柄
-    #endif    
+    Hide();
+
+    HANDLE file = CreateFile(TEXT("consoleLog.txt"), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+ 
+    if (file != INVALID_HANDLE_VALUE) 
+    {
+        // 重定向
+        SetStdHandle(STD_OUTPUT_HANDLE, file);
+        SetStdHandle(STD_ERROR_HANDLE, file);
+        // 获取重定向后的句柄
+        m_handle = GetStdHandle(STD_OUTPUT_HANDLE);
+    }
+    #endif  
 }
 
 void WindowsConsole::Tick()
@@ -74,5 +86,5 @@ bool WindowsConsole::IsVisible() const
 
 bool WindowsConsole::IsAttached() const
 {
-    return false;
+    return m_isAttached;
 }

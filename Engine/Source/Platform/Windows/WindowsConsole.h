@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/Core.h"
-#include "Application/Console/Console.h"
+#include "Function/Console/Console.h"
 
 class WindowsConsole : public Console
 {
@@ -37,4 +37,6 @@ private:
     HWND m_hwnd = nullptr;
     // 控制台句柄
     HANDLE m_handle = nullptr;
+    // 是否附加到外部控制台
+    bool m_isAttached = false;
 };
