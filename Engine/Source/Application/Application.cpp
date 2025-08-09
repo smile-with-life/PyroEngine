@@ -35,3 +35,8 @@ int32 Application::Run()
 
     return error;
 }
+
+ApplicationInfo Application::About()
+{
+    return ApplicationInfo();
+}

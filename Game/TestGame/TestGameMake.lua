@@ -5,7 +5,6 @@ project "TestGame"
 
     -- 变量定义
     local outputDir = "Build/" .. SystemName[_TARGET_OS] .. "/%{cfg.buildcfg}"
-    local EngineSourcePath = WorkPath .. EnginePath .. "Source"
     
     targetdir (outputDir .. "/Bin")
     objdir (outputDir .. "/Obj")
@@ -23,12 +22,12 @@ project "TestGame"
 
     libdirs 
     {
-        
+        EngineLibPath
     }
     
     links
     {
-        "PyroEngine",
+        "Engine",
     }
 
     filter "configurations:Test" --Test模式
@@ -51,7 +50,7 @@ project "TestGame"
 		buildoptions "/MD"
 		optimize "On"
     
-    filter "system:Windows"
+    filter "system:windows"
         staticruntime "On"
         systemversion "latest"
             
@@ -62,6 +61,10 @@ project "TestGame"
 
         postbuildcommands --编译完成后执行
 		{
-			'{MKDIR} "%{targetdir}"', -- 确保目标目录存在
-            '{COPY} "' .. EnginePath .. "Build/Windwos/Debug/Bin" .. '/PyroEngine.dll" "%{targetdir}/PyroEngine.dll"'
+			
 		}
+        prebuildcommands {
+            [[set PATH=%PATH%;]] .. EngineLibPath
+            -- 或 PowerShell 命令（更灵活）
+            -- [[powershell -ExecutionPolicy Bypass -Command "$env:Path += ']] .. EngineLibPath .. [[/Engine.dll'"]]
+        }

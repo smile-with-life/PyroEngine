@@ -68,29 +68,29 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>Build\Windows\Test\Bin\</OutDir>
-    <IntDir>Build\Windows\Test\Obj\</IntDir>
+    <OutDir>$(ProjectDir)Build\Windows\Test\Bin\</OutDir>
+    <IntDir>$(ProjectDir)Build\Windows\Test\Obj\</IntDir>
     <TargetName>TestGame</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>Build\Windows\Debug\Bin\</OutDir>
-    <IntDir>Build\Windows\Debug\Obj\</IntDir>
+    <OutDir>$(ProjectDir)Build\Windows\Debug\Bin\</OutDir>
+    <IntDir>$(ProjectDir)Build\Windows\Debug\Obj\</IntDir>
     <TargetName>TestGame</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>Build\Windows\Release\Bin\</OutDir>
-    <IntDir>Build\Windows\Release\Obj\</IntDir>
+    <OutDir>$(ProjectDir)Build\Windows\Release\Bin\</OutDir>
+    <IntDir>$(ProjectDir)Build\Windows\Release\Obj\</IntDir>
     <TargetName>TestGame</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>Build\Windows\Dist\Bin\</OutDir>
-    <IntDir>Build\Windows\Dist\Obj\</IntDir>
+    <OutDir>$(ProjectDir)Build\Windows\Dist\Bin\</OutDir>
+    <IntDir>$(ProjectDir)Build\Windows\Dist\Obj\</IntDir>
     <TargetName>TestGame</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
@@ -112,12 +112,11 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>PyroEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\Engine\Build\Windows\Test\Bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
-    <PostBuildEvent>
-      <Command>IF NOT EXIST "function: 02F0EC60" (mkdir "function: 02F0EC60")
-IF EXIST "Engine\Build\Windwos\Debug\Bin\PyroEngine.dll"\ (xcopy /Q /E /Y /I "Engine\Build\Windwos\Debug\Bin\PyroEngine.dll" "function: 02F0EC60\PyroEngine.dll" &gt; nul) ELSE (xcopy /Q /Y /I "Engine\Build\Windwos\Debug\Bin\PyroEngine.dll" "function: 02F0EC60\PyroEngine.dll" &gt; nul)</Command>
-    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>set PATH=%PATH%;D:/Study/PyroEngine/Engine/Build/Windows/Test/Bin</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -137,12 +136,11 @@ IF EXIST "Engine\Build\Windwos\Debug\Bin\PyroEngine.dll"\ (xcopy /Q /E /Y /I "En
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>PyroEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\Engine\Build\Windows\Debug\Bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
-    <PostBuildEvent>
-      <Command>IF NOT EXIST "function: 02F0EC60" (mkdir "function: 02F0EC60")
-IF EXIST "Engine\Build\Windwos\Debug\Bin\PyroEngine.dll"\ (xcopy /Q /E /Y /I "Engine\Build\Windwos\Debug\Bin\PyroEngine.dll" "function: 02F0EC60\PyroEngine.dll" &gt; nul) ELSE (xcopy /Q /Y /I "Engine\Build\Windwos\Debug\Bin\PyroEngine.dll" "function: 02F0EC60\PyroEngine.dll" &gt; nul)</Command>
-    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>set PATH=%PATH%;D:/Study/PyroEngine/Engine/Build/Windows/Debug/Bin</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -165,12 +163,11 @@ IF EXIST "Engine\Build\Windwos\Debug\Bin\PyroEngine.dll"\ (xcopy /Q /E /Y /I "En
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>PyroEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\Engine\Build\Windows\Release\Bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
-    <PostBuildEvent>
-      <Command>IF NOT EXIST "function: 02F0EC60" (mkdir "function: 02F0EC60")
-IF EXIST "Engine\Build\Windwos\Debug\Bin\PyroEngine.dll"\ (xcopy /Q /E /Y /I "Engine\Build\Windwos\Debug\Bin\PyroEngine.dll" "function: 02F0EC60\PyroEngine.dll" &gt; nul) ELSE (xcopy /Q /Y /I "Engine\Build\Windwos\Debug\Bin\PyroEngine.dll" "function: 02F0EC60\PyroEngine.dll" &gt; nul)</Command>
-    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>set PATH=%PATH%;D:/Study/PyroEngine/Engine/Build/Windows/Release/Bin</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <ClCompile>
@@ -193,15 +190,19 @@ IF EXIST "Engine\Build\Windwos\Debug\Bin\PyroEngine.dll"\ (xcopy /Q /E /Y /I "En
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>PyroEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\Engine\Build\Windows\Dist\Bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
-    <PostBuildEvent>
-      <Command>IF NOT EXIST "function: 02F0EC60" (mkdir "function: 02F0EC60")
-IF EXIST "Engine\Build\Windwos\Debug\Bin\PyroEngine.dll"\ (xcopy /Q /E /Y /I "Engine\Build\Windwos\Debug\Bin\PyroEngine.dll" "function: 02F0EC60\PyroEngine.dll" &gt; nul) ELSE (xcopy /Q /Y /I "Engine\Build\Windwos\Debug\Bin\PyroEngine.dll" "function: 02F0EC60\PyroEngine.dll" &gt; nul)</Command>
-    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>set PATH=%PATH%;D:/Study/PyroEngine/Engine/Build/Windows/Dist/Bin</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\game.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Engine\Engine.vcxproj">
+      <Project>{DBC7D3B0-C769-FE86-B024-12DB9C6585D7}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

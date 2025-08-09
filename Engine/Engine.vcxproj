@@ -68,29 +68,29 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>Build\Windows\Test\Bin\</OutDir>
-    <IntDir>Build\Windows\Test\Obj\</IntDir>
+    <OutDir>$(ProjectDir)Build\Windows\Test\Bin\</OutDir>
+    <IntDir>$(ProjectDir)Build\Windows\Test\Obj\</IntDir>
     <TargetName>Engine</TargetName>
     <TargetExt>.dll</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>Build\Windows\Debug\Bin\</OutDir>
-    <IntDir>Build\Windows\Debug\Obj\</IntDir>
+    <OutDir>$(ProjectDir)Build\Windows\Debug\Bin\</OutDir>
+    <IntDir>$(ProjectDir)Build\Windows\Debug\Obj\</IntDir>
     <TargetName>Engine</TargetName>
     <TargetExt>.dll</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>Build\Windows\Release\Bin\</OutDir>
-    <IntDir>Build\Windows\Release\Obj\</IntDir>
+    <OutDir>$(ProjectDir)Build\Windows\Release\Bin\</OutDir>
+    <IntDir>$(ProjectDir)Build\Windows\Release\Obj\</IntDir>
     <TargetName>Engine</TargetName>
     <TargetExt>.dll</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>Build\Windows\Dist\Bin\</OutDir>
-    <IntDir>Build\Windows\Dist\Obj\</IntDir>
+    <OutDir>$(ProjectDir)Build\Windows\Dist\Bin\</OutDir>
+    <IntDir>$(ProjectDir)Build\Windows\Dist\Obj\</IntDir>
     <TargetName>Engine</TargetName>
     <TargetExt>.dll</TargetExt>
   </PropertyGroup>
@@ -205,6 +205,7 @@
     <ClCompile Include="Source\pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Source\Platform\Windows\WindowsPlatform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Launch\Windows\WindowsExport.def" />

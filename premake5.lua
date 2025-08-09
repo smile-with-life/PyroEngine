@@ -9,6 +9,7 @@ workspace "PyroEngine" --工作区
         windows = "Windows",
         linux = "Linux"
     }
+
     WorkPath = os.getcwd() .. "/" -- 工作目录
     EnginePath = "Engine/" -- 游戏引擎目录
     GamePath = "Game/" -- 游戏目录

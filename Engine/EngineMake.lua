@@ -6,7 +6,10 @@ project "Engine" --项目
     pchsource "Source/pch.cpp" --VS下的预编译文件
 
     -- 变量定义
-    outputDir = "Build/" .. SystemName[_TARGET_OS] .. "/%{cfg.buildcfg}" -- 输出目录
+    local outputDir = "Build/" .. SystemName[_TARGET_OS] .. "/%{cfg.buildcfg}" -- 输出目录
+
+    EngineSourcePath = WorkPath .. EnginePath .. "Source/" -- 引擎源码路径
+    EngineLibPath = WorkPath .. EnginePath .. "Build/" .. SystemName[_TARGET_OS] .. "/%{cfg.buildcfg}/Bin"
 
     targetdir (outputDir .. "/Bin") --引擎库文件目录
     objdir (outputDir .. "/Obj") --中间文件目录
