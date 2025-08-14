@@ -60,8 +60,10 @@
     <ClCompile Include="Source\Platform\Windows\WindowsConsole.cpp">
       <Filter>Platform\Windows</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Platform\Windows\WindowsPlatform.cpp">
+      <Filter>Platform\Windows</Filter>
+    </ClCompile>
     <ClCompile Include="Source\pch.cpp" />
-    <ClCompile Include="Source\Platform\Windows\WindowsPlatform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Launch\Windows\WindowsExport.def">

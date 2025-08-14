@@ -40,6 +40,8 @@ project "TestGame"
 		buildoptions "/MDd"
 		symbols "On"
 
+        debugenvs "PATH=%PATH%;"
+
 	filter "configurations:Release" --Release模式
 	    defines "STAR_RELEASE"
 		buildoptions "/MD"
@@ -53,6 +55,8 @@ project "TestGame"
     filter "system:windows"
         staticruntime "On"
         systemversion "latest"
+
+        debugenvs "PATH=%PATH%;${EngineLibPath}"
             
         defines
         {
@@ -61,10 +65,15 @@ project "TestGame"
 
         postbuildcommands --编译完成后执行
 		{
-			
+			[[set PATH=%PATH%;]] .. EngineLibPath
 		}
-        prebuildcommands {
+
+        prelinkcommands
+        {
             [[set PATH=%PATH%;]] .. EngineLibPath
-            -- 或 PowerShell 命令（更灵活）
-            -- [[powershell -ExecutionPolicy Bypass -Command "$env:Path += ']] .. EngineLibPath .. [[/Engine.dll'"]]
+        }
+
+        prebuildcommands 
+        {
+            [[set PATH=%PATH%;]] .. EngineLibPath
         }

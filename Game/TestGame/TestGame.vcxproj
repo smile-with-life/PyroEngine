@@ -117,6 +117,12 @@
     <PreBuildEvent>
       <Command>set PATH=%PATH%;D:/Study/PyroEngine/Engine/Build/Windows/Test/Bin</Command>
     </PreBuildEvent>
+    <PreLinkEvent>
+      <Command>set PATH=%PATH%;D:/Study/PyroEngine/Engine/Build/Windows/Test/Bin</Command>
+    </PreLinkEvent>
+    <PostBuildEvent>
+      <Command>set PATH=%PATH%;D:/Study/PyroEngine/Engine/Build/Windows/Test/Bin</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -141,6 +147,12 @@
     <PreBuildEvent>
       <Command>set PATH=%PATH%;D:/Study/PyroEngine/Engine/Build/Windows/Debug/Bin</Command>
     </PreBuildEvent>
+    <PreLinkEvent>
+      <Command>set PATH=%PATH%;D:/Study/PyroEngine/Engine/Build/Windows/Debug/Bin</Command>
+    </PreLinkEvent>
+    <PostBuildEvent>
+      <Command>set PATH=%PATH%;D:/Study/PyroEngine/Engine/Build/Windows/Debug/Bin</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -168,6 +180,12 @@
     <PreBuildEvent>
       <Command>set PATH=%PATH%;D:/Study/PyroEngine/Engine/Build/Windows/Release/Bin</Command>
     </PreBuildEvent>
+    <PreLinkEvent>
+      <Command>set PATH=%PATH%;D:/Study/PyroEngine/Engine/Build/Windows/Release/Bin</Command>
+    </PreLinkEvent>
+    <PostBuildEvent>
+      <Command>set PATH=%PATH%;D:/Study/PyroEngine/Engine/Build/Windows/Release/Bin</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <ClCompile>
@@ -195,6 +213,12 @@
     <PreBuildEvent>
       <Command>set PATH=%PATH%;D:/Study/PyroEngine/Engine/Build/Windows/Dist/Bin</Command>
     </PreBuildEvent>
+    <PreLinkEvent>
+      <Command>set PATH=%PATH%;D:/Study/PyroEngine/Engine/Build/Windows/Dist/Bin</Command>
+    </PreLinkEvent>
+    <PostBuildEvent>
+      <Command>set PATH=%PATH%;D:/Study/PyroEngine/Engine/Build/Windows/Dist/Bin</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\game.cpp" />
