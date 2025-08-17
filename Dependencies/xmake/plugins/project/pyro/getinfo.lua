@@ -396,7 +396,6 @@ function main(outputdir, vsinfo)
     -- init solution directory
     vsinfo.vcxproj_rootdir = path.absolute(path.join(outputdir, "vsxmake" .. vsinfo.vstudio_version))
     vsinfo.vcxproj_rootdir = path.absolute(path.join(outputdir))
-    print(vsinfo.vcxproj_rootdir)
     if project.policy("generator.vsxmake.root_sln") then
         vsinfo.solution_dir = path.absolute(outputdir)
     else
@@ -442,6 +441,8 @@ function main(outputdir, vsinfo)
     -- load targets
     local targets = {}
     vsinfo._arch_modes = {}
+    print("configurations")
+    print(vsinfo.modes)
     for _, mode in ipairs(vsinfo.modes) do
         vsinfo._arch_modes[mode] = {}
         for _, arch in ipairs(vsinfo.archs) do
@@ -501,16 +502,13 @@ function main(outputdir, vsinfo)
                 -- init target info
                 _target.targetname = targetname
                 _target.targetname_inpath = vsutils.translate_path(targetname)
-                _target.vcxprojdir = path.join(vsinfo.vcxproj_rootdir, targetname)
+                _target.vcxprojdir = target:scriptdir()
                 _target.vcxprojdir_relative_sln = vsutils.translate_path(path.relative(_target.vcxprojdir, vsinfo.solution_dir))
                 _target.target_id = hash.uuid4(targetname)
                 _target.kind = target:kind()
                 _target.absscriptdir = target:scriptdir()
                 _target.scriptdir = path.relative(target:scriptdir(), _target.vcxprojdir)
                 _target.projectdir = path.relative(project.directory(), _target.vcxprojdir)
-
-                print(_target.absscriptdir)
-                _target.vcxprojdir = target:scriptdir()
 
                 if _target.vcxprojdir == project.directory() then
                     _target.vcxprojdir = path.join(vsinfo.vcxproj_rootdir, targetname)

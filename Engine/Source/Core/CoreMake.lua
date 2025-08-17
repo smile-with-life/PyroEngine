@@ -1,4 +1,0 @@
-files
-{
-	"Core.h"
-}
