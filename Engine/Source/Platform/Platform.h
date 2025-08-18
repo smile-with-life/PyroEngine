@@ -79,7 +79,7 @@
     #define DLLIMPORT
 #endif
 
-// ================== DLL导入/导出控制 ==================​​
+// ================== 符号导出控制 ==================​​
 #ifdef BUILD_EXPORT_DLL
     #define CORE_API DLLEXPORT
 #else
@@ -104,7 +104,7 @@
     #error The platform is not supported!
 #endif
 
-// ================== 平台构建定义 ==================​​
+// ================== 构建配置检测 ==================​​
 #ifdef BUILD_CONFIG_TEST
     #define BUILD_CONFIG_TEST 0
     #define BUILD_CONFIG BUILD_CONFIG_TEST
@@ -119,7 +119,7 @@
     #define BUILD_CONFIG BUILD_CONFIG_DIST
 #endif
 
-// ================== 平台类型定义 ==================
+// ================== 跨平台类型统一 ==================
 #include <cstdint>
 #include <cstddef>
 #include <stdint.h>
