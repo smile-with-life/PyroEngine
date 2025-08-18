@@ -52,6 +52,22 @@ target "Engine"
         add_defines {"PLATFORM_IOS"}
     end
 
+    if is_mode("Test") then
+        add_defines "BUILD_CONFIG_TEST=0"
+    end
+
+    if is_mode("Debug") then
+        add_defines "BUILD_CONFIG_DEBUG=1"
+    end
+
+    if is_mode("Release") then
+        add_defines "BUILD_CONFIG_RELEASE=2"
+    end
+
+    if is_mode("Dist") then
+        add_defines "BUILD_CONFIG_DIST=3"
+    end
+
     
 
     add_headerfiles{
