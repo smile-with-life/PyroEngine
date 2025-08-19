@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Core.h"
+#include "Platform/Platform.h"
 #include "Function/Console/Console.h"
 
 class WindowsConsole : public Console

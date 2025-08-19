@@ -1,5 +1,5 @@
 target "TestGame"
-    -- 设置目标编译类型：动态库程序
+    -- 设置目标编译类型：应用程序
     set_kind "binary"
     -- 设置代码语言标准：最新
     set_languages "cxxlatest"
@@ -11,25 +11,24 @@ target "TestGame"
     set_dependir "$(projectdir)/Game/TestGame/Build/$(os)/$(mode)/Dep"
     -- 添加头文件搜索目录
     add_includedirs "$(projectdir)/Engine/Source"
-    -- 添加链接搜索目录
-    add_linkdirs("$(projectdir)/Engine/Build/$(os)/$(mode)/Bin")
     -- 指定编译配置
     add_rules("mode.Test", "mode.Debug", "mode.Release", "mode.Dist")
-    -- 添加链接库名
+    -- 添加目标依赖
+    add_deps "Engine"
+    -- 添加链接搜索目录
+    add_linkdirs("$(projectdir)/Engine/Build/$(os)/$(mode)/Bin")
+    -- 添加链接库
     add_links("Engine")
-    set_plat(os.host())
-    set_arch(os.arch())
-
-    if is_mode("release") then
-        set_runtimes("MD")  -- Release 模式用动态 CRT
-    elseif is_mode("debug") then
-        set_runtimes("MD") -- Debug 模式用调试版动态 CRT
-    end
+    -- 添加程序运行时动态库加载路径
+    add_runenvs("PATH","$(projectdir)/Engine/Build/$(os)/$(mode)/Bin")
+    -- 设置运行目录
+    set_rundir"$(projectdir)/Game/TestGame"
 
     if is_os("windows") then
         add_defines "PLATFORM_WINDOWS"
         add_syslinks("kernel32")  -- 链接 Windows API 库
-        add_ldflags("/SUBSYSTEM:WINDOWS")            -- 指定窗口子系统
+        add_ldflags("/SUBSYSTEM:WINDOWS") -- 指定窗口子系统
+        -- set_runtimes "MDd"
     end
 
     if is_os("linux") then
