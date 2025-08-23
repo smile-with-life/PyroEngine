@@ -4,6 +4,7 @@
 
 int32 Application::Init()
 {
+    m_console = Console::Create();
     return 0;
 }
 
@@ -14,7 +15,7 @@ void Application::Tick()
 
 void Application::Exit()
 {
-
+    delete m_console;
 }
 
 bool Application::IsQuit()

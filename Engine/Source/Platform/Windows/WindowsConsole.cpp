@@ -2,6 +2,11 @@
 
 #include "WindowsConsole.h"
 
+Console* Console::Create()
+{
+    return new WindowsConsole();
+}
+
 void WindowsConsole::Init()
 {
     // 尝试附加到父进程控制台（若存在）
