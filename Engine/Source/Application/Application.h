@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Core.h"
+#include "Function/Console/Console.h"
 
 struct ApplicationInfo
 {
@@ -30,4 +31,7 @@ public:
 private:
     // 退出标志
     bool m_isQuit = false;
+
+    // 控制台
+    Console* m_console = nullptr;
 };
