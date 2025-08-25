@@ -54,6 +54,8 @@ void WindowsConsole::Init()
         // 获取重定向后的句柄
         m_handle = GetStdHandle(STD_OUTPUT_HANDLE);
     }
+    #else
+    Show();
     #endif  
 }
 
