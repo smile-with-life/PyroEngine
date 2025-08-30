@@ -156,28 +156,28 @@ xmake version 3.0.1+dev.7ab1594d2
     <XmakeConfigDir></XmakeConfigDir>
     <XmakeConfigFileDir></XmakeConfigFileDir>
     <XmakeTargetDir>$(XmakeProjectDir)\Game\TestGame\Build\windows\Debug\Bin</XmakeTargetDir>
-    <XmakeRunDir></XmakeRunDir>
+    <XmakeRunDir>$(XmakeProjectDir)\Game\TestGame</XmakeRunDir>
   </PropertyGroup>
   <PropertyGroup Label="XmakePath" Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <XmakeBuilDDir>$(XmakeProjectDir)\build</XmakeBuilDDir>
     <XmakeConfigDir></XmakeConfigDir>
     <XmakeConfigFileDir></XmakeConfigFileDir>
     <XmakeTargetDir>$(XmakeProjectDir)\Game\TestGame\Build\windows\Dist\Bin</XmakeTargetDir>
-    <XmakeRunDir></XmakeRunDir>
+    <XmakeRunDir>$(XmakeProjectDir)\Game\TestGame</XmakeRunDir>
   </PropertyGroup>
   <PropertyGroup Label="XmakePath" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <XmakeBuilDDir>$(XmakeProjectDir)\build</XmakeBuilDDir>
     <XmakeConfigDir></XmakeConfigDir>
     <XmakeConfigFileDir></XmakeConfigFileDir>
     <XmakeTargetDir>$(XmakeProjectDir)\Game\TestGame\Build\windows\Release\Bin</XmakeTargetDir>
-    <XmakeRunDir></XmakeRunDir>
+    <XmakeRunDir>$(XmakeProjectDir)\Game\TestGame</XmakeRunDir>
   </PropertyGroup>
   <PropertyGroup Label="XmakePath" Condition="'$(Configuration)|$(Platform)'=='Test|x64'">
     <XmakeBuilDDir>$(XmakeProjectDir)\build</XmakeBuilDDir>
     <XmakeConfigDir></XmakeConfigDir>
     <XmakeConfigFileDir></XmakeConfigFileDir>
     <XmakeTargetDir>$(XmakeProjectDir)\Game\TestGame\Build\windows\Test\Bin</XmakeTargetDir>
-    <XmakeRunDir></XmakeRunDir>
+    <XmakeRunDir>$(XmakeProjectDir)\Game\TestGame</XmakeRunDir>
   </PropertyGroup>
 
   <Import Project="$(XmakeProgramDir)\scripts\vsxmake\vsproj\Xmake.props" />
@@ -204,6 +204,9 @@ xmake version 3.0.1+dev.7ab1594d2
 
   </ItemGroup>
   <!-- <ItemGroup>
+    <ProjectReference Include="..\Engine\Engine.vcxproj">
+      <Project>{28BADE4B-ACF5-4E29-BC75-898670B6C78F}</Project>
+    </ProjectReference>
 
   </ItemGroup> -->
   <Import Project="$(XmakeProgramDir)\scripts\vsxmake\vsproj\Xmake.targets" />

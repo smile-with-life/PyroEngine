@@ -1,6 +1,5 @@
 #pragma once
 
-
 #define NOMINMAX // 禁用 min/max 宏定义（避免与 std::min/max 冲突）
 
 #include <Windows.h>

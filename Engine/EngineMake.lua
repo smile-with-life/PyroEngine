@@ -9,126 +9,98 @@ target "Engine"
     set_objectdir "$(projectdir)/Engine/Build/$(os)/$(mode)/Obj"
     -- 设置依赖文件生成目录
     set_dependir "$(projectdir)/Engine/Build/$(os)/$(mode)/Dep"
-    set_plat(os.host())
-    set_arch(os.arch())
     -- 指定编译配置
     add_rules("mode.Test", "mode.Debug", "mode.Release", "mode.Dist")
-
+    -- 添加头文件搜索目录
     add_includedirs "Source"
+    -- 设置 C++ 预编译头文件
     set_pcxxheader "Source/pch.h"
-
-    add_syslinks "User32"
-
-    add_defines "BUILD_EXPORT_DLL"
-
+    -- 自动导出所有的动态库符号
     add_rules("utils.symbols.export_all")
-    
-
-    if is_mode("release") then
-        set_runtimes("MD")  -- Release 模式用动态 CRT
-    elseif is_mode("debug") then
-        set_runtimes("MD") -- Debug 模式用调试版动态 CRT
-    end
-
-    if is_os("windows") then
+    -- 动态库设置
+    add_defines "BUILD_EXPORT_DLL"
+    -- Windows设置
+    if is_plat("windows") then
+        -- 添加宏定义
         add_defines "PLATFORM_WINDOWS"
-        add_syslinks("kernel32")  -- 链接 Windows API 库
-        -- add_rules("utils.symbols.export_list", {symbols = "WinMain"})
-    end
-
-    if is_os("linux") then
-        add_defines {"PLATFORM_LINUX"}
-    end
-
-    if is_os("android") then
-        add_defines {"PLATFORM_ANDROID"}
-    end
-
-    if is_os("macosx") then
-        add_defines {"PLATFORM_MAC"}
-    end
-
-    if is_os("ios") then
-        add_defines {"PLATFORM_IOS"}
-    end
-
-    if is_mode("Test") then
-        add_defines "BUILD_CONFIG_TEST=0"
-    end
-
-    if is_mode("Debug") then
-        add_defines "BUILD_CONFIG_DEBUG=1"
-    end
-
-    if is_mode("Release") then
-        add_defines "BUILD_CONFIG_RELEASE=2"
-    end
-
-    if is_mode("Dist") then
-        add_defines "BUILD_CONFIG_DIST=3"
-    end
-
-    
-
-    add_headerfiles{
-        "Source/pch.h"
-    }
-    add_files{
-        "Source/pch.cpp"
-    }
-
-    -- 平台层
-    add_headerfiles{
-        "Source/Platform/Platform.h"
-    }
-    add_files{
-        
-    }
-    if is_os("windows") then
+        -- 链接 Windows API 库
+        add_syslinks("kernel32","User32")
+        -- 添加头文件
         add_headerfiles{
-            "Source/Platform/Windows/WindowsPlatform.h",
-            "Source/Platform/Windows/WindowsConsole.h"
+            -- 平台层：Windows平台
+            "Source/Platform/Windows/**.h",
         }
+        -- 添加源代码文件
         add_files{
-            "Source/Platform/Windows/WindowsPlatform.cpp",
-            "Source/Platform/Windows/WindowsConsole.cpp"
-        }     
-    end
-    -- 核心层
-    add_headerfiles{
-        "Source/Core/Core.h"
-    }
-    add_files{
-        
-    }
-    -- 功能层
-    add_headerfiles{
-        "Source/Function/Console/Console.h"
-    }
-    add_files{
-        "Source/Function/Console/Console.cpp"
-    }
-    -- 服务层
-    add_headerfiles{
-
-    }
-    add_files{
-
-    }
-    -- 应用层
-    add_headerfiles{
-        "Source/Application/Application.h"
-    }
-    add_files{
-        "Source/Application/Application.cpp"
-    }
-    -- 入口点
-    if is_os("windows") then
-        add_headerfiles{
-            
-        }
-        add_files{
+            -- 平台层：Windows平台
+            "Source/Platform/Windows/**.cpp",
+            -- Windows入口
             "Source/Launch/Windows/WindowsLaunch.cpp",
             "Source/Launch/Windows/WindowsExport.def"
         }     
+        -- Test配置
+        if is_mode("Test") then
+            add_defines "BUILD_CONFIG_TEST=0"
+            set_runtimes "MDd"
+        end
+        -- Debug配置
+        if is_mode("Debug") then
+            add_defines "BUILD_CONFIG_DEBUG=1"
+            set_runtimes "MDd"
+        end
+        -- Release配置
+        if is_mode("Release") then
+            add_defines "BUILD_CONFIG_RELEASE=2"
+            set_runtimes "MDd"
+        end
+        -- Dist配置
+        if is_mode("Dist") then
+            add_defines "BUILD_CONFIG_DIST=3"
+            set_runtimes "MD"
+        end 
     end
+    -- Linux设置
+    if is_plat("linux") then
+        add_defines {"PLATFORM_LINUX"}
+    end
+    -- Android设置
+    if is_plat("android") then
+        add_defines {"PLATFORM_ANDROID"}
+    end
+    -- Mac设置
+    if is_plat("macosx") then
+        add_defines {"PLATFORM_MAC"}
+    end
+    -- IOS设置
+    if is_plat("ios") then
+        add_defines {"PLATFORM_IOS"}
+    end    
+
+    add_headerfiles{
+        -- 预编译头文件
+        "Source/pch.h",
+        -- 核心层
+        "Source/Core/**.h",
+        -- 平台层
+        "Source/Platform/*.h",
+        -- 功能层
+        "Source/Function/**.h",
+        -- 服务层
+        "Source/Server/**.h",
+        -- 应用层
+        "Source/Application/**.h"
+    }
+    add_files{
+        -- 预编译文件(msvc专用)
+        "Source/pch.cpp",
+        -- 核心层
+        "Source/Core/**.cpp",
+        -- 平台层
+        "Source/Platform/*.cpp",
+        -- 功能层
+        "Source/Function/**.cpp",
+        -- 服务层
+        "Source/Server/**.cpp",
+        -- 应用层
+        "Source/Application/**.cpp"
+    }
