@@ -21,6 +21,18 @@ xmake version 3.0.1+dev.7ab1594d2
     <Filter Include="Source\Core">
       <UniqueIdentifier>{403BA268-673A-4F91-97BB-2A99A2239770}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Core\Container">
+      <UniqueIdentifier>{E82D2069-ECF4-407C-9A19-CFA2A05B8908}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Core\Container\Iterator">
+      <UniqueIdentifier>{EA6739B1-4129-4EE9-8922-3BBE86240686}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Core\Memory">
+      <UniqueIdentifier>{5AD0C2C8-7CBA-4F88-865D-FE41C684992A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Core\String">
+      <UniqueIdentifier>{218CC711-738F-4F71-A590-4CAD546F4B93}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\Function">
       <UniqueIdentifier>{2AC6D8D0-456D-4B9E-9B9D-967EF3CEEC91}</UniqueIdentifier>
     </Filter>
@@ -39,6 +51,7 @@ xmake version 3.0.1+dev.7ab1594d2
     <Filter Include="Source\Platform\Windows">
       <UniqueIdentifier>{4AF40CB8-9B23-444E-B9B6-C06CF76E5E2A}</UniqueIdentifier>
     </Filter>
+
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildProjectDirectory)\Xmake.Custom.props">
@@ -53,13 +66,31 @@ xmake version 3.0.1+dev.7ab1594d2
     <None Include="$(MSBuildProjectDirectory)\Xmake.Custom.items.filters">
       <Filter>Properties</Filter>
     </None>
+    <None Include="$(XmakeScriptDir)\xmake.lua">
+      <Filter>Properties</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Application\Application.h">
       <Filter>Source\Application</Filter>
     </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Container\Array.h">
+      <Filter>Source\Core\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Container\Iterator\Iterator.h">
+      <Filter>Source\Core\Container\Iterator</Filter>
+    </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Core.h">
       <Filter>Source\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Memory\Allocator.h">
+      <Filter>Source\Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\String\Char.h">
+      <Filter>Source\Core\String</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\String\String.h">
+      <Filter>Source\Core\String</Filter>
     </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Console\Console.h">
       <Filter>Source\Function\Console</Filter>
@@ -76,11 +107,19 @@ xmake version 3.0.1+dev.7ab1594d2
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\pch.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Core\String\String.h" />
+
+
   </ItemGroup>
   <ItemGroup>
+
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Application\Application.cpp">
       <Filter>Source\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Core\String\Char.cpp">
+      <Filter>Source\Core\String</Filter>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Core\String\String.cpp">
+      <Filter>Source\Core\String</Filter>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Function\Console\Console.cpp">
       <Filter>Source\Function\Console</Filter>
@@ -97,11 +136,19 @@ xmake version 3.0.1+dev.7ab1594d2
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\pch.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Core\String\String.cpp" />
+
+
+
   </ItemGroup>
   <ItemGroup>
+
   </ItemGroup>
   <ItemGroup>
+
+
+
+
   </ItemGroup>
-  <Import Condition="Exists('$(MSBuildThisFileDirectory)\Xmake.Custom.files.filters')" Project="$(MSBuildThisFileDirectory)\Xmake.Custom.files.filters" />
+  <Import Condition="Exists('$(MSBuildThisFileDirectory)\Xmake.Custom.files.filters')"
+    Project="$(MSBuildThisFileDirectory)\Xmake.Custom.files.filters" />
 </Project>

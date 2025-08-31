@@ -1,11 +1,21 @@
 #pragma once
 
-#include "Core/Core.h"
-#include "Function/Console/Console.h"
+#include "Core.h"
+#include "Console.h"
+#include "String.h"
 
 struct ApplicationInfo
 {
-    
+    // 应用名称
+    String name;
+    // 版本号
+    String version;
+    // 构建号
+    String buildNumber;
+    // 开发者
+    String developer;
+    // 版权信息 
+    String copyright;
 };
 
 class Application

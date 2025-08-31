@@ -73,7 +73,7 @@ xmake version 3.0.1+dev.7ab1594d2
     </XmakeRunArgs>
     <XmakeConfigFlags>
     </XmakeConfigFlags>
-    <XmakeIncludeDirs>$(XmakeProjectDir)\Engine\Source</XmakeIncludeDirs>
+    <XmakeIncludeDirs>$(XmakeProjectDir)\Engine\Source;$(XmakeProjectDir)\Engine\Source\Core;$(XmakeProjectDir)\Engine\Source\Platform;$(XmakeProjectDir)\Engine\Source\Function;$(XmakeProjectDir)\Engine\Source\Server;$(XmakeProjectDir)\Engine\Source\Application;$(XmakeProjectDir)\Engine\Source\Core\String;$(XmakeProjectDir)\Engine\Source\Core\Container;$(XmakeProjectDir)\Engine\Source\Core\Memory;$(XmakeProjectDir)\Engine\Source\Function\Console</XmakeIncludeDirs>
     <XmakeForceIncludes>
     </XmakeForceIncludes>
     <XmakeLinkDirs>
@@ -114,7 +114,7 @@ xmake version 3.0.1+dev.7ab1594d2
     </XmakeRunArgs>
     <XmakeConfigFlags>
     </XmakeConfigFlags>
-    <XmakeIncludeDirs>$(XmakeProjectDir)\Engine\Source</XmakeIncludeDirs>
+    <XmakeIncludeDirs>$(XmakeProjectDir)\Engine\Source;$(XmakeProjectDir)\Engine\Source\Core;$(XmakeProjectDir)\Engine\Source\Platform;$(XmakeProjectDir)\Engine\Source\Function;$(XmakeProjectDir)\Engine\Source\Server;$(XmakeProjectDir)\Engine\Source\Application;$(XmakeProjectDir)\Engine\Source\Core\String;$(XmakeProjectDir)\Engine\Source\Core\Container;$(XmakeProjectDir)\Engine\Source\Core\Memory;$(XmakeProjectDir)\Engine\Source\Function\Console</XmakeIncludeDirs>
     <XmakeForceIncludes>
     </XmakeForceIncludes>
     <XmakeLinkDirs>
@@ -155,7 +155,7 @@ xmake version 3.0.1+dev.7ab1594d2
     </XmakeRunArgs>
     <XmakeConfigFlags>
     </XmakeConfigFlags>
-    <XmakeIncludeDirs>$(XmakeProjectDir)\Engine\Source</XmakeIncludeDirs>
+    <XmakeIncludeDirs>$(XmakeProjectDir)\Engine\Source;$(XmakeProjectDir)\Engine\Source\Core;$(XmakeProjectDir)\Engine\Source\Platform;$(XmakeProjectDir)\Engine\Source\Function;$(XmakeProjectDir)\Engine\Source\Server;$(XmakeProjectDir)\Engine\Source\Application;$(XmakeProjectDir)\Engine\Source\Core\String;$(XmakeProjectDir)\Engine\Source\Core\Container;$(XmakeProjectDir)\Engine\Source\Core\Memory;$(XmakeProjectDir)\Engine\Source\Function\Console</XmakeIncludeDirs>
     <XmakeForceIncludes>
     </XmakeForceIncludes>
     <XmakeLinkDirs>
@@ -196,7 +196,7 @@ xmake version 3.0.1+dev.7ab1594d2
     </XmakeRunArgs>
     <XmakeConfigFlags>
     </XmakeConfigFlags>
-    <XmakeIncludeDirs>$(XmakeProjectDir)\Engine\Source</XmakeIncludeDirs>
+    <XmakeIncludeDirs>$(XmakeProjectDir)\Engine\Source;$(XmakeProjectDir)\Engine\Source\Core;$(XmakeProjectDir)\Engine\Source\Platform;$(XmakeProjectDir)\Engine\Source\Function;$(XmakeProjectDir)\Engine\Source\Server;$(XmakeProjectDir)\Engine\Source\Application;$(XmakeProjectDir)\Engine\Source\Core\String;$(XmakeProjectDir)\Engine\Source\Core\Container;$(XmakeProjectDir)\Engine\Source\Core\Memory;$(XmakeProjectDir)\Engine\Source\Function\Console</XmakeIncludeDirs>
     <XmakeForceIncludes>
     </XmakeForceIncludes>
     <XmakeLinkDirs>
@@ -254,16 +254,27 @@ xmake version 3.0.1+dev.7ab1594d2
   <Import Project="$(XmakeProgramDir)\scripts\vsxmake\vsproj\Xmake.props" />
   <ItemGroup>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Application\Application.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Container\Array.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Container\Iterator\Iterator.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Core.h" />
+    <ClInclude Include="Source\Core\Container\Allocator\Allocator.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\String\Char.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\String\String.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Console\Console.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Platform\Platform.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Platform\Windows\WindowsConsole.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Platform\Windows\WindowsPlatform.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\pch.h" />
-    <ClInclude Include="Source\Core\String\String.h" />
+    <ClInclude Include="Source\Core\Memory\Memory.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Application\Application.cpp">
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Core\String\Char.cpp">
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Core\String\String.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Function\Console\Console.cpp">
@@ -281,7 +292,6 @@ xmake version 3.0.1+dev.7ab1594d2
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\pch.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
-    <ClCompile Include="Source\Core\String\String.cpp" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>
