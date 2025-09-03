@@ -12,7 +12,14 @@ target "Engine"
     -- 指定编译配置
     add_rules("mode.Test", "mode.Debug", "mode.Release", "mode.Dist")
     -- 添加头文件搜索目录
-    add_includedirs "Source"
+    add_includedirs {
+        "Source",
+        "Source/Core",
+        "Source/Platform",
+        "Source/Function",
+        "Source/Server",
+        "Source/Application"
+    }
     -- 设置 C++ 预编译头文件
     set_pcxxheader "Source/pch.h"
     -- 自动导出所有的动态库符号
@@ -104,3 +111,15 @@ target "Engine"
         -- 应用层
         "Source/Application/**.cpp"
     }
+
+    -- 添加核心层的头文件搜索目录
+    add_includedirs {
+        "Source/Core/String",
+        "Source/Core/Container",
+        "Source/Core/Memory"
+    }
+    -- 添加功能层的头文件搜索目录
+    add_includedirs {
+        "Source/Function/Console"
+    }
+

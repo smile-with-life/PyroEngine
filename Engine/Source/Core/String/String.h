@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Core/Core.h"
-class Char{};
+#include "Char.h"
+
 class StringList;
 class String
 {
