@@ -1,3 +1,3 @@
 #pragma once
 
-#include "Platform/Type.h"
+#include "CoreType.h"

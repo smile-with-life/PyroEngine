@@ -31,7 +31,7 @@ target "Engine"
         -- 添加宏定义
         add_defines "PLATFORM_WINDOWS"
         -- 链接 Windows API 库
-        add_syslinks("kernel32","User32")
+        add_syslinks("msvcrt", "kernel32","User32")
         -- 添加头文件
         add_headerfiles{
             -- 平台层：Windows平台
@@ -114,6 +114,7 @@ target "Engine"
 
     -- 添加核心层的头文件搜索目录
     add_includedirs {
+        "Source/Core/Concept",
         "Source/Core/String",
         "Source/Core/Container",
         "Source/Core/Memory"

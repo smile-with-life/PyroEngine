@@ -1,5 +1,7 @@
 #pragma once
-#include "Core/Core.h"
+
+#include "Core.h"
+#include "Concept.h"
 #include "Iterator/Iterator.h"
 #include "Allocator/Allocator.h"
 
@@ -11,12 +13,21 @@ class ArrayIterator
 
 };
 
+template <class Type>
+class ArrayConstIterator
+{
+
+
+};
+
 template<class Type>
 class Array 
 {
 public:
     using iterator = ArrayIterator<Type>;
-    using const_iterator = ArrayIterator<const Type>;
+    using const_iterator = ArrayConstIterator<Type>;
+    using reverse_iterator = std::reverse_iterator<iterator>;
+    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 public:
     /// <summary>
     /// 默认构造函数
@@ -132,6 +143,11 @@ public:
     /// </summary>
     /// <returns>已使用的内存字节大小</returns>
     constexpr uint64 ByteSize() const;
+    /// <summary>
+    /// 获取模板参数类型Type的字节大小
+    /// </summary>
+    /// <returns>类型Type的字节大小</returns>
+    constexpr int32 TypeSize();
     /// <summary>
     /// 获取数组当前元素数量
     /// </summary>
@@ -411,7 +427,6 @@ public:
     /// </summary>
     /// <returns>true表示数组为空</returns>
     constexpr bool IsEmpty() const;
-
     /// <summary>
     /// 检查索引是否有效
     /// </summary>
@@ -445,7 +460,56 @@ public:
     /// <param name="value"></param>
     constexpr void Fill(int32 count, const Type& value);
 public:
-    constexpr static int32 TypeSize();
+    constexpr Type& operator[](int64 index);
+
+    constexpr const Type& operator[](int64 index) const;
+
+    template<class Type>
+    constexpr friend Array operator+(const Array<Type>& left, const Array<Type>& right);
+
+    constexpr Array& operator+=(const Array& other);
+
+    template<Concept::EqualComparableType Type>
+    constexpr bool operator==(const Array<Type>& other);
+
+    template<Concept::EqualComparableType Type>
+    constexpr bool operator!=(const Array<Type>& other);
+
+    template<Concept::SortComparableType Type>
+    constexpr bool operator>(const Array<Type>& other);
+
+    template<Concept::SortComparableType Type>
+    constexpr bool operator>=(const Array<Type>& other);
+
+    template<Concept::SortComparableType Type>
+    constexpr bool operator<(const Array<Type>& other);
+
+    template<Concept::SortComparableType Type>
+    constexpr bool operator<=(const Array<Type>& other);
+public:
+    [[nodiscard]] constexpr iterator begin() noexcept;
+
+    [[nodiscard]] constexpr const_iterator begin() const noexcept;
+
+    [[nodiscard]] constexpr iterator end() noexcept;
+
+    [[nodiscard]] constexpr const_iterator end() const noexcept;
+
+    [[nodiscard]] constexpr const_iterator cbegin() const noexcept;
+
+    [[nodiscard]] constexpr const_iterator cend() const noexcept;
+
+    [[nodiscard]] constexpr reverse_iterator rbegin() noexcept;
+
+    [[nodiscard]] constexpr const_reverse_iterator rbegin() const noexcept;
+
+    [[nodiscard]] constexpr reverse_iterator rend() noexcept;
+
+    [[nodiscard]] constexpr const_reverse_iterator rend() const noexcept;
+
+    [[nodiscard]] constexpr const_reverse_iterator crbegin() const noexcept;
+
+    [[nodiscard]] constexpr const_reverse_iterator crend() const noexcept;
 private:
     int32 m_size = 0;
     int32 m_capacity = 0;
