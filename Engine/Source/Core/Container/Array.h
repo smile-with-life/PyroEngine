@@ -128,10 +128,10 @@ public:
     /// <returns>指向数组首元素的const指针</returns>
     constexpr const Type* Data() const;
     /// <summary>
-    /// 检查数组是否为空
+    /// 获取数组当前已使用的内存字节大小
     /// </summary>
-    /// <returns>true表示数组为空</returns>
-    constexpr bool IsEmpty() const;
+    /// <returns>已使用的内存字节大小</returns>
+    constexpr uint64 ByteSize() const;
     /// <summary>
     /// 获取数组当前元素数量
     /// </summary>
@@ -166,81 +166,286 @@ public:
     /// </summary>
     constexpr void Shrink();
     /// <summary>
-    /// 在末尾附加元素(拷贝语义)
+    /// 在末尾添加元素(拷贝语义)
     /// </summary>
     /// <param name="value">要添加的元素</param>
     /// <returns>this</returns>
-    constexpr Array& Append(const Type& value);
+    constexpr Array& Add(const Type& value);
     /// <summary>
-    /// 在末尾附加元素(移动语义)
+    /// 在末尾添加元素(移动语义)
     /// </summary>
     /// <param name="value">要添加的元素</param>
     /// <returns>this</returns>
-    constexpr Array& Append(Type&& value) noexcept;
+    constexpr Array& Add(Type&& value) noexcept;
     /// <summary>
-    /// 在末尾附加另一个数组的所有元素(拷贝语义)
+    /// 在末尾追加另一个数组的所有元素(拷贝语义)
     /// </summary>
     /// <param name="other">要添加的数组</param>
     /// <returns>this</returns>
     constexpr Array& Append(const Array& other);
     /// <summary>
-    /// 在末尾附加另一个数组的所有元素(移动语义)
+    /// 在末尾追加另一个数组的所有元素(移动语义)
     /// </summary>
     /// <param name="other">要添加的数组</param>
     /// <returns>this</returns>
     constexpr Array& Append(Array&& other) noexcept;
-
+    /// <summary>
+    /// 在数组末尾追加从 first 到 last 范围内的元素
+    /// </summary>
+    /// <param name="first">起始迭代器</param>
+    /// <param name="last">结束迭代器</param>
+    /// <returns>this</returns>
+    template <std::random_access_iterator InputIt>
+    constexpr Array& Append(InputIt first, InputIt last);
+    /// <summary>
+    /// 在数组末尾追加初始化列表中的元素
+    /// </summary>
+    /// <param name="ilist">初始化列表</param>
+    /// <returns>this</returns>
+    constexpr Array& Append(std::initializer_list<Type> ilist);  
+    /// <summary>
+    /// 在指定位置插入一个元素(拷贝语义)
+    /// </summary>
+    /// <param name="iter">插入位置的迭代器</param>
+    /// <param name="value">要插入的值</param>
+    /// <returns>指向新插入元素的迭代器</returns>
     constexpr iterator Insert(const_iterator iter, const Type& value);
-
+    /// <summary>
+    /// 在指定位置插入一个元素(移动语义)
+    /// </summary>
+    /// <param name="iter">插入位置的迭代器</param>
+    /// <param name="value">要插入的值</param>
+    /// <returns>指向新插入元素的迭代器</returns>
     constexpr iterator Insert(const_iterator iter, Type&& value);
-
+    /// <summary>
+    /// 在指定位置插入 count 个相同元素
+    /// </summary>
+    /// <param name="iter">插入位置的迭代器</param>
+    /// <param name="count">要插入的元素数量</param>
+    /// <param name="value">要插入的值</param>
+    /// <returns>指向第一个新插入元素的迭代器</returns>
     constexpr iterator Insert(const_iterator iter, int32 count, const Type& value);
-
+    /// <summary>
+    /// 在指定位置插入从 first 到 last 范围内的元素
+    /// </summary>
+    /// <param name="iter">插入位置的迭代器</param>
+    /// <param name="first">起始迭代器</param>
+    /// <param name="last">结束迭代器</param>
+    /// <returns>指向第一个新插入元素的迭代器</returns>
     template<class InputIt>
     constexpr iterator Insert(const_iterator iter, InputIt first, InputIt last);
-
+    /// <summary>
+    /// 在指定位置插入初始化列表中的元素
+    /// </summary>
+    /// <param name="iter">插入位置的迭代器</param>
+    /// <param name="ilist">初始化列表</param>
+    /// <returns>指向第一个新插入元素的迭代器</returns>
     constexpr iterator Insert(const_iterator iter, std::initializer_list<Type> ilist);
-
+    /// <summary>
+    /// 在指定索引位置插入一个元素(拷贝语义)
+    /// </summary>
+    /// <param name="index">插入位置的索引</param>
+    /// <param name="value">要插入的值</param>
+    constexpr void Insert(int32 index, const Type& value);
+    /// <summary>
+    /// 在指定索引位置插入一个元素(移动语义)
+    /// </summary>
+    /// <param name="index">插入位置的索引</param>
+    /// <param name="value">要插入的值</param>
+    constexpr void Insert(int32 index, Type&& value);
+    /// <summary>
+    /// 在指定索引位置插入 count 个相同元素
+    /// </summary>
+    /// <param name="index">插入位置的索引</param>
+    /// <param name="count">要插入的元素数量</param>
+    /// <param name="value">要插入的值</param>
+    constexpr void Insert(int32 index, int32 count, const Type& value);
+    /// <summary>
+    /// 在指定索引位置插入从 first 到 last 范围内的元素
+    /// </summary>
+    /// <param name="index">插入位置的索引</param>
+    /// <param name="first">起始迭代器</param>
+    /// <param name="last">结束迭代器</param>
+    template<class InputIt>
+    constexpr void Insert(int32 index, InputIt first, InputIt last);
+    /// <summary>
+    /// 在指定索引位置插入初始化列表中的元素
+    /// </summary>
+    /// <param name="index">插入位置的索引</param>
+    /// <param name="ilist">初始化列表</param>
+    constexpr void Insert(int32 index, std::initializer_list<Type> ilist);
+    /// <summary>
+    /// 在数组末尾添加一个元素(拷贝语义)
+    /// </summary>
+    /// <param name="value">要添加的值</param>
+    constexpr void Push(const Type& value);
+    /// <summary>
+    /// 在数组末尾添加一个元素(移动语义)
+    /// </summary>
+    /// <param name="value">要添加的值</param>
+    constexpr void Push(Type&& value);
+    /// <summary>
+    /// 移除数组末尾的元素
+    /// </summary>
+    constexpr void Pop();
+    /// <summary>
+    /// 在数组开头添加一个元素(拷贝语义)
+    /// </summary>
+    /// <param name="value">要添加的值</param>
+    constexpr void Unshift(const Type& value);
+    /// <summary>
+    /// 在数组开头添加一个元素(移动语义)
+    /// </summary>
+    /// <param name="value">要添加的值</param>
+    constexpr void Unshift(Type&& value);
+    /// <summary>
+    /// 移除数组开头的元素
+    /// </summary>
+    constexpr void Shift();
+    /// <summary>
+    /// 在数组末尾就地构造一个元素
+    /// </summary>
+    /// <param name="args">构造元素的参数</param>
+    /// <returns>指向新构造元素的迭代器</returns>
     template<class... Args>
-    constexpr iterator Emplace(const_iterator iter, Args&&... args);
-
+    constexpr iterator Emplace(Args&&... args);
+    /// <summary>
+    /// 移除指定位置的元素
+    /// </summary>
+    /// <param name="iter">要移除元素的迭代器</param>
+    /// <returns>指向被移除元素后面元素的迭代器</returns>
     constexpr iterator Erase(const_iterator iter);
-
+    /// <summary>
+    /// 移除从 firstIter 到 lastIter 范围内的元素
+    /// </summary>
+    /// <param name="firstIter">起始迭代器</param>
+    /// <param name="lastIter">结束迭代器</param>
+    /// <returns>指向被移除元素后面元素的迭代器</returns>
     constexpr iterator Erase(const_iterator firstIter, const_iterator lastIter);
-
-    constexpr void PushBack(const Type& value);
-
-    constexpr void PushBack(Type&& value);
-
-    template<class... Args>
-    constexpr Type& EmplaceBack(Args&&... args);
-
-    constexpr void PopBack();
-
-    constexpr void Swap(Array& other);
-
+    /// <summary>
+    /// 移除指定索引位置的元素
+    /// </summary>
+    /// <param name="index">要移除元素的索引</param>
+    constexpr void Erase(int32 index);
+    /// <summary>
+    /// 移除从 start 到 end 索引范围内的元素
+    /// </summary>
+    /// <param name="start">起始索引</param>
+    /// <param name="end">结束索引</param>
+    constexpr void Erase(int32 start, int32 end);    
+    /// <summary>
+    /// 检查数组中是否包含指定值
+    /// </summary>
+    /// <param name="value">要查找的值</param>
+    /// <returns>如果找到返回 true，否则返回 false</returns>
     constexpr bool Contains(const Type& value);
+    /// <summary>
+    /// 检查数组中是否有元素满足指定条件
+    /// </summary>
+    /// <param name="condition">条件函数或谓词</param>
+    /// <returns>如果有元素满足条件返回 true，否则返回 false</returns>
+    template<class Condition>
+    constexpr bool Includes(Condition&& condition);
+    /// <summary>
+    /// 查找第一个满足条件的元素
+    /// </summary>
+    /// <param name="condition">条件函数或谓词</param>
+    /// <returns>指向找到的元素的引用，如果未找到则行为未定义</returns>
+    template<class Condition>
+    constexpr Type& Find(Condition&& condition);
+    /// <summary>
+    /// 查找最后一个满足条件的元素
+    /// </summary>
+    /// <param name="condition">条件函数或谓词</param>
+    /// <returns>指向找到的元素的引用，如果未找到则行为未定义</returns>
+    template<class Condition>
+    constexpr Type& FindLast(Condition&& condition);
+    /// <summary>
+    /// 查找第一个满足条件的元素的索引
+    /// </summary>
+    /// <param name="condition">条件函数或谓词</param>
+    /// <returns>找到的元素的索引，如果未找到则行为未定义</returns>
+    template<class Condition>
+    constexpr int32 FindIndex(Condition&& condition);
+    /// <summary>
+    /// 查找最后一个满足条件的元素的索引
+    /// </summary>
+    /// <param name="condition">条件函数或谓词</param>
+    /// <returns>找到的元素的索引，如果未找到则行为未定义</returns>
+    template<class Condition>
+    constexpr int32& FindLastIndex(Condition&& condition);
+    /// <summary>
+    /// 查找指定值的第一个出现位置
+    /// </summary>
+    /// <param name="value">要查找的值</param>
+    /// <returns>找到的索引，如果未找到返回 -1</returns>
+    constexpr int32 IndexOf(const Type& value);
+    /// <summary>
+    /// 查找指定值的最后一个出现位置
+    /// </summary>
+    /// <param name="value">要查找的值</param>
+    /// <returns>找到的索引，如果未找到返回 -1</returns>
+    constexpr int32 LastIndexOf(const Type& value);
+    /// <summary>
+    /// 过滤数组，保留满足条件的元素
+    /// </summary>
+    /// <param name="condition">条件函数或谓词</param>
+    /// <returns>包含满足条件元素的新数组</returns>
+    template<class Condition>
+    constexpr Array& Filter(Condition&& condition);
+    /// <summary>
+    /// 创建包含满足条件元素的新数组
+    /// </summary>
+    /// <param name="condition">条件函数或谓词</param>
+    /// <returns>包含满足条件元素的新数组</returns>
+    template<class Condition>
+    constexpr Array With(Condition&& condition);
+    /// <summary>
+    /// 根据条件对数组进行排序
+    /// </summary>
+    /// <param name="condition">排序条件或比较函数</param>
+    template<class Condition>
+    constexpr void Sort(Condition&& condition);
+    /// <summary>
+    /// 检查数组是否为空
+    /// </summary>
+    /// <returns>true表示数组为空</returns>
+    constexpr bool IsEmpty() const;
 
-    constexpr bool Find();
-
-    constexpr bool FindLast();
-
-    constexpr bool FindIndex();
-
-    constexpr bool FindLastIndex();
-
+    /// <summary>
+    /// 检查索引是否有效
+    /// </summary>
+    /// <param name="index">要检查的索引</param>
+    /// <returns>如果索引有效返回 true，否则返回 false</returns>
+    constexpr bool IsValidIndex(int32 index) const;
+    /// <summary>
+    /// 检查索引和数量是否在有效范围内
+    /// </summary>
+    /// <param name="index">起始索引</param>
+    /// <param name="count">元素数量</param>
+    constexpr void RangeCheck(int32 index, int32 count) const;
+    /// <summary>
+    /// 交换两个数组的内容
+    /// </summary>
+    /// <param name="other">要交换的另一个数组</param>
+    constexpr void Swap(Array& other);
+    /// <summary>
+    /// @暂定
+    /// </summary>
+    /// <returns></returns>
+    constexpr int32 AllocateSize();
+    /// <summary>
+    /// @暂定
+    /// </summary>
     constexpr void ForEach();
-
-    constexpr int32 IndexOf();
-
-    constexpr int32 LastIndexOf();
-
-    constexpr void Sort();
-
-    constexpr void Fill(int32 a, int32 b);
-
+    /// <summary>
+    /// @暂定
+    /// </summary>
+    /// <param name="count"></param>
+    /// <param name="value"></param>
+    constexpr void Fill(int32 count, const Type& value);
 public:
-
+    constexpr static int32 TypeSize();
 private:
     int32 m_size = 0;
     int32 m_capacity = 0;

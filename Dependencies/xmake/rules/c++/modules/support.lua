@@ -76,10 +76,14 @@ end
 -- strip flags not relevent for module reuse
 function strip_flags(target, flags, opt)
 
-    local strippeable_flags, splitted_strippeable_flags =  _support(target).strippeable_flags()
-
-    if opt and opt.strip_defines then
-        table.join2(splitted_strippeable_flags, {"D", "U"})
+    local strippeable_flags, splitted_strippeable_flags
+    if not opt.requiresonly then
+        strippeable_flags, splitted_strippeable_flags =  _support(target).strippeable_flags()
+        if opt and opt.strip_defines then
+            table.join2(splitted_strippeable_flags, {"D", "U"})
+        end
+    else
+        strippeable_flags, splitted_strippeable_flags =  _support(target).require_flags()
     end
 
     local splitted_strippeable_flags_set = hashset.new()
@@ -205,14 +209,19 @@ function is_public(target, sourcefile)
     return fileconfig and fileconfig.public or false
 end
 
--- query if a module is external
-function is_external(target, sourcefile)
+-- query if a module from a target dep
+function is_from_dep(target, sourcefile)
     local fileconfig = target:fileconfig(sourcefile)
-    local external = fileconfig and fileconfig.external
-    return external or false
+    return fileconfig and fileconfig.from_dep or false
 end
 
--- query if a module is external
+-- query if a module from a package
+function is_from_package(target, sourcefile)
+    local fileconfig = target:fileconfig(sourcefile)
+    return fileconfig and fileconfig.from_package or false
+end
+
+-- query if we should only build bmi
 function is_bmionly(target, sourcefile)
     local fileconfig = target:fileconfig(sourcefile)
     return fileconfig and fileconfig.bmionly or false

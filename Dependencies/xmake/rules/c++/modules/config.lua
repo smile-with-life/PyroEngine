@@ -76,11 +76,6 @@ function main(target)
             target:add("files")
         end
 
-        local memcache = support.memcache()
-        local targets = memcache:get("targets") or {}
-        targets[target:fullname()] = {}
-        targets[target:fullname()].finished_parsing = false
-        memcache:set("targets", targets)
         -- moduleonly modules are implicitly public
         if target:is_moduleonly() then
             local sourcebatches = target:sourcebatches()
@@ -95,7 +90,7 @@ function main(target)
 end
 
 function insert_stdmodules(target)
-    if target:data("cxx.has_modules") then
+    if target:data("cxx.has_modules") and target:policy("build.c++.modules.std") then
         local sourcebatches = target:sourcebatches()
         if sourcebatches and sourcebatches["c++.build.modules.scanner"] then
             local sourcebatch = sourcebatches["c++.build.modules.scanner"]
