@@ -1,3 +1,7 @@
+includes "Dependencies/PackageMake.lua"
+
+add_requires("GoogleTest", {configs = {shared = false}})  -- 静态链接
+
 target "Engine"
     -- 设置目标编译类型：动态库程序
     set_kind "shared"
@@ -11,6 +15,8 @@ target "Engine"
     set_dependir "$(projectdir)/Engine/Build/$(os)/$(mode)/Dep"
     -- 指定编译配置
     add_rules("mode.Test", "mode.Debug", "mode.Release", "mode.Dist")
+    -- 自动链接gtest库
+    add_packages("GoogleTest")  
     -- 添加头文件搜索目录
     add_includedirs {
         "Source",
@@ -123,4 +129,6 @@ target "Engine"
     add_includedirs {
         "Source/Function/Console"
     }
+
+
 
