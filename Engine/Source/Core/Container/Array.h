@@ -9,14 +9,253 @@
 template <class Type>
 class ArrayIterator
 {
+public:
+    using category = ContiguousIteratorTag;
+public:
+    constexpr ArrayIterator() noexcept
+        : m_ptr()
+    {
+    }
 
+    explicit constexpr ArrayIterator(const Type* ptr) noexcept
+        : m_ptr(ptr)
+    {
+    }
+public:
+    [[nodiscard]] constexpr Type& operator*() const noexcept
+    {
+        return *m_ptr;
+    }
 
+    [[nodiscard]] constexpr Type* operator->() const noexcept
+    {
+        return m_ptr;
+    }
+
+    [[nodiscard]] constexpr Type& operator[](const ptrdiff off) const noexcept
+    {
+        return *(*this + off);
+    }
+
+    constexpr ArrayIterator& operator++() noexcept
+    {
+        ++m_ptr;
+        return *this;
+    }
+
+    constexpr ArrayIterator operator++(int) noexcept
+    {
+        ArrayConstIterator tmp = *this;
+        ++*this;
+        return tmp;
+    }
+
+    constexpr ArrayIterator& operator--() noexcept
+    {
+        --m_ptr;
+        return *this;
+    }
+
+    constexpr ArrayIterator operator--(int) noexcept
+    {
+        ArrayIterator tmp = *this;
+        --*this;
+        return tmp;
+    }
+
+    constexpr ArrayIterator& operator+=(const ptrdiff off) noexcept
+    {
+        m_ptr += off;
+        return *this;
+    }
+
+    constexpr ArrayIterator& operator-=(const ptrdiff off) noexcept
+    {
+        return *this += -off;
+    }
+
+    [[nodiscard]] constexpr ArrayIterator operator+(const ptrdiff off) const noexcept
+    {
+        ArrayConstIterator tmp = *this;
+        tmp += off;
+        return tmp;
+    }
+
+    [[nodiscard]] friend constexpr ArrayIterator operator+(const ptrdiff off, ArrayIterator next) noexcept
+    {
+        next += off;
+        return next;
+    }
+
+    [[nodiscard]] constexpr ArrayIterator operator-(const ptrdiff off) const noexcept
+    {
+        ArrayIterator tmp = *this;
+        tmp -= off;
+        return tmp;
+    }
+
+    [[nodiscard]] constexpr ptrdiff operator-(const ArrayIterator& right) const noexcept
+    {
+        return static_cast<ptrdiff>(m_ptr - right.m_ptr);
+    }
+
+    [[nodiscard]] constexpr bool operator==(const ArrayIterator& right) const noexcept
+    {
+        return m_ptr == right.m_ptr;
+    }
+
+    [[nodiscard]] constexpr bool operator!=(const ArrayIterator& right) const noexcept
+    {
+        return !(*this == right);
+    }
+
+    [[nodiscard]] constexpr bool operator<(const ArrayIterator& right) const noexcept
+    {
+        return m_ptr < right.m_ptr;
+    }
+
+    [[nodiscard]] constexpr bool operator>(const ArrayIterator& right) const noexcept
+    {
+        return right < *this;
+    }
+
+    [[nodiscard]] constexpr bool operator<=(const ArrayIterator& right) const noexcept
+    {
+        return !(right < *this);
+    }
+
+    [[nodiscard]] constexpr bool operator>=(const ArrayIterator& right) const noexcept
+    {
+        return !(*this < right);
+    }
+private:
+    Type* m_ptr;
 };
 
 template <class Type>
 class ArrayConstIterator
 {
+public:
+    using category = ContiguousIteratorTag;
+public:
+    constexpr ArrayConstIterator() noexcept
+        : m_ptr()
+    {
+    }
 
+    explicit constexpr ArrayConstIterator(Type* ptr) noexcept
+        : m_ptr(ptr)
+    {
+    }
+public:
+    [[nodiscard]] constexpr const Type& operator*() const noexcept
+    {
+        return *m_ptr;
+    }
+
+    [[nodiscard]] constexpr const Type* operator->() const noexcept
+    {
+        return m_ptr;
+    }
+
+    [[nodiscard]] constexpr const Type& operator[](const ptrdiff off) const noexcept
+    {
+        return *(*this + off);
+    }
+
+    constexpr ArrayConstIterator& operator++() noexcept
+    {
+        ++m_ptr;
+        return *this;
+    }
+
+    constexpr ArrayConstIterator operator++(int) noexcept
+    {
+        ArrayConstIterator tmp = *this;
+        ++*this;
+        return tmp;
+    }
+
+    constexpr ArrayConstIterator& operator--() noexcept
+    {
+        --m_ptr;
+        return *this;
+    }
+
+    constexpr ArrayConstIterator operator--(int) noexcept
+    {
+        ArrayConstIterator tmp = *this;
+        --*this;
+        return tmp;
+    }
+
+    constexpr ArrayConstIterator& operator+=(const ptrdiff off) noexcept
+    {
+        m_ptr += off;
+        return *this;
+    }
+
+    constexpr ArrayConstIterator& operator-=(const ptrdiff off) noexcept
+    {
+        return *this += -off;
+    }
+
+    [[nodiscard]] constexpr ArrayConstIterator operator+(const ptrdiff off) const noexcept
+    {
+        ArrayConstIterator tmp = *this;
+        tmp += off;
+        return tmp;
+    }
+
+    [[nodiscard]] friend constexpr ArrayConstIterator operator+(const ptrdiff off, ArrayConstIterator next) noexcept
+    {
+        next += off;
+        return next;
+    }
+
+    [[nodiscard]] constexpr ArrayConstIterator operator-(const ptrdiff off) const noexcept
+    {
+        ArrayConstIterator tmp = *this;
+        tmp -= off;
+        return tmp;
+    }
+
+    [[nodiscard]] constexpr ptrdiff operator-(const ArrayConstIterator& right) const noexcept
+    {
+        return static_cast<ptrdiff>(m_ptr - right.m_ptr);
+    }
+
+    [[nodiscard]] constexpr bool operator==(const ArrayConstIterator& right) const noexcept
+    {
+        return m_ptr == right.m_ptr;
+    }
+
+    [[nodiscard]] constexpr bool operator!=(const ArrayConstIterator& right) const noexcept
+    {
+        return !(*this == right);
+    }
+
+    [[nodiscard]] constexpr bool operator<(const ArrayConstIterator& right) const noexcept
+    {
+        return m_ptr < right.m_ptr;
+    }
+
+    [[nodiscard]] constexpr bool operator>(const ArrayConstIterator& right) const noexcept
+    {
+        return right < *this;
+    }
+
+    [[nodiscard]] constexpr bool operator<=(const ArrayConstIterator& right) const noexcept
+    {
+        return !(right < *this);
+    }
+
+    [[nodiscard]] constexpr bool operator>=(const ArrayConstIterator& right) const noexcept
+    {
+        return !(*this < right);
+    }
+private:
+    const Type* m_ptr;
 
 };
 
