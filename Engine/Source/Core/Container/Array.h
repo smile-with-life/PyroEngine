@@ -15,11 +15,13 @@ public:
     constexpr ArrayIterator() noexcept
         : m_ptr()
     {
+
     }
 
     explicit constexpr ArrayIterator(const Type* ptr) noexcept
         : m_ptr(ptr)
     {
+
     }
 public:
     [[nodiscard]] constexpr Type& operator*() const noexcept
