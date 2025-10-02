@@ -81,8 +81,10 @@ public:
         }
         // 检查是否有指定的内存资源
         if (m_resource) {
-            if(m_resource->)
-            m_resource.Free(ptr);
+            if (m_resource->Contains(ptr))
+            {
+                m_resource.Free(ptr);
+            }     
         }
         else {
             // 回退到 delete 释放
