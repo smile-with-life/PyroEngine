@@ -22,6 +22,7 @@
 import("core.base.option")
 import("core.base.semver")
 import("core.base.hashset")
+import("core.tool.toolchain")
 import("core.project.config")
 import("core.project.project")
 import("core.platform.platform")
@@ -395,8 +396,6 @@ function main(outputdir, vsinfo)
 
     -- init solution directory
     vsinfo.vcxproj_rootdir = path.absolute(path.join(outputdir, "vsxmake" .. vsinfo.vstudio_version))
-    vsinfo.vcxproj_rootdir = path.absolute(path.join(outputdir))
-    print(vsinfo.vcxproj_rootdir)
     if project.policy("generator.vsxmake.root_sln") then
         vsinfo.solution_dir = path.absolute(outputdir)
     else
@@ -458,7 +457,9 @@ function main(outputdir, vsinfo)
 
             -- clear all options
             for _, opt in pairs(project.options()) do
-                opt:clear()
+                if not config.readonly(opt:fullname()) then
+                    opt:clear()
+                end
             end
 
             -- clear cache
@@ -484,6 +485,9 @@ function main(outputdir, vsinfo)
             -- update config files
             generate_configfiles()
 
+            -- save toolchain configs
+            toolchain.save()
+
             -- ensure to enter project directory
             os.cd(project.directory())
 
@@ -508,15 +512,6 @@ function main(outputdir, vsinfo)
                 _target.absscriptdir = target:scriptdir()
                 _target.scriptdir = path.relative(target:scriptdir(), _target.vcxprojdir)
                 _target.projectdir = path.relative(project.directory(), _target.vcxprojdir)
-
-                print(_target.absscriptdir)
-                _target.vcxprojdir = target:scriptdir()
-
-                if _target.vcxprojdir == project.directory() then
-                    _target.vcxprojdir = path.join(vsinfo.vcxproj_rootdir, targetname)
-                end
-
-
                 local targetdir = target:get("targetdir")
                 if targetdir then _target.targetdir = path.relative(targetdir, _target.vcxprojdir) end
                 _target._targets = _target._targets or {}

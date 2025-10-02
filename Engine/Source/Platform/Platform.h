@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Core.h"
+#include "Core.h"
 
 // ================== 编译器检测 ==================
 #if defined(_MSC_VER)

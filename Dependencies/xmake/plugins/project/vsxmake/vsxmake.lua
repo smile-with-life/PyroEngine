@@ -28,10 +28,6 @@ import("core.project.config")
 import("core.cache.localcache")
 import("vstudio.impl.vsutils", {rootdir = path.join(os.programdir(), "plugins", "project")})
 
--- 添加命令行选项支持
--- option("output", "o", "kv", nil, "Set the output directory for generated project files")
--- option("outputdir", nil, "kv", nil, "Alias for --output")
-
 local template_root = path.join(os.programdir(), "scripts", "vsxmake", "vsproj", "templates")
 local template_sln = path.join(template_root, "sln", "vsxmake.sln")
 local template_vcx = path.join(template_root, "vcxproj", "#target#.vcxproj")
@@ -222,16 +218,6 @@ function make(version)
             return function(outputdir)
                 raise("invalid vs version, run `xmake f --vs=20xx`")
             end
-        end
-    end
-
-    -- 添加输出目录覆盖逻辑
-    local user_outputdir = option.get("output") or option.get("outputdir")
-    if user_outputdir then
-        outputdir = user_outputdir
-        -- 确保目录存在
-        if not os.isdir(outputdir) then
-            os.mkdir(outputdir)
         end
     end
 
