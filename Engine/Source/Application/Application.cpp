@@ -4,7 +4,7 @@
 
 int32 Application::Init()
 {
-    m_console = Console::Create();
+    m_console = ScopePtr<Console>(Console::Create());
     m_console->Init();
     return 0;
 }
@@ -17,7 +17,6 @@ void Application::Tick()
 void Application::Exit()
 {
     m_console->Exit();
-    delete m_console;
 }
 
 bool Application::IsQuit()

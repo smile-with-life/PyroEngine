@@ -1,4 +1,5 @@
 #include"pch.h"
+
 #include"WindowsPlatform.h"
 
-HINSTANCE GWindowsInstance = nullptr;
+CORE_API HINSTANCE GWindowsInstance = nullptr;

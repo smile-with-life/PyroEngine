@@ -1,8 +1,8 @@
 #include "pch.h"
 
-#include "Core/Core.h"
-#include "Platform/Platform.h"
-#include "Application/Application.h"
+#include "Core.h"
+#include "Platform.h"
+#include "Application.h"
 
 // 设置 Windows 环境
 void SetWindowsEnvironment()

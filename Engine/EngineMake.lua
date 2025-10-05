@@ -1,6 +1,6 @@
-includes "Dependencies/PackageMake.lua"
+--includes "Dependencies/PackageMake.lua"
 
-add_requires("GoogleTest", {configs = {shared = false}})  -- 静态链接
+--add_requires("GoogleTest", {configs = {shared = false}})  -- 静态链接
 
 target "Engine"
     -- 设置目标编译类型：动态库程序
@@ -16,7 +16,7 @@ target "Engine"
     -- 指定编译配置
     add_rules("mode.Test", "mode.Debug", "mode.Release", "mode.Dist")
     -- 自动链接gtest库
-    add_packages("GoogleTest")  
+    --add_packages("GoogleTest")  
     -- 添加头文件搜索目录
     add_includedirs {
         "Source",
@@ -37,7 +37,7 @@ target "Engine"
         -- 添加宏定义
         add_defines "PLATFORM_WINDOWS"
         -- 链接 Windows API 库
-        add_syslinks("msvcrt", "kernel32","User32")
+        add_syslinks("kernel32","User32")
         -- 添加头文件
         add_headerfiles{
             -- 平台层：Windows平台
@@ -64,7 +64,7 @@ target "Engine"
         -- Release配置
         if is_mode("Release") then
             add_defines "BUILD_CONFIG_RELEASE=2"
-            set_runtimes "MDd"
+            set_runtimes "MD"
         end
         -- Dist配置
         if is_mode("Dist") then
@@ -109,25 +109,13 @@ target "Engine"
         -- 核心层
         "Source/Core/**.cpp",
         -- 平台层
-        "Source/Platform/*.cpp",
+        "Source/Platform/**.cpp",
         -- 功能层
         "Source/Function/**.cpp",
         -- 服务层
         "Source/Server/**.cpp",
         -- 应用层
         "Source/Application/**.cpp"
-    }
-
-    -- 添加核心层的头文件搜索目录
-    add_includedirs {
-        "Source/Core/Concept",
-        "Source/Core/String",
-        "Source/Core/Container",
-        "Source/Core/Memory"
-    }
-    -- 添加功能层的头文件搜索目录
-    add_includedirs {
-        "Source/Function/Console"
     }
 
 

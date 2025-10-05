@@ -1,8 +1,9 @@
 #pragma once
 
 #include "Core.h"
-#include "Console.h"
-#include "String.h"
+#include "Console/Console.h"
+#include "String/String.h"
+#include "Memory/RAII.h"
 
 struct ApplicationInfo
 {
@@ -43,5 +44,5 @@ private:
     bool m_isQuit = false;
 
     // 控制台
-    Console* m_console = nullptr;
+    ScopePtr<Console> m_console;
 };
