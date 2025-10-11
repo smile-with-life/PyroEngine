@@ -1425,21 +1425,6 @@ public:
         std::swap(m_alloc, other.m_alloc);
         std::swap(m_data, other.m_data);
     }
-    /// <summary>
-    /// @暂定
-    /// </summary>
-    /// <returns></returns>
-    constexpr int32 AllocateSize();
-    /// <summary>
-    /// @暂定
-    /// </summary>
-    constexpr void ForEach();
-    /// <summary>
-    /// @暂定
-    /// </summary>
-    /// <param name="count"></param>
-    /// <param name="value"></param>
-    constexpr void Fill(int32 count, const Type& value);
 public:
     constexpr Type& operator[](int64 index)
     {
@@ -1485,19 +1470,58 @@ public:
     }
 
     template<Concept::EqualComparableType Type>
-    constexpr bool operator!=(const Array<Type>& other);
+    constexpr bool operator!=(const Array<Type>& other)
+    {
+        if (m_size != other.m_size)
+        {
+            return true;
+        }
+
+        for (int32 i = 0; i < m_size; ++i)
+        {
+            if (m_data[i] != other.m_data[i])
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
     template<Concept::SortComparableType Type>
-    constexpr bool operator>(const Array<Type>& other);
+    constexpr bool operator>(const Array<Type>& other)
+    {
+        return other < *this;
+    }
 
     template<Concept::SortComparableType Type>
-    constexpr bool operator>=(const Array<Type>& other);
+    constexpr bool operator>=(const Array<Type>& other)
+    {
+        return !(*this < other);
+    }
 
     template<Concept::SortComparableType Type>
-    constexpr bool operator<(const Array<Type>& other);
+    constexpr bool operator<(const Array<Type>& other)
+    {
+        const int32 min_size = std::min(m_size, other.m_size);
+
+        for (int32 i = 0; i < min_size; ++i) {
+            if (m_data[i] < other.m_data[i]) {
+                return true;
+            }
+            if (other.m_data[i] < m_data[i]) {
+                return false;
+            }
+        }
+
+        // 所有比较的元素都相等，比较长度
+        return m_size < other.m_size;
+    }
 
     template<Concept::SortComparableType Type>
-    constexpr bool operator<=(const Array<Type>& other);
+    constexpr bool operator<=(const Array<Type>& other)
+    {
+        return !(other < *this);
+    }
 public:
     [[nodiscard]] constexpr iterator begin() noexcept
     {
@@ -1531,32 +1555,32 @@ public:
 
     [[nodiscard]] constexpr reverse_iterator rbegin() noexcept
     {
-
+        return reverse_iterator(end());
     }
 
     [[nodiscard]] constexpr const_reverse_iterator rbegin() const noexcept
     {
-
+        return const_reverse_iterator(end());
     }
 
     [[nodiscard]] constexpr reverse_iterator rend() noexcept
     {
-
+        return reverse_iterator(begin());
     }
 
     [[nodiscard]] constexpr const_reverse_iterator rend() const noexcept
     {
-
+        return const_reverse_iterator(begin());
     }
 
     [[nodiscard]] constexpr const_reverse_iterator crbegin() const noexcept
     {
-
+        return const_reverse_iterator(end());
     }
 
     [[nodiscard]] constexpr const_reverse_iterator crend() const noexcept
     {
-
+        return const_reverse_iterator(begin());
     }
 private:
     int32 m_size = 0;

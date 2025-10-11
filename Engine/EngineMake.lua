@@ -1,4 +1,4 @@
---includes "Dependencies/PackageMake.lua"
+includes "Dependencies/PackageMake.lua"
 
 --add_requires("GoogleTest", {configs = {shared = false}})  -- 静态链接
 

@@ -101,6 +101,9 @@ xmake version 3.0.3+HEAD.de7aca410
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Memory\Memory.h">
       <Filter>Source\Core\Memory</Filter>
     </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Memory\RAII.h">
+      <Filter>Source\Core\Memory</Filter>
+    </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\String\Char.h">
       <Filter>Source\Core\String</Filter>
     </ClInclude>
