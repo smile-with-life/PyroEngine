@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core.h"
-#include "Memory.h"
+#include "Memory/Memory.h"
 
 /// <summary>
 /// 内存分配器

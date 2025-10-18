@@ -66,7 +66,7 @@ function makers()
     ,   vsxmake          = vsxmake.make()
     ,   compile_flags    = compile_flags.make
     ,   compile_commands = compile_commands.make
-    ,   pyro_vs2017 = vsxmake.make(2017)
+    ,   pyro_vs2017 = pyro_vs.make(2017)
     ,   pyro_vs2019 = pyro_vs.make(2019)
     ,   pyro_vs2022 = pyro_vs.make(2022)
     ,   pyro = pyro_vs.make()

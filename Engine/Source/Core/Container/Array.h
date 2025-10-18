@@ -6,6 +6,8 @@
 #include "Allocator/Allocator.h"
 
 #include <utility>
+#include <type_traits>
+#include<vector>
 
 
 template <class Type>
@@ -147,7 +149,7 @@ public:
     {
     }
 
-    explicit constexpr ArrayConstIterator(Type* ptr) noexcept
+    explicit constexpr ArrayConstIterator(const Type* ptr) noexcept
         : m_ptr(ptr)
     {
     }
@@ -259,7 +261,7 @@ public:
         return !(*this < right);
     }
 private:
-    const Type* m_ptr;
+    Type* m_ptr;
 
 };
 
@@ -275,10 +277,7 @@ public:
     /// <summary>
     /// 默认构造函数
     /// </summary>
-    constexpr Array()
-    {
-
-    }
+    constexpr Array() = default;
     /// <summary>
     /// 析构函数
     /// </summary>
@@ -351,23 +350,27 @@ public:
     /// <returns>this</returns>
     constexpr Array& operator=(Array&& other)
     {
+        // 判断自赋值
         if (&other == this) [[unlikely]]
         {
             return *this;
         }
-
+        // 销毁元素
         for (int32 i = 0; i != m_size; i++)
         {
             std::destroy_at(&m_data[i]);
         }
-
+        // 释放内存
         if (m_capacity != 0)
         {
             m_alloc.Deallocate(m_data, m_capacity);
         }
-
+        // 接管 other 的资源
         m_data = other.m_data;
         m_size = other.m_size;
+        m_capacity = other.m_capacity;
+        m_alloc = other.m_alloc;
+        // 将 other 置为空数组 
         other.m_data = nullptr;
         other.m_size = 0;
         other.m_capacity = 0;
@@ -1249,35 +1252,35 @@ public:
     /// 查找第一个满足条件的元素
     /// </summary>
     /// <param name="condition">条件函数或谓词</param>
-    /// <returns>指向找到的元素的引用，如果未找到则行为未定义</returns>
+    /// <returns>指向匹配元素的迭代器</returns>
     template<class Condition>
-    constexpr Type& Find(Condition&& condition)
+    constexpr iterator Find(Condition&& condition)
     {
-        for (int32 i = 0; i < m_size; ++i) 
+        for (iterator iter = begin(); iter != end(); ++iter)
         {
-            if (std::forward<Condition>(condition)(m_data[i]))
+            if (condition(*iter))
             {
-                return m_data[i];
+                return iter;
             }
         }
-        throw std::out_of_range("Element not found");
+        return end();
     }
     /// <summary>
     /// 查找最后一个满足条件的元素
     /// </summary>
     /// <param name="condition">条件函数或谓词</param>
-    /// <returns>指向找到的元素的引用，如果未找到则行为未定义</returns>
+    /// <returns>指向匹配元素的迭代器</returns>
     template<class Condition>
-    constexpr Type& FindLast(Condition&& condition)
+    constexpr iterator FindLast(Condition&& condition)
     {
-        for (int32 i = m_size - 1; i >= 0; --i) 
+        for (iterator iter = end() - 1; iter >= begin(); --iter)
         {
-            if (std::forward<Condition>(condition)(m_data[i])) 
+            if (condition(*iter))
             {
-                return m_data[i];
+                return iter;
             }
         }
-        throw std::out_of_range("Element not found");
+        return end();
     }
     /// <summary>
     /// 查找第一个满足条件的元素的索引
@@ -1337,7 +1340,7 @@ public:
     /// <param name="condition">条件函数或谓词</param>
     /// <returns>包含满足条件元素的新数组</returns>
     template<class Condition>
-    constexpr Array& Filter(Condition&& condition)
+    constexpr Array& With(Condition&& condition)
     {
         int32 new_size = 0;
         for (int32 i = 0; i < m_size; ++i) {
@@ -1364,7 +1367,7 @@ public:
     /// <param name="condition">条件函数或谓词</param>
     /// <returns>包含满足条件元素的新数组</returns>
     template<class Condition>
-    constexpr Array With(Condition&& condition)
+    constexpr Array Filter(Condition&& condition)
     {
         Array result;
         for (int32 i = 0; i < m_size; ++i) 
@@ -1401,18 +1404,6 @@ public:
     constexpr bool IsValidIndex(int32 index) const
     {
         return index >= 0 && index < m_size;
-    }
-    /// <summary>
-    /// 检查索引和数量是否在有效范围内
-    /// </summary>
-    /// <param name="index">起始索引</param>
-    /// <param name="count">元素数量</param>
-    constexpr void RangeCheck(int32 index, int32 count) const
-    {
-        if (index < 0 || count < 0 || index + count > m_size) 
-        {
-            throw std::out_of_range("Array range check failed");
-        }
     }
     /// <summary>
     /// 交换两个数组的内容

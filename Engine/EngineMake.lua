@@ -1,7 +1,5 @@
 includes "Dependencies/PackageMake.lua"
 
---add_requires("GoogleTest", {configs = {shared = false}})  -- 静态链接
-
 target "Engine"
     -- 设置目标编译类型：动态库程序
     set_kind "shared"
@@ -15,8 +13,11 @@ target "Engine"
     set_dependir "$(projectdir)/Engine/Build/$(os)/$(mode)/Dep"
     -- 指定编译配置
     add_rules("mode.Test", "mode.Debug", "mode.Release", "mode.Dist")
-    -- 自动链接gtest库
-    --add_packages("GoogleTest")  
+    -- 添加第三方库的头文件搜索目录
+    add_includedirs {
+        "Dependencies",
+        "Dependencies/GoogleTest/include" 
+    }
     -- 添加头文件搜索目录
     add_includedirs {
         "Source",
@@ -53,22 +54,18 @@ target "Engine"
         }     
         -- Test配置
         if is_mode("Test") then
-            add_defines "BUILD_CONFIG_TEST=0"
             set_runtimes "MDd"
         end
         -- Debug配置
         if is_mode("Debug") then
-            add_defines "BUILD_CONFIG_DEBUG=1"
             set_runtimes "MDd"
         end
         -- Release配置
         if is_mode("Release") then
-            add_defines "BUILD_CONFIG_RELEASE=2"
             set_runtimes "MD"
         end
         -- Dist配置
         if is_mode("Dist") then
-            add_defines "BUILD_CONFIG_DIST=3"
             set_runtimes "MD"
         end 
     end
@@ -87,7 +84,23 @@ target "Engine"
     -- IOS设置
     if is_plat("ios") then
         add_defines {"PLATFORM_IOS"}
-    end    
+    end
+    -- Test配置
+    if is_mode("Test") then
+        add_defines "BUILD_CONFIG_TEST=0"
+    end
+    -- Debug配置
+    if is_mode("Debug") then
+        add_defines "BUILD_CONFIG_DEBUG=1"
+    end
+    -- Release配置
+    if is_mode("Release") then
+        add_defines "BUILD_CONFIG_RELEASE=2"
+    end
+    -- Dist配置
+    if is_mode("Dist") then
+        add_defines "BUILD_CONFIG_DIST=3"
+    end     
 
     add_headerfiles{
         -- 预编译头文件
@@ -117,6 +130,5 @@ target "Engine"
         -- 应用层
         "Source/Application/**.cpp"
     }
-
 
 
