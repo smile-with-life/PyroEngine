@@ -1,5 +1,3 @@
-includes "Dependencies/PackageMake.lua"
-
 target "Engine"
     -- 设置目标编译类型：动态库程序
     set_kind "shared"

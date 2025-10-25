@@ -27,6 +27,9 @@ xmake version 3.0.3+HEAD.de7aca410
     <Filter Include="Source\Core\Container">
       <UniqueIdentifier>{E82D2069-ECF4-407C-9A19-CFA2A05B8908}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Core\Container\.Tests">
+      <UniqueIdentifier>{0AE1F5CB-FE2B-462A-A299-962BD93BE231}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\Core\Container\Allocator">
       <UniqueIdentifier>{D0CE056E-F54D-47F8-8F8F-A789C8CFA5F0}</UniqueIdentifier>
     </Filter>
@@ -132,6 +135,9 @@ xmake version 3.0.3+HEAD.de7aca410
 
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Application\Application.cpp">
       <Filter>Source\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Core\Container\.Tests\Test_Array.cpp">
+      <Filter>Source\Core\Container\.Tests</Filter>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Core\String\Char.cpp">
       <Filter>Source\Core\String</Filter>

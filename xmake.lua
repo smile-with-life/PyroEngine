@@ -52,7 +52,7 @@ rule("mode.Dist")
     end)
 
 
-    -- 包含引擎工程描述文件
+-- 包含引擎工程描述文件
 includes "Engine/EngineMake.lua"
 -- 包含游戏工程描述文件
 includes "Game/GameMake.lua"
