@@ -7,11 +7,6 @@ class StringList;
 class String
 {
 public:
-    using iterator = std::string::iterator;
-    using const_iterator = std::string::const_iterator;
-    using reverse_iterator = std::string::reverse_iterator;
-    using const_reverse_iterator = std::string::const_reverse_iterator;
-public:
     // 默认构造函数
     String() = default;
 
