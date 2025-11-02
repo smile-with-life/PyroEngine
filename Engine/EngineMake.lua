@@ -1,3 +1,7 @@
+includes "Dependencies/xmake.lua"
+
+add_requires("GoogleTest", {configs = {shared = false}})
+
 target "Engine"
     -- 设置目标编译类型：动态库程序
     set_kind "shared"
@@ -16,6 +20,7 @@ target "Engine"
         "Dependencies",
         "Dependencies/GoogleTest/include" 
     }
+    add_packages("GoogleTest")
     -- 添加头文件搜索目录
     add_includedirs {
         "Source",

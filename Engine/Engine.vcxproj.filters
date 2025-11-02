@@ -101,6 +101,9 @@ xmake version 3.0.3+HEAD.de7aca410
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\CoreType.h">
       <Filter>Source\Core</Filter>
     </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Memory\ByteArray.h">
+      <Filter>Source\Core\Memory</Filter>
+    </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Memory\Memory.h">
       <Filter>Source\Core\Memory</Filter>
     </ClInclude>
@@ -138,6 +141,9 @@ xmake version 3.0.3+HEAD.de7aca410
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Core\Container\.Tests\Test_Array.cpp">
       <Filter>Source\Core\Container\.Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Core\Memory\ByteArray.cpp">
+      <Filter>Source\Core\Memory</Filter>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Core\String\Char.cpp">
       <Filter>Source\Core\String</Filter>

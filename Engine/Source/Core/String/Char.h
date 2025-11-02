@@ -1,9 +1,12 @@
 #pragma once
 
 #include "Core.h"
+#include "String/String.h"
 
 class Char 
 {
+public:
+    friend class String;
 public:
     // 默认构造函数
     Char() = default;
@@ -22,6 +25,9 @@ public:
 
     // 移动赋值
     Char& operator=(Char&& other);
+
+    // 隐式转换
+    operator bool() const;
 public:
     // 返回字符的 Unicode 值
     uint32 Unicode() const;
