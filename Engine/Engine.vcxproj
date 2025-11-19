@@ -251,6 +251,7 @@ xmake version 3.0.3+HEAD.de7aca410
   <ItemGroup>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Application\Application.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Concept\Concept.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Container\.Tests\Test_Struct\_Struct_Simple.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Container\Allocator\Allocator.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Container\Array.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Container\Iterator\Iterator.h" />
@@ -262,18 +263,36 @@ xmake version 3.0.3+HEAD.de7aca410
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\String\Char.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\String\String.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Console\Console.h" />
+    <ClInclude Include="Source\Core\Alog\Alog.h" />
+    <ClInclude Include="Source\Core\Time\Clock.h" />
+    <ClInclude Include="Source\Core\Time\Duration.h" />
+    <ClInclude Include="Source\Core\Time\Time.h" />
+    <ClInclude Include="Source\Core\Time\TimePoint.h" />
+    <ClInclude Include="Source\Function\DateTime\DateOnly.h" />
+    <ClInclude Include="Source\Function\DateTime\DateTime.h" />
+    <ClInclude Include="Source\Function\DateTime\TimeOnly.h" />
+    <ClInclude Include="Source\Function\FileSystem\DeviceFile.h" />
+    <ClInclude Include="Source\Function\FileSystem\Directory.h" />
+    <ClInclude Include="Source\Function\FileSystem\FIFOFile.h" />
+    <ClInclude Include="Source\Function\FileSystem\File.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Platform\Platform.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Platform\Windows\WindowsConsole.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Platform\Windows\WindowsPlatform.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\pch.h" />
-    <ClInclude Include="Source\Core\Container\.Tests\Test_Struct\_Struct_Simple.h" />
-    <ClInclude Include="Source\Function\File\File.h" />
+    <ClInclude Include="Source\Function\FileSystem\FileSystem.h" />
+    <ClInclude Include="Source\Function\FileSystem\FileSystemEntry.h" />
+    <ClInclude Include="Source\Function\FileSystem\Path.h" />
+    <ClInclude Include="Source\Function\FileSystem\SocketFile.h" />
+    <ClInclude Include="Source\Function\FileSystem\Symlink.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Application\Application.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Core\Container\.Tests\Test_Array.cpp">
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Core\Container\.Tests\Test_Project\Test.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Core\Memory\ByteArray.cpp">
@@ -300,8 +319,6 @@ xmake version 3.0.3+HEAD.de7aca410
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\pch.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
-    <ClCompile Include="Source\Core\Container\.Tests\Test_Project\Test.cpp" />
-    <ClCompile Include="Source\Function\File\File.cpp" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

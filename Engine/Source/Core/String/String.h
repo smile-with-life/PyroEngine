@@ -183,11 +183,23 @@ public:
     // 将字符串转换为 int8 类型的值
     bool ToBool() const;
 
+    // 将字符串转换为 int8 类型的值
+    int8 ToInt8(int base = 10) const;
+
+    // 将字符串转换为 int16 类型的值
+    int16 ToInt16(int base = 10) const;
+
     // 将字符串转换为 int32 类型的值
     int32 ToInt32(int base = 10) const;
 
     // 将字符串转换为 int32 类型的值
     int64 ToInt64(int base = 10) const;
+
+    // 将字符串转换为 uint8 类型的值
+    uint8 ToUInt8(int base = 10) const;
+
+    // 将字符串转换为 uint16 类型的值
+    uint16 ToUInt16(int base = 10) const;
 
     // 将字符串转换为 uint32 类型的值
     uint32 ToUInt32(int base = 10) const;
@@ -208,6 +220,76 @@ public:
     const char* ToCString() const;
 public:
     Char operator[](int64 index);  
+
+    String& operator+=(const String& str);
+
+    String& operator+=(char ch);
+
+    friend String operator+(const String& left, const String& right);
+
+    friend bool operator==(const String& left, const String& right);
+
+    friend bool operator==(const String& left, const char* right);
+
+    friend bool operator==(const char* left, const String& right);
+
+    friend bool operator!=(const String& left, const String& right);
+
+    friend bool operator!=(const String& left, const char* right);
+
+    friend bool operator!=(const char* left, const String& right);
+
+    friend bool operator>(const String& left, const String& right);
+
+    friend bool operator>(const String& left, const char* right);
+
+    friend bool operator>(const char* left, const String& right);
+
+    friend bool operator>=(const String& left, const String& right);
+
+    friend bool operator>=(const String& left, const char* right);
+
+    friend bool operator>=(const char* left, const String& right);
+
+    friend bool operator<(const String& left, const String& right);
+
+    friend bool operator<(const String& left, const char* right);
+
+    friend bool operator<(const char* left, const String& right);
+
+    friend bool operator<=(const String& left, const String& right);
+
+    friend bool operator<=(const String& left, const char* right);
+
+    friend bool operator<=(const char* left, const String& right);
+
+    friend std::ostream& operator<<(std::ostream& os, const String& str);
+public:
+    static String FromStdString(const std::string& str);
+
+    static String FromCString(const char* str);
+
+    static String FromInt8(int8 value);
+
+    static String FromInt16(int16 value);
+
+    static String FromInt32(int32 value);
+
+    static String FromInt64(int64 value);
+
+    static String FromUInt8(uint8 value);
+
+    static String FromUInt16(uint16 value);
+
+    static String FromUInt32(uint32 value);
+
+    static String FromUInt64(uint64 value);
+
+    static String FromFloat(float value);
+
+    static String FromDouble(double value);
+
+    static String FromBool(bool value);
 public:
     // 空字符串
     inline static const char* Empty = "";

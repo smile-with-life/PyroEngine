@@ -30,6 +30,12 @@ xmake version 3.0.3+HEAD.de7aca410
     <Filter Include="Source\Core\Container\.Tests">
       <UniqueIdentifier>{0AE1F5CB-FE2B-462A-A299-962BD93BE231}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Core\Container\.Tests\Test_Project">
+      <UniqueIdentifier>{D34FAE3F-83A6-487D-BD20-BEED6F2CA09C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Core\Container\.Tests\Test_Struct">
+      <UniqueIdentifier>{DED1390E-AD82-4957-BBAC-174C4D40D6AD}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\Core\Container\Allocator">
       <UniqueIdentifier>{D0CE056E-F54D-47F8-8F8F-A789C8CFA5F0}</UniqueIdentifier>
     </Filter>
@@ -48,6 +54,9 @@ xmake version 3.0.3+HEAD.de7aca410
     <Filter Include="Source\Function\Console">
       <UniqueIdentifier>{16482FDF-F1B0-4844-BD7D-744C1B8B29AA}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Function\File">
+      <UniqueIdentifier>{81210374-D9D7-4DBC-A620-8288626214D8}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\Launch">
       <UniqueIdentifier>{2F2F16A4-6EA7-4A0D-8C49-C6016380981E}</UniqueIdentifier>
     </Filter>
@@ -60,7 +69,6 @@ xmake version 3.0.3+HEAD.de7aca410
     <Filter Include="Source\Platform\Windows">
       <UniqueIdentifier>{4AF40CB8-9B23-444E-B9B6-C06CF76E5E2A}</UniqueIdentifier>
     </Filter>
-
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildProjectDirectory)\Xmake.Custom.props">
@@ -75,9 +83,6 @@ xmake version 3.0.3+HEAD.de7aca410
     <None Include="$(MSBuildProjectDirectory)\Xmake.Custom.items.filters">
       <Filter>Properties</Filter>
     </None>
-    <None Include="$(XmakeScriptDir)\xmake.lua">
-      <Filter>Properties</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Application\Application.h">
@@ -85,6 +90,9 @@ xmake version 3.0.3+HEAD.de7aca410
     </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Concept\Concept.h">
       <Filter>Source\Core\Concept</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Container\.Tests\Test_Struct\_Struct_Simple.h">
+      <Filter>Source\Core\Container\.Tests\Test_Struct</Filter>
     </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Container\Allocator\Allocator.h">
       <Filter>Source\Core\Container\Allocator</Filter>
@@ -119,6 +127,9 @@ xmake version 3.0.3+HEAD.de7aca410
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Console\Console.h">
       <Filter>Source\Function\Console</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Function\FileSystem\File.h">
+      <Filter>Source\Function\File</Filter>
+    </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Platform\Platform.h">
       <Filter>Source\Platform</Filter>
     </ClInclude>
@@ -131,16 +142,32 @@ xmake version 3.0.3+HEAD.de7aca410
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\pch.h">
       <Filter>Source</Filter>
     </ClInclude>
-
-
+    <ClInclude Include="Source\Function\FileSystem\Directory.h" />
+    <ClInclude Include="Source\Function\FileSystem\FileSystem.h" />
+    <ClInclude Include="Source\Function\FileSystem\Symlink.h" />
+    <ClInclude Include="Source\Function\FileSystem\FileSystemEntry.h" />
+    <ClInclude Include="Source\Function\FileSystem\SocketFile.h" />
+    <ClInclude Include="Source\Function\FileSystem\FIFOFile.h" />
+    <ClInclude Include="Source\Function\FileSystem\DeviceFile.h" />
+    <ClInclude Include="Source\Function\FileSystem\Path.h" />
+    <ClInclude Include="Source\Function\DateTime\DateTime.h" />
+    <ClInclude Include="Source\Core\Time\Clock.h" />
+    <ClInclude Include="Source\Core\Time\Time.h" />
+    <ClInclude Include="Source\Core\Time\TimePoint.h" />
+    <ClInclude Include="Source\Core\Time\Duration.h" />
+    <ClInclude Include="Source\Core\Alog\Alog.h" />
+    <ClInclude Include="Source\Function\DateTime\TimeOnly.h" />
+    <ClInclude Include="Source\Function\DateTime\DateOnly.h" />
   </ItemGroup>
   <ItemGroup>
-
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Application\Application.cpp">
       <Filter>Source\Application</Filter>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Core\Container\.Tests\Test_Array.cpp">
       <Filter>Source\Core\Container\.Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Core\Container\.Tests\Test_Project\Test.cpp">
+      <Filter>Source\Core\Container\.Tests\Test_Project</Filter>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Core\Memory\ByteArray.cpp">
       <Filter>Source\Core\Memory</Filter>
@@ -166,19 +193,10 @@ xmake version 3.0.3+HEAD.de7aca410
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\pch.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-
-
-
   </ItemGroup>
   <ItemGroup>
-
   </ItemGroup>
   <ItemGroup>
-
-
-
-
   </ItemGroup>
-  <Import Condition="Exists('$(MSBuildThisFileDirectory)\Xmake.Custom.files.filters')"
-    Project="$(MSBuildThisFileDirectory)\Xmake.Custom.files.filters" />
+  <Import Condition="Exists('$(MSBuildThisFileDirectory)\Xmake.Custom.files.filters')" Project="$(MSBuildThisFileDirectory)\Xmake.Custom.files.filters" />
 </Project>

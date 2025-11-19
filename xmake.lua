@@ -10,6 +10,8 @@ set_xmakever "3.0.0"
 set_allowedplats("windows","linux","android","macosx","ios")
 -- 设置允许编译的平台架构
 set_allowedarchs("x64")
+-- 设置代码语言标准：最新
+set_languages "cxxlatest"
 
 rule("mode.Test")
     on_load(function(target)
@@ -50,7 +52,6 @@ rule("mode.Dist")
         -- 设置警告级别：禁用所有警告
         target:set("warnings", "none")
     end)
-
 
 -- 包含引擎工程描述文件
 includes "Engine/EngineMake.lua"

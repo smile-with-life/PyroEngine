@@ -5,8 +5,6 @@ add_requires("GoogleTest", {configs = {shared = false}})
 target "Engine"
     -- 设置目标编译类型：动态库程序
     set_kind "shared"
-    -- 设置代码语言标准：最新
-    set_languages "cxxlatest"
     -- 设置目标文件生成目录
     set_targetdir "$(projectdir)/Engine/Build/$(os)/$(mode)/Bin"
     -- 设置中间文件生成目录
