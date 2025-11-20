@@ -50,8 +50,8 @@ target "Engine"
             -- 平台层：Windows平台
             "Source/Platform/Windows/**.cpp",
             -- Windows入口
-            "Source/Launch/Windows/WindowsLaunch.cpp",
-            "Source/Launch/Windows/WindowsExport.def"
+            "Source/Application/Launch/Windows/WindowsLaunch.cpp",
+            "Source/Application/Launch/Windows/WindowsExport.def"
         }     
         -- Test配置
         if is_mode("Test") then
@@ -115,7 +115,7 @@ target "Engine"
         -- 服务层
         "Source/Server/**.h",
         -- 应用层
-        "Source/Application/**.h"
+        "Source/Application/*.h"
     }
     add_files{
         -- 预编译文件(msvc专用)
@@ -129,7 +129,7 @@ target "Engine"
         -- 服务层
         "Source/Server/**.cpp",
         -- 应用层
-        "Source/Application/**.cpp"
+        "Source/Application/*.cpp"
     }
 
 

@@ -156,8 +156,6 @@ xmake version 3.0.3+HEAD.de7aca410
     <ClInclude Include="Source\Core\Time\TimePoint.h" />
     <ClInclude Include="Source\Core\Time\Duration.h" />
     <ClInclude Include="Source\Core\Alog\Alog.h" />
-    <ClInclude Include="Source\Function\DateTime\TimeOnly.h" />
-    <ClInclude Include="Source\Function\DateTime\DateOnly.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Application\Application.cpp">
@@ -181,7 +179,7 @@ xmake version 3.0.3+HEAD.de7aca410
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Function\Console\Console.cpp">
       <Filter>Source\Function\Console</Filter>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Launch\Windows\WindowsLaunch.cpp">
+    <ClCompile Include="Source\Application\Launch\Windows\WindowsLaunch.cpp">
       <Filter>Source\Launch\Windows</Filter>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Platform\Windows\WindowsConsole.cpp">

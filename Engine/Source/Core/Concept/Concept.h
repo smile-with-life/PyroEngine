@@ -21,10 +21,6 @@ concept ArithmeticType = IntegralType<Type> || FloatPointType<Type>;
 template<class Type>
 concept ClassType = std::is_class_v<Type>;
 
-// 随机访问迭代器类型
-//template<class Type>
-//using RandomIteratorType = std::random_access_iterator<Type>;
-
 // 支持相等的可比较类型
 template<class Type>
 concept EqualComparableType = requires(const Type & left, const Type & right)
@@ -46,4 +42,28 @@ concept SortComparableType = requires(const Type & left, const Type & right)
 // 可比较类型
 template<class Type>
 concept ComparableType = EqualComparableType<Type> && SortComparableType<Type>;
+
+// 输出迭代器类型
+template<class Type>
+using OutputIteratorType = requires() {};
+
+// 输入迭代器类型
+template<class Type>
+using InputIteratorType = requires() {};
+
+// 前向迭代器类型
+template<class Type>
+using ForwardIteratorType = requires() {};
+
+// 双向迭代器类型
+template<class Type>
+using BidirectionalIteratorType = requires() {};
+
+// 随机迭代器类型
+template<class Type>
+using RandomIteratorType = requires() {};
+
+// 连续迭代器类型
+template<class Type>
+using ContiguousIteratorType = requires() {}; 
 }// namespace Concept

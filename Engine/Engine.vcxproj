@@ -268,9 +268,7 @@ xmake version 3.0.3+HEAD.de7aca410
     <ClInclude Include="Source\Core\Time\Duration.h" />
     <ClInclude Include="Source\Core\Time\Time.h" />
     <ClInclude Include="Source\Core\Time\TimePoint.h" />
-    <ClInclude Include="Source\Function\DateTime\DateOnly.h" />
     <ClInclude Include="Source\Function\DateTime\DateTime.h" />
-    <ClInclude Include="Source\Function\DateTime\TimeOnly.h" />
     <ClInclude Include="Source\Function\FileSystem\DeviceFile.h" />
     <ClInclude Include="Source\Function\FileSystem\Directory.h" />
     <ClInclude Include="Source\Function\FileSystem\FIFOFile.h" />
@@ -307,7 +305,7 @@ xmake version 3.0.3+HEAD.de7aca410
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Function\Console\Console.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Launch\Windows\WindowsLaunch.cpp">
+    <ClCompile Include="Source\Application\Launch\Windows\WindowsLaunch.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Platform\Windows\WindowsConsole.cpp">
