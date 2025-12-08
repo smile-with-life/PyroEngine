@@ -22,27 +22,40 @@ struct ApplicationInfo
 class Application
 {
 public:
-    // 初始化
+    /// <summary>
+    /// 初始化
+    /// </summary>
+    /// <returns></returns>
     int32 Init();
 
-    // 帧更新
+    /// <summary>
+    /// 帧更新
+    /// </summary>
     void Tick();
 
-    // 退出清理
+    /// <summary>
+    /// 退出清理
+    /// </summary>
     void Exit();
 
-    // 是否退出
-    bool IsQuit();
-
-    // 运行
+    /// <summary>
+    /// 运行
+    /// </summary>
+    /// <returns></returns>
     int32 Run();
 
-    // 关于
+    /// <summary>
+    /// 关于
+    /// </summary>
+    /// <returns></returns>
     ApplicationInfo About();
+
+    /// <summary>
+    /// 是否退出
+    /// </summary>
+    /// <returns></returns>
+    bool IsQuit();
 private:
     // 退出标志
     bool m_isQuit = false;
-
-    // 控制台
-    ScopePtr<Console> m_console;
 };

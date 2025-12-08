@@ -10,8 +10,14 @@
 #if WINVER < 0x0A00  // Windows 10
     #error "Windows 10 or newer required"
 #endif
+
 extern "C" 
 {
     // Windows应用程序句柄
     extern CORE_API HINSTANCE GWindowsInstance;
+}
+
+namespace Platform
+{
+    using NativeText = std::wstring;
 }

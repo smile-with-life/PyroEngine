@@ -133,10 +133,7 @@ xmake version 3.0.3+HEAD.de7aca410
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Platform\Platform.h">
       <Filter>Source\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Platform\Windows\WindowsConsole.h">
-      <Filter>Source\Platform\Windows</Filter>
-    </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Platform\Windows\WindowsPlatform.h">
+    <ClInclude Include="Source\Platform\WindowsPlatform\WindowsPlatform.h">
       <Filter>Source\Platform\Windows</Filter>
     </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\pch.h">
@@ -156,6 +153,28 @@ xmake version 3.0.3+HEAD.de7aca410
     <ClInclude Include="Source\Core\Time\TimePoint.h" />
     <ClInclude Include="Source\Core\Time\Duration.h" />
     <ClInclude Include="Source\Core\Alog\Alog.h" />
+    <ClInclude Include="Source\Function\Console\Windows\WindowsConsole.h" />
+    <ClInclude Include="Source\Server\FrameSever\FrameServer.h" />
+    <ClInclude Include="Source\Function\Device\Device.h" />
+    <ClInclude Include="Source\Function\Resource\Image.h" />
+    <ClInclude Include="Source\Function\JSON\JSON.h" />
+    <ClInclude Include="Source\Core\Container\Map.h" />
+    <ClInclude Include="Source\Core\Thread\Thread.h" />
+    <ClInclude Include="Source\Core\Thread\WaitCondition.h" />
+    <ClInclude Include="Source\Core\Thread\Semaphore.h" />
+    <ClInclude Include="Source\Core\Thread\Mutex.h" />
+    <ClInclude Include="Source\Core\Math\Math.h" />
+    <ClInclude Include="Source\Core\Math\Vector3.h" />
+    <ClInclude Include="Source\Core\Math\Vector4.h" />
+    <ClInclude Include="Source\Function\Color\Color.h" />
+    <ClInclude Include="Source\Function\GUID\GUID.h" />
+    <ClInclude Include="Source\Function\Log\Log.h" />
+    <ClInclude Include="Source\Function\SystemTray\SystemTray.h" />
+    <ClInclude Include="Source\Function\Taskbar\Taskbar.h" />
+    <ClInclude Include="Source\Function\Config\Config.h" />
+    <ClInclude Include="Source\Server\Server.h" />
+    <ClInclude Include="Source\Server\Module\Module.h" />
+    <ClInclude Include="Source\Server\ConsoleServer\ConsoleServer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Application\Application.cpp">
@@ -182,15 +201,14 @@ xmake version 3.0.3+HEAD.de7aca410
     <ClCompile Include="Source\Application\Launch\Windows\WindowsLaunch.cpp">
       <Filter>Source\Launch\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Platform\Windows\WindowsConsole.cpp">
-      <Filter>Source\Platform\Windows</Filter>
-    </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Platform\Windows\WindowsPlatform.cpp">
+    <ClCompile Include="Source\Platform\WindowsPlatform\WindowsPlatform.cpp">
       <Filter>Source\Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\pch.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Function\Console\Windows\WindowsConsole.cpp" />
+    <ClCompile Include="Source\Server\FrameSever\FrameServer.cpp" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

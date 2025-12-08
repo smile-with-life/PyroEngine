@@ -2,12 +2,7 @@
 
 #include "WindowsConsole.h"
 
-Console* Console::Create()
-{
-    return new WindowsConsole();
-}
-
-void WindowsConsole::Init()
+WindowsConsole::WindowsConsole()
 {
     // 尝试附加到父进程控制台（若存在）
     if (AttachConsole(ATTACH_PARENT_PROCESS)) 
@@ -39,32 +34,9 @@ void WindowsConsole::Init()
 
     // Unicode支持
     setlocale(LC_ALL, "chs");
-
-    // 非Debug配置隐藏控制台并重定向到文件
-    #if BUILD_CONFIG > BUILD_CONFIG_DEBUG
-    Hide();
-
-    HANDLE file = CreateFile(TEXT("consoleLog.txt"), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
- 
-    if (file != INVALID_HANDLE_VALUE) 
-    {
-        // 重定向
-        SetStdHandle(STD_OUTPUT_HANDLE, file);
-        SetStdHandle(STD_ERROR_HANDLE, file);
-        // 获取重定向后的句柄
-        m_handle = GetStdHandle(STD_OUTPUT_HANDLE);
-    }
-    #else
-    Show();
-    #endif  
 }
 
-void WindowsConsole::Tick()
-{
-
-}
-
-void WindowsConsole::Exit()
+WindowsConsole::~WindowsConsole()
 {
     // 将当前进程从其关联的控制台分离
     FreeConsole();
@@ -86,6 +58,31 @@ void WindowsConsole::Show()
     }
 }
 
+void WindowsConsole::InputRedirect(const String& path)
+{
+    
+}
+
+void WindowsConsole::OutputRedirect(const String& path)
+{
+    // 文件名称为 stdin.txt;
+    HANDLE file = CreateFile(TEXT("stdin.txt"), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+
+    if (file != INVALID_HANDLE_VALUE)
+    {
+        // 重定向
+        SetStdHandle(STD_OUTPUT_HANDLE, file);
+        SetStdHandle(STD_ERROR_HANDLE, file);
+        // 获取重定向后的句柄
+        m_handle = GetStdHandle(STD_OUTPUT_HANDLE);
+    }
+}
+
+void WindowsConsole::ErrorRedirect(const String& path)
+{
+
+}
+
 bool WindowsConsole::IsVisible() const
 {
     return m_hwnd && IsWindowVisible(m_hwnd);
@@ -93,5 +90,5 @@ bool WindowsConsole::IsVisible() const
 
 bool WindowsConsole::IsAttached() const
 {
-    return m_isAttached;
+    return false;
 }
