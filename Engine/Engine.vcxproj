@@ -336,6 +336,7 @@ xmake version 3.0.3+HEAD.de7aca410
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <ClCompile Include="Source\Function\Console\Windows\WindowsConsole.cpp" />
+    <ClCompile Include="Source\Server\ConsoleServer\ConsoleServer.cpp" />
     <ClCompile Include="Source\Server\FrameSever\FrameServer.cpp" />
   </ItemGroup>
   <ItemGroup>
