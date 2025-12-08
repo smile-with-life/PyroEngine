@@ -1,8 +1,10 @@
+includes "Dependencies/xmake.lua"
+
+add_requires("GoogleTest", {configs = {shared = false}})
+
 target "Engine"
     -- 设置目标编译类型：动态库程序
     set_kind "shared"
-    -- 设置代码语言标准：最新
-    set_languages "cxxlatest"
     -- 设置目标文件生成目录
     set_targetdir "$(projectdir)/Engine/Build/$(os)/$(mode)/Bin"
     -- 设置中间文件生成目录
@@ -16,6 +18,7 @@ target "Engine"
         "Dependencies",
         "Dependencies/GoogleTest/include" 
     }
+    add_packages("GoogleTest")
     -- 添加头文件搜索目录
     add_includedirs {
         "Source",
@@ -47,8 +50,8 @@ target "Engine"
             -- 平台层：Windows平台
             "Source/Platform/Windows/**.cpp",
             -- Windows入口
-            "Source/Launch/Windows/WindowsLaunch.cpp",
-            "Source/Launch/Windows/WindowsExport.def"
+            "Source/Application/Launch/Windows/WindowsLaunch.cpp",
+            "Source/Application/Launch/Windows/WindowsExport.def"
         }     
         -- Test配置
         if is_mode("Test") then
@@ -112,7 +115,7 @@ target "Engine"
         -- 服务层
         "Source/Server/**.h",
         -- 应用层
-        "Source/Application/**.h"
+        "Source/Application/*.h"
     }
     add_files{
         -- 预编译文件(msvc专用)
@@ -126,7 +129,7 @@ target "Engine"
         -- 服务层
         "Source/Server/**.cpp",
         -- 应用层
-        "Source/Application/**.cpp"
+        "Source/Application/*.cpp"
     }
 
 
