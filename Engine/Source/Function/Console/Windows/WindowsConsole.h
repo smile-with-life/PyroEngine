@@ -151,7 +151,8 @@ private:
     }
 
     // 获取控制台最后一行位置
-    COORD GetConsoleLastLinePos() {
+    COORD GetInputLine() 
+    {
         CONSOLE_SCREEN_BUFFER_INFO csbi;
         if (!GetConsoleScreenBufferInfo(m_stdoutHandle, &csbi)) {
             return { 0, 0 };
@@ -160,8 +161,8 @@ private:
         return { 0, static_cast<SHORT>(csbi.dwSize.Y - 1) };
     }
     // 清空最后一行并重新绘制>提示符
-    void ResetInputLine() {
-        COORD lastLine = GetConsoleLastLinePos();
+    void ClearInputLine() {
+        COORD lastLine = GetInputLine();
         CONSOLE_SCREEN_BUFFER_INFO csbi;
         GetConsoleScreenBufferInfo(m_stdoutHandle, &csbi);
 
@@ -180,53 +181,24 @@ private:
         SetConsoleCursorPosition(m_stdoutHandle, inputPos);
     }
 
-    void ConsoleOutput(const String& content) {
-        std::u16string wContent = Convert::UTF8ToUTF16(content);
-
-        // 2. 获取信息区最后位置（最后一行的上一行）
-        COORD lastLine = GetConsoleLastLinePos();
-        COORD infoPos = { 0, static_cast<SHORT>(lastLine.Y - 1) };
-
-        // 3. 定位到信息区，输出内容
-        CONSOLE_SCREEN_BUFFER_INFO csbi;
-        GetConsoleScreenBufferInfo(m_stdoutHandle, &csbi);
-        SetConsoleCursorPosition(m_stdoutHandle, infoPos);
-
-        DWORD written = 0;
-        WriteConsoleW(m_stdoutHandle, wContent.data(), static_cast<DWORD>(wContent.size()), &written, nullptr);
-
-        // 4. 输出后重置输入行（避免被覆盖）
-        ResetInputLine();
+    void RedirectCout()
+    {
+        // 确保cout使用UTF8编码
+        std::cout.imbue(std::locale(".UTF8"));
     }
-    void RedirectCout() {
-        class ConsoleBuf : public std::streambuf {
-        private:
-            WindowsConsole& console;
-            std::string buffer;
-        public:
-            ConsoleBuf(WindowsConsole& c) : console(c) {}
-            int overflow(int c) override {
-                if (c != EOF) {
-                    buffer += static_cast<char>(c);
-                }
-                else {
-                    // 遇到EOF（如std::endl），输出缓冲区内容
-                    console.ConsoleOutput(buffer);
-                    buffer.clear();
-                }
-                return c;
-            }
-            int sync() override {
-                console.ConsoleOutput(buffer);
-                buffer.clear();
-                return 0;
-            }
-        };
+    // 类内新增：计算UTF-16字符串的视觉字符数（中文/英文都按1个算）
+    int GetVisualCharCount(const std::u16string& utf16Str) const
+    {
+        int visualCount = 0;
+        for (char16 ch : utf16Str)
+        {
+            if (ch < 0x20 || ch == 0x7F) continue;
 
-        static ConsoleBuf buf(*this);
-        std::cout.rdbuf(&buf);
+            bool isChinese = (ch >= 0x4E00 && ch <= 0x9FFF) || (ch >= 0x3400 && ch <= 0x4DBF);
+            visualCount += isChinese ? 2 : 1; // 中文占2格，英文占1格
+        }
+        return visualCount;
     }
-
 private:
     // 控制台窗口句柄
     HWND m_hwnd = nullptr;

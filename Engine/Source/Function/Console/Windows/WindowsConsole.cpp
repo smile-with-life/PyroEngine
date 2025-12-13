@@ -67,17 +67,17 @@ WindowsConsole::WindowsConsole()
     std::cerr << std::unitbuf;
 
 
-    // 2. 启用控制台UTF-8模式（Win10 1903+支持）
     DWORD mode = 0;
-    if (GetConsoleMode(m_stdoutHandle, &mode))
-    {
-        mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING; // 启用ANSI转义，兼容UTF-8
-        SetConsoleMode(m_stdoutHandle, mode);
-    }
     if (GetConsoleMode(m_stdinHandle, &mode))
     {
-        mode |= ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT; // 兼容Unicode输入
-        SetConsoleMode(m_stdinHandle, mode);
+        // 仅禁用快速编辑，保留行输入/回显/鼠标输入
+        mode &= ~ENABLE_QUICK_EDIT_MODE; // 仅保留禁用快速编辑
+        mode |= ENABLE_LINE_INPUT;
+        mode |= ENABLE_ECHO_INPUT;
+        if (!SetConsoleMode(m_stdinHandle, mode))
+        {
+            OutputDebugStringA("控制台输入模式设置失败");
+        }
     }
 
     // 关闭Ctrl+C默认行为
@@ -96,157 +96,164 @@ WindowsConsole::~WindowsConsole()
 
 bool WindowsConsole::ReadInput(String& text)
 {
-
     text.Clear();
+
     INPUT_RECORD inputRecords[32];
     DWORD eventCount = 0;
     bool hasValidInput = false;
 
-    // 初始化输入行（首次调用）
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    GetConsoleScreenBufferInfo(m_stdoutHandle, &csbi);
+
     static bool isFirstInput = true;
-    if (isFirstInput) {
-        ResetInputLine();
-        RedirectCout(); // 启动时重定向std::cout
+    if (isFirstInput)
+    {
+        ClearInputLine();
+        RedirectCout();
         isFirstInput = false;
     }
 
-    // 检查输入事件
-    if (!PeekConsoleInput(m_stdinHandle, inputRecords, 32, &eventCount) || eventCount == 0) {
+    // 非阻塞检查输入
+    if (!PeekConsoleInput(m_stdinHandle, inputRecords, 32, &eventCount) || eventCount == 0)
+    {
         return false;
     }
 
-    // 读取所有待处理事件
-    if (!ReadConsoleInputW(m_stdoutHandle, inputRecords, eventCount, &eventCount)) {
+    // 读取事件（不丢弃IME相关事件）
+    DWORD readCount = 0;
+    if (!ReadConsoleInputW(m_stdinHandle, inputRecords, eventCount, &readCount))
+    {
         return false;
     }
 
-    // 批量处理事件
-    for (DWORD i = 0; i < eventCount; ++i) {
+    // 处理读取到的事件
+    for (DWORD i = 0; i < readCount; ++i)
+    {
         const INPUT_RECORD& record = inputRecords[i];
-        if (record.EventType != KEY_EVENT) continue;
+
+        // 仅处理按键事件，其他事件留给IME
+        if (record.EventType != KEY_EVENT)
+            continue;
 
         const KEY_EVENT_RECORD& keyEvent = record.Event.KeyEvent;
-        if (!keyEvent.bKeyDown) continue;
+        // 仅处理按键按下 + 非空字符
+        if (!keyEvent.bKeyDown || keyEvent.uChar.UnicodeChar == 0)
+            continue;
 
-        COORD lastLine = GetConsoleLastLinePos();
+        COORD lastLine = GetInputLine();
         SpecialKey key = SpecialKey::None;
         WORD vkCode = keyEvent.wVirtualKeyCode;
         bool isCtrlPressed = (keyEvent.dwControlKeyState & (LEFT_CTRL_PRESSED | RIGHT_CTRL_PRESSED)) != 0;
 
-        // 组合键处理
-        if (isCtrlPressed) {
+        // 特殊键处理（原有逻辑不变）
+        if (isCtrlPressed)
+        {
             if (vkCode == 0x56) key = SpecialKey::Paste;
             if (vkCode == 0x43) key = SpecialKey::Copy;
+            if (vkCode == 0x41) key = SpecialKey::None;
         }
-        else {
-            switch (vkCode) {
-            case VK_UP: key = SpecialKey::Up; break;
-            case VK_DOWN: key = SpecialKey::Down; break;
-            case VK_LEFT:
-                // 禁止光标移到>左侧
-                /*if (keyEvent.dwCursorPosition.X > lastLine.X + 1) {
-                    key = SpecialKey::Left;
-                }*/
-                break;
+        else
+        {
+            switch (vkCode)
+            {
+            case VK_UP:    key = SpecialKey::Up; break;
+            case VK_DOWN:  key = SpecialKey::Down; break;
+            case VK_LEFT:  key = SpecialKey::Left; break;
             case VK_RIGHT: key = SpecialKey::Right; break;
-            case VK_BACK: key = SpecialKey::Backspace; break;
-            case VK_RETURN: key = SpecialKey::Enter; break;
+            case VK_BACK:  key = SpecialKey::Backspace; break;
+            case VK_RETURN:key = SpecialKey::Enter; break;
             default: break;
             }
         }
 
-        // 特殊键处理
-        if (key != SpecialKey::None) {
+        // 特殊键处理逻辑（原有不变）
+        if (key != SpecialKey::None)
+        {
             m_specialKeyQueue.push(key);
-            switch (key) {
+            switch (key)
+            {
             case SpecialKey::Copy:
                 CopyToClipboard(m_inputBuffer);
                 break;
-
-            case SpecialKey::Paste: {
+            case SpecialKey::Paste:
+            {
                 std::u16string pasteText = PasteFromClipboard();
-                if (!pasteText.empty() && m_inputBuffer.size() + pasteText.size() < 1024) {
-                    COORD pastePos = {
-                        static_cast<SHORT>(lastLine.X + 1 + m_inputBuffer.size()),
-                        lastLine.Y
-                    };
+                if (!pasteText.empty() && m_inputBuffer.size() + pasteText.size() < 1024)
+                {
+                    int visualLen = GetVisualCharCount(m_inputBuffer);
+                    COORD pastePos = { static_cast<SHORT>(2 + visualLen), lastLine.Y };
                     SetConsoleCursorPosition(m_stdoutHandle, pastePos);
 
                     DWORD written = 0;
-                    WriteConsoleW(m_stdoutHandle, pasteText.data(),
+                    WriteConsoleW(m_stdoutHandle, reinterpret_cast<const wchar_t*>(pasteText.data()),
                         static_cast<DWORD>(pasteText.size()), &written, nullptr);
-
                     m_inputBuffer += pasteText;
                 }
                 break;
             }
-
             case SpecialKey::Backspace:
                 if (!m_inputBuffer.empty()) {
                     m_inputBuffer.pop_back();
-                    COORD backPos = {
-                        static_cast<SHORT>(lastLine.X + 1 + m_inputBuffer.size()),
-                        lastLine.Y
-                    };
+                    int visualLen = GetVisualCharCount(m_inputBuffer);
+                    COORD backPos = { static_cast<SHORT>(2 + visualLen), lastLine.Y };
                     SetConsoleCursorPosition(m_stdoutHandle, backPos);
 
-                    const wchar backspaceSeq[] = { L'\b', L' ', L'\b' };
+                    const wchar_t backspaceSeq[] = { L'\b', L' ', L'\b' };
                     DWORD written = 0;
-                    WriteConsoleW(m_stdoutHandle, backspaceSeq, 3, &written, nullptr);
+                    WriteConsoleW(m_stdoutHandle, backspaceSeq, _countof(backspaceSeq) - 1, &written, nullptr);
                 }
                 break;
-
-            case SpecialKey::Enter: {
+            case SpecialKey::Enter:
                 if (!m_inputBuffer.empty()) {
-                    // 输出输入内容到信息区（替代原std::cout）
-                    ConsoleOutput("输入: " + Convert::UTF16ToUTF8(m_inputBuffer) + "\n");
+                    COORD infoOutputPos = { 0, static_cast<SHORT>(lastLine.Y - 1) };
+                    SetConsoleCursorPosition(m_stdoutHandle, infoOutputPos);
+
+                    DWORD written = 0;
+                    WriteConsoleW(m_stdoutHandle, L"输入: ", 4, &written, nullptr);
+                    WriteConsoleW(m_stdoutHandle, reinterpret_cast<const wchar_t*>(m_inputBuffer.data()),
+                        static_cast<DWORD>(m_inputBuffer.size()), &written, nullptr);
+                    WriteConsoleW(m_stdoutHandle, L"\n", 1, &written, nullptr);
 
                     hasValidInput = true;
-                    text = Convert::UTF16ToUTF8(m_inputBuffer);
+                    text = Convert::UTF16ToUTF8(m_inputBuffer); // 直接赋值
+                    m_inputBuffer.clear();
+                    ClearInputLine();
                 }
-
-                // 重置输入行
-                m_inputBuffer.clear();
-                ResetInputLine();
                 break;
-            }
-
-            default: break;
+            default:
+                break;
             }
             continue;
         }
 
-        // 普通字符处理
-        wchar wch = keyEvent.uChar.UnicodeChar;
-        if ((iswprint(static_cast<wint_t>(wch)) || wch == L' ') && m_inputBuffer.size() < 1024) {
-            COORD charPos = {
-                static_cast<SHORT>(lastLine.X + 1 + m_inputBuffer.size()),
-                lastLine.Y
-            };
+        // 处理普通可打印字符（兼容中文）
+        wchar_t wch = keyEvent.uChar.UnicodeChar;
+        if ((iswprint(static_cast<wint_t>(wch)) || wch == L' ') && m_inputBuffer.size() < 1024)
+        {
+            int visualLen = GetVisualCharCount(m_inputBuffer);
+            COORD charPos = { static_cast<SHORT>(2 + visualLen), lastLine.Y };
             SetConsoleCursorPosition(m_stdoutHandle, charPos);
 
             DWORD written = 0;
             WriteConsoleW(m_stdoutHandle, &wch, 1, &written, nullptr);
-
-            m_inputBuffer += wch;
+            m_inputBuffer += static_cast<char16>(wch);
             hasValidInput = true;
         }
     }
 
-    // 确保光标停在最后一行输入位置
+    // 光标位置最终校准
+    int finalVisualLen = GetVisualCharCount(m_inputBuffer);
     COORD finalCursorPos = {
-        static_cast<SHORT>(GetConsoleLastLinePos().X + 1 + m_inputBuffer.size()),
-        GetConsoleLastLinePos().Y
+        static_cast<SHORT>(2 + finalVisualLen),
+        GetInputLine().Y
     };
     SetConsoleCursorPosition(m_stdoutHandle, finalCursorPos);
 
-    // 结果转换
-    if (text.IsEmpty() && hasValidInput)
+    // 非回车时也返回输入内容
+    if (!text.IsEmpty() && hasValidInput)
     {
         text = Convert::UTF16ToUTF8(m_inputBuffer);
     }
-
-    
 
     return hasValidInput;
 }
@@ -257,7 +264,6 @@ void WindowsConsole::ReadLine(String& text)
     std::cin >> content;
     text = content;
 }
-
 
 bool WindowsConsole::KeyDetection(SpecialKey& keyCode)
 {
