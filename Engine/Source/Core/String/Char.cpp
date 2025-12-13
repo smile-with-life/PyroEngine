@@ -50,22 +50,22 @@ Char::Char(uint32 unicode)
     m_data.clear();
 
     if (unicode <= 0x7F)
-    { // µ¥×Ö½Ú
+    {
         m_data += static_cast<char>(unicode);
     }
     else if (unicode <= 0x7FF) 
-    { // Ë«×Ö½Ú
+    {
         m_data += static_cast<char>(0xC0 | ((unicode >> 6) & 0x1F));
         m_data += static_cast<char>(0x80 | (unicode & 0x3F));
     }
     else if (unicode <= 0xFFFF) 
-    { // Èý×Ö½Ú
+    {
         m_data += static_cast<char>(0xE0 | ((unicode >> 12) & 0x0F));
         m_data += static_cast<char>(0x80 | ((unicode >> 6) & 0x3F));
         m_data += static_cast<char>(0x80 | (unicode & 0x3F));
     }
     else if (unicode <= 0x10FFFF) 
-    { // ËÄ×Ö½Ú
+    { 
         m_data += static_cast<char>(0xF0 | ((unicode >> 18) & 0x07));
         m_data += static_cast<char>(0x80 | ((unicode >> 12) & 0x3F));
         m_data += static_cast<char>(0x80 | ((unicode >> 6) & 0x3F));
@@ -84,10 +84,9 @@ uint32 Char::Unicode() const
     const unsigned char* data = reinterpret_cast<const unsigned char*>(m_data.data());
     size_t len = m_data.size();
 
-    // µ¥×Ö½Ú
+
     if (len == 1) return data[0];
 
-    // ¶à×Ö½Ú´¦Àí
     if (len == 2) 
     {
         return ((data[0] & 0x1F) << 6) | (data[1] & 0x3F);
@@ -114,13 +113,12 @@ bool Char::IsValid() const
     const unsigned char* data = reinterpret_cast<const unsigned char*>(m_data.data());
     size_t len = m_data.size();
 
-    // µ¥×Ö½ÚASCII
+
     if (len == 1) return (data[0] <= 0x7F);
 
-    // ¶à×Ö½Ú×Ö·ûÑéÖ¤
-    if (len > 4) return false; // UTF-8×î´ó4×Ö½Ú
 
-    // ¼ì²éÊ××Ö½Ú¸ñÊ½
+    if (len > 4) return false;
+
     if ((data[0] & 0xE0) == 0xC0 && len == 2) return true;
     if ((data[0] & 0xF0) == 0xE0 && len == 3) return true;
     if ((data[0] & 0xF8) == 0xF0 && len == 4) return true;
@@ -131,17 +129,17 @@ bool Char::IsValid() const
 bool Char::IsLower() const
 {
     const uint32 code = Unicode();
-    return  (code >= 0x0061 && code <= 0x007A) ||   // a-z
-            (code >= 0x00E0 && code <= 0x00F6) ||   // À­¶¡×ÖÄ¸¸½¼ÓÀ©Õ¹
-            (code >= 0x00F8 && code <= 0x00FF);     // À­¶¡×ÖÄ¸²¹³ä
+    return  (code >= 0x0061 && code <= 0x007A) ||   
+            (code >= 0x00E0 && code <= 0x00F6) ||  
+            (code >= 0x00F8 && code <= 0x00FF);     
 }
 
 bool Char::IsUpper() const
 {
     const uint32 code = Unicode();
     return  (code >= 0x0041 && code <= 0x005A) ||   // A-Z
-            (code >= 0x00C0 && code <= 0x00D6) ||   // À­¶¡×ÖÄ¸¸½¼ÓÀ©Õ¹
-            (code >= 0x00D8 && code <= 0x00DF);     // À­¶¡×ÖÄ¸²¹³ä
+            (code >= 0x00C0 && code <= 0x00D6) ||   // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ¹
+            (code >= 0x00D8 && code <= 0x00DF);     // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½
 }
 
 bool Char::IsNull() const
@@ -158,26 +156,26 @@ bool Char::IsNumber() const
 bool Char::IsPrint() const
 {
     const uint32 code = Unicode();
-    return code >= 0x0020 && code <= 0x007E; // ¿É´òÓ¡ASCII·¶Î§
+    return code >= 0x0020 && code <= 0x007E; // ï¿½É´ï¿½Ó¡ASCIIï¿½ï¿½Î§
 }
 
 bool Char::IsSpace() const
 {
     const uint32 code = Unicode();
-    return  (code == 0x0020) ||  // ¿Õ¸ñ
-            (code == 0x0009) ||  // Ë®Æ½ÖÆ±í·û
-            (code == 0x000A);    // »»ÐÐ
+    return  (code == 0x0020) ||  // ï¿½Õ¸ï¿½
+            (code == 0x0009) ||  // Ë®Æ½ï¿½Æ±ï¿½ï¿½
+            (code == 0x000A);    // ï¿½ï¿½ï¿½ï¿½
 }
 
 Char Char::ToLower() const
 {
     const uint32_t code = Unicode();
-    // ASCII·¶Î§×ª»»
+
     if (code >= 0x0041 && code <= 0x005A) 
     {
         return Char(static_cast<char>(code + 0x20));
     }
-    // À©Õ¹À­¶¡×ÖÄ¸´¦Àí£¨Ê¾Àý·¶Î§£©
+
     if (code >= 0x00C0 && code <= 0x00D6) 
     {
         return Char(static_cast<char>(code + 0x20));

@@ -8,34 +8,63 @@ void ConsoleServer::Init()
 
 void ConsoleServer::Tick()
 {
+    String inputText;
+    while (m_console.ReadInput(inputText))
+    {
+        if (!inputText.IsEmpty())
+        {
+            m_inputBuffer = inputText;// 追加到控制台输入缓冲区
+        }
+    }
+
+    // 处理特殊键
+    Console::SpecialKey key;
+    while (m_console.KeyDetection(key))
+    {
+        switch (key)
+        {
+        case Console::SpecialKey::Enter:
+            if (!m_inputBuffer.IsEmpty())
+            {
+                m_commandQueue.push(m_inputBuffer);
+                m_inputBuffer.Clear();
+            }
+            break;
+        case Console::SpecialKey::Backspace:
+            if (!m_inputBuffer.IsEmpty())
+            {
+                m_inputBuffer.RemoveRight(1);
+            }
+            break;
+            // 其他特殊键处理...
+        default:
+            break;
+        }
+    }
+
+    while (!m_commandQueue.empty())
+    {
+        String cmd = m_commandQueue.front();
+        m_commandQueue.pop();
+        //std::cout << cmd << std::endl;
+        //m_console.Write(cmd);
+    }
+    
 }
 
 void ConsoleServer::Exit()
 {
+
 }
 
 void ConsoleServer::RegisterCommand(const String& cmdName, CommandFunc cmdFunc)
 {
+
 }
 
 void ConsoleServer::UnregisterCommand(const String& cmdName)
 {
+
 }
 
-void ConsoleServer::_RegisterDefaultCommand()
-{
-    m_commands["help"] = std::move([this](const String& args) 
-        {
-            m_console.WriteLine("=== 控制台命令帮助 ===");
-            m_console.WriteLine("help - 显示帮助信息");
-            m_console.WriteLine("exit - 退出控制台服务");
-        });
-    m_commands["exit"] = std::move([this](const String& args)
-        {
-            m_console.WriteLine("=== 退出控制台服务 ===");
-        });
-}
 
-void ConsoleServer::_UnregisterDefaultCommand()
-{
-}

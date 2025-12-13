@@ -4,22 +4,21 @@
 
 int32 Application::Init()
 {
-    m_console = ScopePtr<Console>(Console::Create());
-    m_console->Init();
     return 0;
+    
 }
 
 void Application::Tick()
 {
-    m_console->Tick();
+    GConsoleServer->Tick();
 }
 
 void Application::Exit()
 {
-    m_console->Exit();
+    
 }
 
-bool Application::IsQuit()
+bool Application::IsQuit() const
 {
     return m_isQuit;
 }

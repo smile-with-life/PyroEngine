@@ -298,26 +298,26 @@ public:
     {
         switch (strategy)
         {
-        case cwq::LockStrategy::NormalLock:
+        case LockStrategy::NormalLock:
         {
             p_mutex = std::addressof(mutex);
             p_mutex->lockRead();
             m_ownLock = true;
             break;
         }
-        case cwq::LockStrategy::DeferLock:
+        case LockStrategy::DeferLock:
         {
             p_mutex = std::addressof(mutex);
             m_ownLock = false;
             break;
         }
-        case cwq::LockStrategy::TryToLock:
+        case LockStrategy::TryToLock:
         {
             p_mutex = std::addressof(mutex);
             m_ownLock(p_mutex->tryLockRead());
             break;
         }
-        case cwq::LockStrategy::AdoptLock:
+        case LockStrategy::AdoptLock:
         {
             p_mutex = std::addressof(mutex);
             m_ownLock = true;
@@ -443,26 +443,26 @@ public:
     {
         switch (strategy)
         {
-        case cwq::LockStrategy::NormalLock:
+        case LockStrategy::NormalLock:
         {
             p_mutex = std::addressof(mutex);
             p_mutex->lockWrite();
             m_ownLock = true;
             break;
         }
-        case cwq::LockStrategy::DeferLock:
+        case LockStrategy::DeferLock:
         {
             p_mutex = std::addressof(mutex);
             m_ownLock = false;
             break;
         }
-        case cwq::LockStrategy::TryToLock:
+        case LockStrategy::TryToLock:
         {
             p_mutex = std::addressof(mutex);
             m_ownLock(p_mutex->tryLockWrite());
             break;
         }
-        case cwq::LockStrategy::AdoptLock:
+        case LockStrategy::AdoptLock:
         {
             p_mutex = std::addressof(mutex);
             m_ownLock = true;

@@ -13,7 +13,7 @@ enum class GammaSpace : uint8
     Pow22,      // 简化伽马空间
     sRGB,       // 标准伽马空间
 };
-
+class Color;
 /// <summary>
 /// 高精度颜色类
 /// <para>适用于渲染计算、HDR 流程及线性空间运算</para>

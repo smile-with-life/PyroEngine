@@ -7,11 +7,16 @@
 class MemoryResource
 {
 public:
+
+    virtual ~MemoryResource() = default;
     /// <summary>
     /// 
     /// </summary>
     /// <param name="size"></param>
-    explicit MemoryResource(int64 alignment);
+    explicit MemoryResource(int64 alignment)
+    {
+
+    }
 public:
     /// <summary>
     /// 
@@ -19,7 +24,10 @@ public:
     /// <param name="bytes"></param>
     /// <param name="alignment"></param>
     /// <returns></returns>
-    void* Malloc(int64 bytes);
+    void* Malloc(int64 bytes)
+    {
+        return nullptr;
+    }
 
     /// <summary>
     /// 
@@ -27,13 +35,19 @@ public:
     /// <param name="ptr"></param>
     /// <param name="bytes"></param>
     /// <param name="alignment"></param>
-    void Free(void* ptr, int64 bytes);
+    void Free(void* ptr, int64 bytes)
+    {
+
+    }
 
     /// <summary>
     /// 
     /// </summary>
     /// <param name="other"></param>
-    bool IsEqual(const MemoryResource& other) const;
+    bool IsEqual(const MemoryResource& other) const
+    {
+        return false;
+    }
 protected:
     /// <summary>
     /// 

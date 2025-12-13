@@ -93,15 +93,15 @@
 
 // ================== 平台扩展支持 ==================​​
 #ifdef PLATFORM_WINDOWS
-    #include "WindowsPlatform/WindowsPlatform.h"
+    #include "Windows/WindowsPlatform.h"
 #elif PLATFORM_LINUX
-    #include "LinuxPlatform/LinuxPlatform.h"
+    #include "Linux/LinuxPlatform.h"
 #elif PLATFORM_ANDROID
-    #include "AndroidPlatform/AndroidPlatform.h"
+    #include "Android/AndroidPlatform.h"
 #elif PLATFORM_IOS
-    #include "IOSPlatform/IOSPlatform.h"
+    #include "IOS/IOSPlatform.h"
 #elif PLATFORM_MAC
-    #include "MacPlatform/MacPlatform.h"
+    #include "Mac/MacPlatform.h"
 #else
     #error The platform is not supported!
 #endif
@@ -120,10 +120,4 @@
     //#define BUILD_CONFIG_DIST 3
     #define BUILD_CONFIG BUILD_CONFIG_DIST
 #endif
-
-
-namespace Platform
-{
-    NativeText NativeTextConvert(const char* str);
-}
 

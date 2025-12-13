@@ -1,9 +1,20 @@
 #include "pch.h"
 #include "Console.h"
 
-void Console::Read(const String& text)
+bool Console::ReadInput(String& text)
+{
+    return false;
+}
+
+void Console::ReadLine(String& text)
 {
 
+}
+
+
+bool Console::KeyDetection(Console::SpecialKey& keyCode)
+{
+    return false;
 }
 
 void Console::SetOutputColor(Color color)
@@ -16,7 +27,22 @@ void Console::SetThemeColor(Color color)
 
 }
 
+void Console::ResetOutputColor(Color color)
+{
+
+}
+
+void Console::ResetThemeColor(Color color)
+{
+
+}
+
 void Console::ResetColor(Color color)
+{
+
+}
+
+void Console::Clear()
 {
 
 }
@@ -31,23 +57,19 @@ void Console::Show()
 
 }
 
-void Console::InputRedirect(const String& path)
-{
 
-}
-
-void Console::OutputRedirect(const String& path)
-{
-
-}
-
-void Console::ErrorRedirect(const String& path)
+void Console::Active()
 {
 
 }
 
 
-bool Console::IsVisible() const
+bool Console::IsShown() const
+{
+    return false;
+}
+
+bool Console::IsActive() const
 {
     return false;
 }

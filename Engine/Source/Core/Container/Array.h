@@ -14,6 +14,8 @@ class ArrayIterator
 {
 public:
     using category = ContiguousIteratorTag;
+    using value_type = Type;
+    using reference = Type&;
 public:
     constexpr ArrayIterator() noexcept
         : m_ptr()
@@ -21,7 +23,7 @@ public:
 
     }
 
-    explicit constexpr ArrayIterator(const Type* ptr) noexcept
+    explicit constexpr ArrayIterator(Type* ptr) noexcept
         : m_ptr(ptr)
     {
 
@@ -134,7 +136,7 @@ public:
         return !(*this < right);
     }
 private:
-    Type* m_ptr;
+    Type* m_ptr = nullptr;
 };
 
 template <class Type>
@@ -142,6 +144,8 @@ class ArrayConstIterator
 {
 public:
     using category = ContiguousIteratorTag;
+    using value_type = Type;
+    using reference = Type&;
 public:
     constexpr ArrayConstIterator() noexcept
         : m_ptr()
@@ -647,7 +651,7 @@ public:
         }
 
         // 分配新内存
-        Type* new_data = m_alloc.Allocate(new_capacity);
+        Type* new_data = m_alloc.Allocate<Type>(new_capacity);
 
         // 移动或复制元素到新内存
         if (m_size > 0) 
@@ -882,7 +886,7 @@ public:
         if constexpr (std::is_trivially_copyable_v<Type>) 
         {
             // 平凡类型：使用内存拷贝
-            std::memcpy(m_data + m_size, std::to_address(first), n * sizeof(Type));
+            std::memcpy(m_data + m_size, std::to_address(first), count * sizeof(Type));
             m_size = new_size;
         }
         else 

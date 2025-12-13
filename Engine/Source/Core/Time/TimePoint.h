@@ -6,7 +6,8 @@ template<class Clock>
 class TimePoint
 {
 public:
-    friend class Clock;
+    friend class SystemClock;
+    friend class SteadyClock;
 public:
     using clock = Clock::clock;
 public:

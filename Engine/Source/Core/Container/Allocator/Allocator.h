@@ -30,7 +30,7 @@ public:
         // 检查整数溢出
         if (size / sizeof(Type) != count) [[unlikely]]
         {
-            throw std::bad_alloc("Integer overflow")
+            //throw std::bad_alloc("Integer overflow");
         }
         // 检查是否有指定的内存资源
         if (m_resource)
@@ -49,7 +49,7 @@ public:
             }
         }
         // 分配失败
-        throw std::bad_alloc("Insufficient available space");
+        //throw std::bad_alloc("Insufficient available space");
     }
 
     /// <summary>
@@ -77,14 +77,14 @@ public:
         // 检查整数溢出
         if (size / sizeof(Type) != count) [[unlikely]]
         {
-            throw std::bad_alloc("Integer overflow")
+            //throw std::bad_alloc("Integer overflow");
         }
         // 检查是否有指定的内存资源
         if (m_resource) {
-            if (m_resource->Contains(ptr))
+            /*if (m_resource->Contains(ptr))
             {
                 m_resource.Free(ptr);
-            }     
+            }    */ 
         }
         else {
             // 回退到 delete 释放

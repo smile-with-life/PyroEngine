@@ -67,7 +67,7 @@ xmake version 3.0.3+HEAD.de7aca410
     <XmakeMfcKind>
       <!-- nil -->
     </XmakeMfcKind>
-    <XmakeRunEnvs>PATH=$(XmakeProjectDir)\build\.packages\g\googletest\latest\eacfe5de760b43b99f8fbd22bac113b7\lib;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\VC\VCPackages;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\bin\Roslyn;C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\x64;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\FSharp\Tools;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Team Tools\DiagnosticsHub\Collector;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\Microsoft\CodeCoverage.Console;C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64;C:\Program Files (x86)\Windows Kits\10\bin\x64;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\amd64;C:\Windows\Microsoft.NET\Framework64\v4.0.30319;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Windows\System32\OpenSSH;C:\Program Files\dotnet;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn;C:\Program Files\Microsoft SQL Server\150\Tools\Binn;C:\Program Files (x86)\Microsoft SQL Server\160\DTS\Binn;C:\Program Files\PowerShell\7;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit;D:\Application\Cmake\bin;C:\Program Files\nodejs;C:\Program Files\nodejs\node_modules\npm;C:\Program Files\nodejs\node.exe;D:\Application\xmake;$(XmakeProjectDir)\Dependencies\xmake;C:\Users\wqcui\AppData\Local\Programs\Python\Python311\Scripts;C:\Users\wqcui\AppData\Local\Programs\Python\Python311;C:\Users\wqcui\AppData\Local\Microsoft\WindowsApps;D:\Application\Microsoft VS Code\bin;C:\Users\wqcui\.dotnet\tools;D:\Application\Fiddler;C:\Users\wqcui\AppData\Roaming\npm;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\VC\Linux\bin\ConnectionManagerExe;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\vcpkg;$([System.Environment]::GetEnvironmentVariable('PATH'))</XmakeRunEnvs>
+    <XmakeRunEnvs>PATH=$(XmakeProjectDir)\build\.packages\g\googletest\latest\eacfe5de760b43b99f8fbd22bac113b7\lib;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\VC\VCPackages;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\bin\Roslyn;C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\x64;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\FSharp\Tools;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Team Tools\DiagnosticsHub\Collector;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\Microsoft\CodeCoverage.Console;C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64;C:\Program Files (x86)\Windows Kits\10\bin\x64;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\amd64;C:\Windows\Microsoft.NET\Framework64\v4.0.30319;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Windows\System32\OpenSSH;C:\Program Files\dotnet;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn;C:\Program Files\Microsoft SQL Server\150\Tools\Binn;C:\Program Files (x86)\Microsoft SQL Server\160\DTS\Binn;C:\Program Files\PowerShell\7;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit;D:\Application\Cmake\bin;C:\Program Files\nodejs;C:\Program Files\nodejs\node_modules\npm;C:\Program Files\nodejs\node.exe;D:\Application\xmake;$(XmakeProjectDir)\Dependencies\xmake;D:\Application\Git\cmd;C:\Users\wqcui\AppData\Local\Programs\Python\Python311\Scripts;C:\Users\wqcui\AppData\Local\Programs\Python\Python311;C:\Users\wqcui\AppData\Local\Microsoft\WindowsApps;D:\Application\Microsoft VS Code\bin;C:\Users\wqcui\.dotnet\tools;D:\Application\Fiddler;C:\Users\wqcui\AppData\Roaming\npm;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\VC\Linux\bin\ConnectionManagerExe;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\vcpkg;$([System.Environment]::GetEnvironmentVariable('PATH'))</XmakeRunEnvs>
     <XmakeRunArgs>
       <!-- nil -->
     </XmakeRunArgs>
@@ -107,7 +107,7 @@ xmake version 3.0.3+HEAD.de7aca410
     <XmakeMfcKind>
       <!-- nil -->
     </XmakeMfcKind>
-    <XmakeRunEnvs>PATH=$(XmakeProjectDir)\build\.packages\g\googletest\latest\eacfe5de760b43b99f8fbd22bac113b7\lib;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\VC\VCPackages;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\bin\Roslyn;C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\x64;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\FSharp\Tools;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Team Tools\DiagnosticsHub\Collector;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\Microsoft\CodeCoverage.Console;C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64;C:\Program Files (x86)\Windows Kits\10\bin\x64;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\amd64;C:\Windows\Microsoft.NET\Framework64\v4.0.30319;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Windows\System32\OpenSSH;C:\Program Files\dotnet;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn;C:\Program Files\Microsoft SQL Server\150\Tools\Binn;C:\Program Files (x86)\Microsoft SQL Server\160\DTS\Binn;C:\Program Files\PowerShell\7;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit;D:\Application\Cmake\bin;C:\Program Files\nodejs;C:\Program Files\nodejs\node_modules\npm;C:\Program Files\nodejs\node.exe;D:\Application\xmake;$(XmakeProjectDir)\Dependencies\xmake;C:\Users\wqcui\AppData\Local\Programs\Python\Python311\Scripts;C:\Users\wqcui\AppData\Local\Programs\Python\Python311;C:\Users\wqcui\AppData\Local\Microsoft\WindowsApps;D:\Application\Microsoft VS Code\bin;C:\Users\wqcui\.dotnet\tools;D:\Application\Fiddler;C:\Users\wqcui\AppData\Roaming\npm;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\VC\Linux\bin\ConnectionManagerExe;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\vcpkg;$([System.Environment]::GetEnvironmentVariable('PATH'))</XmakeRunEnvs>
+    <XmakeRunEnvs>PATH=$(XmakeProjectDir)\build\.packages\g\googletest\latest\eacfe5de760b43b99f8fbd22bac113b7\lib;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\VC\VCPackages;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\bin\Roslyn;C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\x64;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\FSharp\Tools;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Team Tools\DiagnosticsHub\Collector;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\Microsoft\CodeCoverage.Console;C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64;C:\Program Files (x86)\Windows Kits\10\bin\x64;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\amd64;C:\Windows\Microsoft.NET\Framework64\v4.0.30319;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Windows\System32\OpenSSH;C:\Program Files\dotnet;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn;C:\Program Files\Microsoft SQL Server\150\Tools\Binn;C:\Program Files (x86)\Microsoft SQL Server\160\DTS\Binn;C:\Program Files\PowerShell\7;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit;D:\Application\Cmake\bin;C:\Program Files\nodejs;C:\Program Files\nodejs\node_modules\npm;C:\Program Files\nodejs\node.exe;D:\Application\xmake;$(XmakeProjectDir)\Dependencies\xmake;D:\Application\Git\cmd;C:\Users\wqcui\AppData\Local\Programs\Python\Python311\Scripts;C:\Users\wqcui\AppData\Local\Programs\Python\Python311;C:\Users\wqcui\AppData\Local\Microsoft\WindowsApps;D:\Application\Microsoft VS Code\bin;C:\Users\wqcui\.dotnet\tools;D:\Application\Fiddler;C:\Users\wqcui\AppData\Roaming\npm;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\VC\Linux\bin\ConnectionManagerExe;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\vcpkg;$([System.Environment]::GetEnvironmentVariable('PATH'))</XmakeRunEnvs>
     <XmakeRunArgs>
       <!-- nil -->
     </XmakeRunArgs>
@@ -147,7 +147,7 @@ xmake version 3.0.3+HEAD.de7aca410
     <XmakeMfcKind>
       <!-- nil -->
     </XmakeMfcKind>
-    <XmakeRunEnvs>PATH=$(XmakeProjectDir)\build\.packages\g\googletest\latest\eacfe5de760b43b99f8fbd22bac113b7\lib;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\VC\VCPackages;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\bin\Roslyn;C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\x64;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\FSharp\Tools;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Team Tools\DiagnosticsHub\Collector;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\Microsoft\CodeCoverage.Console;C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64;C:\Program Files (x86)\Windows Kits\10\bin\x64;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\amd64;C:\Windows\Microsoft.NET\Framework64\v4.0.30319;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Windows\System32\OpenSSH;C:\Program Files\dotnet;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn;C:\Program Files\Microsoft SQL Server\150\Tools\Binn;C:\Program Files (x86)\Microsoft SQL Server\160\DTS\Binn;C:\Program Files\PowerShell\7;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit;D:\Application\Cmake\bin;C:\Program Files\nodejs;C:\Program Files\nodejs\node_modules\npm;C:\Program Files\nodejs\node.exe;D:\Application\xmake;$(XmakeProjectDir)\Dependencies\xmake;C:\Users\wqcui\AppData\Local\Programs\Python\Python311\Scripts;C:\Users\wqcui\AppData\Local\Programs\Python\Python311;C:\Users\wqcui\AppData\Local\Microsoft\WindowsApps;D:\Application\Microsoft VS Code\bin;C:\Users\wqcui\.dotnet\tools;D:\Application\Fiddler;C:\Users\wqcui\AppData\Roaming\npm;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\VC\Linux\bin\ConnectionManagerExe;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\vcpkg;$([System.Environment]::GetEnvironmentVariable('PATH'))</XmakeRunEnvs>
+    <XmakeRunEnvs>PATH=$(XmakeProjectDir)\build\.packages\g\googletest\latest\eacfe5de760b43b99f8fbd22bac113b7\lib;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\VC\VCPackages;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\bin\Roslyn;C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\x64;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\FSharp\Tools;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Team Tools\DiagnosticsHub\Collector;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\Microsoft\CodeCoverage.Console;C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64;C:\Program Files (x86)\Windows Kits\10\bin\x64;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\amd64;C:\Windows\Microsoft.NET\Framework64\v4.0.30319;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Windows\System32\OpenSSH;C:\Program Files\dotnet;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn;C:\Program Files\Microsoft SQL Server\150\Tools\Binn;C:\Program Files (x86)\Microsoft SQL Server\160\DTS\Binn;C:\Program Files\PowerShell\7;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit;D:\Application\Cmake\bin;C:\Program Files\nodejs;C:\Program Files\nodejs\node_modules\npm;C:\Program Files\nodejs\node.exe;D:\Application\xmake;$(XmakeProjectDir)\Dependencies\xmake;D:\Application\Git\cmd;C:\Users\wqcui\AppData\Local\Programs\Python\Python311\Scripts;C:\Users\wqcui\AppData\Local\Programs\Python\Python311;C:\Users\wqcui\AppData\Local\Microsoft\WindowsApps;D:\Application\Microsoft VS Code\bin;C:\Users\wqcui\.dotnet\tools;D:\Application\Fiddler;C:\Users\wqcui\AppData\Roaming\npm;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\VC\Linux\bin\ConnectionManagerExe;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\vcpkg;$([System.Environment]::GetEnvironmentVariable('PATH'))</XmakeRunEnvs>
     <XmakeRunArgs>
       <!-- nil -->
     </XmakeRunArgs>
@@ -187,7 +187,7 @@ xmake version 3.0.3+HEAD.de7aca410
     <XmakeMfcKind>
       <!-- nil -->
     </XmakeMfcKind>
-    <XmakeRunEnvs>PATH=$(XmakeProjectDir)\build\.packages\g\googletest\latest\eacfe5de760b43b99f8fbd22bac113b7\lib;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\VC\VCPackages;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\bin\Roslyn;C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\x64;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\FSharp\Tools;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Team Tools\DiagnosticsHub\Collector;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\Microsoft\CodeCoverage.Console;C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64;C:\Program Files (x86)\Windows Kits\10\bin\x64;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\amd64;C:\Windows\Microsoft.NET\Framework64\v4.0.30319;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Windows\System32\OpenSSH;C:\Program Files\dotnet;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn;C:\Program Files\Microsoft SQL Server\150\Tools\Binn;C:\Program Files (x86)\Microsoft SQL Server\160\DTS\Binn;C:\Program Files\PowerShell\7;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit;D:\Application\Cmake\bin;C:\Program Files\nodejs;C:\Program Files\nodejs\node_modules\npm;C:\Program Files\nodejs\node.exe;D:\Application\xmake;$(XmakeProjectDir)\Dependencies\xmake;C:\Users\wqcui\AppData\Local\Programs\Python\Python311\Scripts;C:\Users\wqcui\AppData\Local\Programs\Python\Python311;C:\Users\wqcui\AppData\Local\Microsoft\WindowsApps;D:\Application\Microsoft VS Code\bin;C:\Users\wqcui\.dotnet\tools;D:\Application\Fiddler;C:\Users\wqcui\AppData\Roaming\npm;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\VC\Linux\bin\ConnectionManagerExe;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\vcpkg;$([System.Environment]::GetEnvironmentVariable('PATH'))</XmakeRunEnvs>
+    <XmakeRunEnvs>PATH=$(XmakeProjectDir)\build\.packages\g\googletest\latest\eacfe5de760b43b99f8fbd22bac113b7\lib;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\VC\VCPackages;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\bin\Roslyn;C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\x64;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\FSharp\Tools;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Team Tools\DiagnosticsHub\Collector;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\Microsoft\CodeCoverage.Console;C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64;C:\Program Files (x86)\Windows Kits\10\bin\x64;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\amd64;C:\Windows\Microsoft.NET\Framework64\v4.0.30319;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Windows\System32\OpenSSH;C:\Program Files\dotnet;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn;C:\Program Files\Microsoft SQL Server\150\Tools\Binn;C:\Program Files (x86)\Microsoft SQL Server\160\DTS\Binn;C:\Program Files\PowerShell\7;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit;D:\Application\Cmake\bin;C:\Program Files\nodejs;C:\Program Files\nodejs\node_modules\npm;C:\Program Files\nodejs\node.exe;D:\Application\xmake;$(XmakeProjectDir)\Dependencies\xmake;D:\Application\Git\cmd;C:\Users\wqcui\AppData\Local\Programs\Python\Python311\Scripts;C:\Users\wqcui\AppData\Local\Programs\Python\Python311;C:\Users\wqcui\AppData\Local\Microsoft\WindowsApps;D:\Application\Microsoft VS Code\bin;C:\Users\wqcui\.dotnet\tools;D:\Application\Fiddler;C:\Users\wqcui\AppData\Roaming\npm;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\VC\Linux\bin\ConnectionManagerExe;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\vcpkg;$([System.Environment]::GetEnvironmentVariable('PATH'))</XmakeRunEnvs>
     <XmakeRunArgs>
       <!-- nil -->
     </XmakeRunArgs>
@@ -250,68 +250,68 @@ xmake version 3.0.3+HEAD.de7aca410
   <Import Project="$(XmakeProgramDir)\scripts\vsxmake\vsproj\Xmake.props" />
   <ItemGroup>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Application\Application.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Alog\Alog.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Concept\Concept.h" />
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Container\.Tests\Test_Struct\_Struct_Simple.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Container\Allocator\Allocator.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Container\Array.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Container\Iterator\Iterator.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Container\Map.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Core.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\CoreType.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Input\Input.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Math\Math.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Math\Radian.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Math\Vector3.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Math\Vector4.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Memory\ByteArray.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Memory\Memory.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Memory\RAII.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\String\Char.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\String\Convert.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\String\String.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Thread\Mutex.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Thread\Semaphore.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Thread\Thread.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Thread\WaitCondition.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Time\Clock.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Time\Duration.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Time\Time.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Time\TimePoint.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Color\Color.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Config\Config.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Console\Console.h" />
-    <ClInclude Include="Source\Core\Alog\Alog.h" />
-    <ClInclude Include="Source\Core\Container\Map.h" />
-    <ClInclude Include="Source\Core\Math\Math.h" />
-    <ClInclude Include="Source\Core\Math\Vector3.h" />
-    <ClInclude Include="Source\Core\Math\Vector4.h" />
-    <ClInclude Include="Source\Core\Thread\Mutex.h" />
-    <ClInclude Include="Source\Core\Thread\Semaphore.h" />
-    <ClInclude Include="Source\Core\Thread\Thread.h" />
-    <ClInclude Include="Source\Core\Thread\WaitCondition.h" />
-    <ClInclude Include="Source\Core\Time\Clock.h" />
-    <ClInclude Include="Source\Core\Time\Duration.h" />
-    <ClInclude Include="Source\Core\Time\Time.h" />
-    <ClInclude Include="Source\Core\Time\TimePoint.h" />
-    <ClInclude Include="Source\Function\Color\Color.h" />
-    <ClInclude Include="Source\Function\Config\Config.h" />
-    <ClInclude Include="Source\Function\Console\Windows\WindowsConsole.h" />
-    <ClInclude Include="Source\Function\DateTime\DateTime.h" />
-    <ClInclude Include="Source\Function\Device\Device.h" />
-    <ClInclude Include="Source\Function\FileSystem\DeviceFile.h" />
-    <ClInclude Include="Source\Function\FileSystem\Directory.h" />
-    <ClInclude Include="Source\Function\FileSystem\FIFOFile.h" />
-    <ClInclude Include="Source\Function\FileSystem\File.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Console\Windows\WindowsConsole.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\DateTime\DateTime.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Device\Device.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\FileSystem\DeviceFile.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\FileSystem\Directory.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\FileSystem\FIFOFile.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\FileSystem\File.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\FileSystem\FileSystem.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\FileSystem\FileSystemEntry.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\FileSystem\Path.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\FileSystem\SocketFile.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\FileSystem\Symlink.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\GUID\GUID.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\JSON\JSON.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Log\Log.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Resource\Image.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Settings\Settings.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\SystemTray\SystemTray.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Taskbar\Taskbar.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Platform\Platform.h" />
-    <ClInclude Include="Source\Function\GUID\GUID.h" />
-    <ClInclude Include="Source\Function\JSON\JSON.h" />
-    <ClInclude Include="Source\Function\Log\Log.h" />
-    <ClInclude Include="Source\Function\Resource\Image.h" />
-    <ClInclude Include="Source\Function\SystemTray\SystemTray.h" />
-    <ClInclude Include="Source\Function\Taskbar\Taskbar.h" />
-    <ClInclude Include="Source\Platform\WindowsPlatform\WindowsPlatform.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Platform\Windows\WindowsPlatform.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Server\ConsoleServer\ConsoleServer.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Server\FrameSever\FrameServer.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Server\Module\Module.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Server\Server.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\pch.h" />
-    <ClInclude Include="Source\Function\FileSystem\FileSystem.h" />
-    <ClInclude Include="Source\Function\FileSystem\FileSystemEntry.h" />
-    <ClInclude Include="Source\Function\FileSystem\Path.h" />
-    <ClInclude Include="Source\Function\FileSystem\SocketFile.h" />
-    <ClInclude Include="Source\Function\FileSystem\Symlink.h" />
-    <ClInclude Include="Source\Server\ConsoleServer\ConsoleServer.h" />
-    <ClInclude Include="Source\Server\FrameSever\FrameServer.h" />
-    <ClInclude Include="Source\Server\Module\Module.h" />
-    <ClInclude Include="Source\Server\Server.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Application\Application.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Core\Container\.Tests\Test_Array.cpp">
-      <CompileAs>CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Core\Container\.Tests\Test_Project\Test.cpp">
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Application\Launch\Windows\WindowsLaunch.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Core\Memory\ByteArray.cpp">
@@ -326,18 +326,22 @@ xmake version 3.0.3+HEAD.de7aca410
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Function\Console\Console.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
-    <ClCompile Include="Source\Application\Launch\Windows\WindowsLaunch.cpp">
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Function\Console\Windows\WindowsConsole.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
-    <ClCompile Include="Source\Platform\WindowsPlatform\WindowsPlatform.cpp">
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Platform\Windows\WindowsPlatform.cpp">
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Server\ConsoleServer\ConsoleServer.cpp">
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Server\FrameSever\FrameServer.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\pch.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
-    <ClCompile Include="Source\Function\Console\Windows\WindowsConsole.cpp" />
-    <ClCompile Include="Source\Server\ConsoleServer\ConsoleServer.cpp" />
-    <ClCompile Include="Source\Server\FrameSever\FrameServer.cpp" />
+    <ClCompile Include="Source\Core\String\Convert.cpp" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

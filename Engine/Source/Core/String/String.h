@@ -4,8 +4,8 @@
 #include "Container/Array.h"
 #include "String/Char.h"
 #include "Memory/ByteArray.h"
-
-class StringList;
+class String;
+using StringList = Array<String>;
 class ByteArray;
 class String
 {
@@ -218,6 +218,9 @@ public:
 
     // 将字符串转换为 C 类型的字符串
     const char* ToCString() const;
+
+    // 将字符串转换为 UTF-16 的字符串
+    std::u16string ToUTF16() const;
 public:
     Char operator[](int64 index);  
 
@@ -268,6 +271,8 @@ public:
     static String FromStdString(const std::string& str);
 
     static String FromCString(const char* str);
+
+    static String FromUTF16(std::u16string u16str);
 
     static String FromInt8(int8 value);
 
@@ -534,4 +539,4 @@ private:
     int64 m_count;
 };
 
-using StringList = Array<String>;
+//using StringList = Array<String>;

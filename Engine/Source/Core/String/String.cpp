@@ -1,7 +1,7 @@
 #include "pch.h"
 
 #include "String.h"
-
+/* member */
 String::String(const String& other)
     : m_data(other.m_data)
     , m_count(other.m_count)
@@ -423,7 +423,7 @@ String String::RightStr(int64 count)
 
 String& String::Trim()
 {
-    
+    return *this;
 }
 
 String& String::TrimLeft()
@@ -437,6 +437,7 @@ String& String::TrimLeft()
         });
     m_data.erase(m_data.begin(), iter);
     m_count = _CalcCharCount(m_data.c_str());
+    return *this;
 }
 
 String& String::TrimRight()
@@ -588,18 +589,18 @@ bool String::IsNumeric() const
         else if ((c == 'e' || c == 'E') && hasDigit && !hasE) 
         {
             hasE = true;
-            hasDigit = false; // e�������������
+            hasDigit = false;
         }
         else if ((c == '+' || c == '-') && (i == 0 || m_data[i - 1] == 'e' || m_data[i - 1] == 'E')) 
         {
-            // ����ֻ���ڿ�ͷ��e����
+            
         }
         else {
             return false;
         }
     }
 
-    return hasDigit; // ����������һ������
+    return hasDigit;
 }
 
 bool String::IsValid(int64 index) const
@@ -638,7 +639,6 @@ int8 String::ToInt8(int base) const
 
     result = static_cast<int8>(std::strtol(m_data.c_str(), &endptr, base));
 
-    // ���ת���Ƿ�ɹ�
     if (endptr == m_data.c_str())
     {
         throw std::invalid_argument("No digits were found");
@@ -654,7 +654,6 @@ int16 String::ToInt16(int base) const
 
     result = static_cast<int16>(std::strtol(m_data.c_str(), &endptr, base));
 
-    // ���ת���Ƿ�ɹ�
     if (endptr == m_data.c_str())
     {
         throw std::invalid_argument("No digits were found");
@@ -670,7 +669,6 @@ int32 String::ToInt32(int base) const
 
     result = static_cast<int32>(std::strtol(m_data.c_str(), &endptr, base));
 
-    // ���ת���Ƿ�ɹ�
     if (endptr == m_data.c_str())
     {
         throw std::invalid_argument("No digits were found");
@@ -686,7 +684,6 @@ int64 String::ToInt64(int base) const
 
     result = static_cast<int64>(std::strtol(m_data.c_str(), &endptr, base));
 
-    // ���ת���Ƿ�ɹ�
     if (endptr == m_data.c_str())
     {
         throw std::invalid_argument("No digits were found");
@@ -702,7 +699,6 @@ uint8 String::ToUInt8(int base) const
 
     result = static_cast<uint8>(std::strtoul(m_data.c_str(), &endptr, base));
 
-    // ���ת���Ƿ�ɹ�
     if (endptr == m_data.c_str())
     {
         throw std::invalid_argument("No digits were found");
@@ -718,7 +714,6 @@ uint16 String::ToUInt16(int base) const
 
     result = static_cast<uint16>(std::strtoul(m_data.c_str(), &endptr, base));
 
-    // ���ת���Ƿ�ɹ�
     if (endptr == m_data.c_str())
     {
         throw std::invalid_argument("No digits were found");
@@ -734,7 +729,6 @@ uint32 String::ToUInt32(int base) const
 
     result = static_cast<uint32>(std::strtoul(m_data.c_str(), &endptr, base));
 
-    // ���ת���Ƿ�ɹ�
     if (endptr == m_data.c_str())
     {
         throw std::invalid_argument("No digits were found");
@@ -750,7 +744,6 @@ uint64 String::ToUInt64(int base) const
 
     result = static_cast<uint64>(std::strtoul(m_data.c_str(), &endptr, base));
 
-    // ���ת���Ƿ�ɹ�
     if (endptr == m_data.c_str())
     {
         throw std::invalid_argument("No digits were found");
@@ -764,7 +757,6 @@ float String::ToFloat() const
     char* endptr;
     float result = std::strtof(m_data.c_str(), &endptr);
 
-    // ���ת���Ƿ�ɹ�
     if (endptr == m_data.c_str() || *endptr != '\0')
     {
         throw std::invalid_argument("Invalid float conversion");
@@ -778,7 +770,6 @@ double String::ToDouble() const
     char* endptr;
     double result = std::strtod(m_data.c_str(), &endptr);
 
-    // ���ת���Ƿ�ɹ�
     if (endptr == m_data.c_str() || *endptr != '\0')
     {
         throw std::invalid_argument("Invalid float conversion");
@@ -797,9 +788,14 @@ const char* String::ToCString() const
     return m_data.c_str();
 }
 
+std::u16string String::ToUTF16() const
+{
+    return std::u16string();
+}
+
 Char String::operator[](int64 index)
 {
-
+    return Char();
 }
 
 String& String::operator+=(const String& str)
@@ -915,4 +911,75 @@ bool operator<=(const char* left, const String& right)
 std::ostream& operator<<(std::ostream& os, const String& str)
 {
     return os << str.ToStdString();
+}
+
+/* static */
+String String::FromStdString(const std::string& str)
+{
+    return String();
+}
+
+String String::FromCString(const char* str)
+{
+    return String();
+}
+
+String String::FromUTF16(std::u16string u16str)
+{
+    return String();
+}
+
+String String::FromInt8(int8 value)
+{
+    return String();
+}
+
+String String::FromInt16(int16 value)
+{
+    return String();
+}
+
+String String::FromInt32(int32 value)
+{
+    return String();
+}
+
+String String::FromInt64(int64 value)
+{
+    return String();
+}
+
+String String::FromUInt8(uint8 value)
+{
+    return String();
+}
+
+String String::FromUInt16(uint16 value)
+{
+    return String();
+}
+
+String String::FromUInt32(uint32 value)
+{
+    return String();
+}
+
+String String::FromUInt64(uint64 value)
+{
+    return String();
+}
+
+String String::FromFloat(float value)
+{
+    return String();
+}
+
+String String::FromDouble(double value)
+{
+    return String();
+}
+
+String String::FromBool(bool value)
+{
+    return String();
 }

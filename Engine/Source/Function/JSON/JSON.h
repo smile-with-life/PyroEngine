@@ -3,6 +3,7 @@
 #include "Container/Array.h"
 #include "Container/Map.h"
 #include "String/String.h"
+#include <variant>
 
 // Json对象类型
 enum class JsonType

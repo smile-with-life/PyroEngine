@@ -1,6 +1,5 @@
 #pragma once
 #include "Core.h"
-
 #include "Container/Array.h"
 
 class ByteArray
@@ -10,48 +9,73 @@ public:
 
     ~ByteArray() = default;
 
-    ByteArray(const char* data);
+    ByteArray(const ByteArray& other) = default;
 
-    ByteArray(const ByteArray& other);
+    ByteArray& operator=(const ByteArray& other) = default;
 
-    ByteArray& operator=(const ByteArray& other);
+    ByteArray(ByteArray&& other) noexcept = default;
 
-    ByteArray(ByteArray&& other) noexcept;
+    ByteArray& operator=(ByteArray&& other) noexcept = default;
 
-    ByteArray& operator=(ByteArray&& other) noexcept;
+    ByteArray(const char* data)
+    {
+        
+    }
 public:
-    // 访问指定元素,不进行边界检查
-    char& operator[](int64 index);
+    void Add(char byte)
+    {
+        m_data.Add(byte);
+    }
 
-    // 访问指定元素,不进行边界检查
-    const char& operator[](int64 index) const;
+    char* Data()
+    {
+        return m_data.Data();
+    }
 
-    // 向字节数组中写入数据
-    void Add(const char* data, int64 size);
+    const char* Data() const
+    {
+        return m_data.Data();
+    }
 
-    ByteArray& operator<<(char ch);
+    int64 Size() const
+    {
+        return m_data.Size();
+    }
 
-    char* Data();
+    int64 Max() const
+    {
 
-    const char* Data() const;
+    }
 
-    // 返回数组的元素个数
-    int64 Size() const;
+    bool IsEmpty()
+    {
+        return m_data.IsEmpty();
+    }
 
-    // 返回数组的最大元素个数
-    int64 Max() const;
+    void Resize(int64 size)
+    {
+        m_data.Resize(size);
+    }
 
-    // 判断数组是否为空
-    bool IsEmpty();
+    void Clear()
+    {
+        m_data.Clear();
+    }
 
-    // 改变存储元素的个数
-    void Resize(int64 size);
+    void Swap(ByteArray& other)
+    {
+        m_data.Swap(other.m_data);
+    }
+public:
+    char& operator[](int64 index)
+    {
+        return m_data[index];
+    }
 
-    // 清空数组,实际内存并不释放
-    void Clear();
-
-    // 交换内容
-    void Swap(ByteArray& other);
+    const char& operator[](int64 index) const
+    {
+        return m_data[index];
+    }
 private:
     Array<char> m_data;
 };

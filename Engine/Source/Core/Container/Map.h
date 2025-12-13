@@ -1,5 +1,6 @@
 #pragma once
 #include "Core.h"
+#include <map>
 
 template<class KeyType, class ValueType>
 class Map

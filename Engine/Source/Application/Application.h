@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core.h"
-#include "Console/Console.h"
+#include "Server.h"
 #include "String/String.h"
 #include "Memory/RAII.h"
 
@@ -54,7 +54,7 @@ public:
     /// 是否退出
     /// </summary>
     /// <returns></returns>
-    bool IsQuit();
+    bool IsQuit() const;
 private:
     // 退出标志
     bool m_isQuit = false;
