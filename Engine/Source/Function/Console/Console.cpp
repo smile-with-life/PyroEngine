@@ -6,7 +6,7 @@ bool Console::ReadInput(String& text)
     return false;
 }
 
-void Console::ReadLine(String& text)
+void Console::Write(const String& text)
 {
 
 }
@@ -17,7 +17,16 @@ bool Console::KeyDetection(Console::SpecialKey& keyCode)
     return false;
 }
 
-void Console::SetOutputColor(Color color)
+void Console::SetTitle(const String& title)
+{
+
+}
+
+void Console::SetFontSize(int32 size)
+{
+}
+
+void Console::SetTextColor(Color color)
 {
 
 }
@@ -27,10 +36,12 @@ void Console::SetThemeColor(Color color)
 
 }
 
-void Console::ResetOutputColor(Color color)
+void Console::ResetTextColor(Color color)
 {
 
 }
+
+
 
 void Console::ResetThemeColor(Color color)
 {
@@ -58,23 +69,18 @@ void Console::Show()
 }
 
 
-void Console::Active()
+void Console::Focus()
 {
 
 }
 
 
-bool Console::IsShown() const
-{
-    return false;
-}
-
-bool Console::IsActive() const
+bool Console::IsVisible() const
 {
     return false;
 }
 
-bool Console::IsAttached() const
+bool Console::IsFocus() const
 {
     return false;
 }

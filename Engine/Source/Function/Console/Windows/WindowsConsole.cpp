@@ -7,36 +7,30 @@
 #include <fcntl.h>
 #include <signal.h>
 
+/* static */
 Console& Console::GetInstance()
 {
     static WindowsConsole instance;
     return instance;
 }
-
+/* public */
 WindowsConsole::WindowsConsole()
 {
-    // 尝试附加到父进程控制台（若存在）
-    if (AttachConsole(ATTACH_PARENT_PROCESS)) 
+    OutputDebugStringA("控制台创建失败: ");
+    // 附加失败时创建新控制台
+    if (!GetConsoleWindow() && AllocConsole()) 
     {
         m_hwnd = GetConsoleWindow();
-        m_isAttached = true;
+        m_isAttached = false;
     }
     else 
     {
-        // 附加失败时创建新控制台
-        if (!GetConsoleWindow() && AllocConsole()) 
-        {
-            m_hwnd = GetConsoleWindow();
-            m_isAttached = false;
-        }
-        else 
-        {
-            DWORD err = GetLastError();
-            OutputDebugStringA("控制台创建失败: ");
-            OutputDebugStringA(std::to_string(err).c_str());
-            return;
-        }
+        DWORD err = GetLastError();
+        OutputDebugStringA("控制台创建失败: ");
+        OutputDebugStringA(std::to_string(err).c_str());
+        return;
     }
+    
     // 获取标准句柄并验证
     m_stdoutHandle = GetStdHandle(STD_OUTPUT_HANDLE);
     m_stdinHandle = GetStdHandle(STD_INPUT_HANDLE);
@@ -86,6 +80,11 @@ WindowsConsole::WindowsConsole()
 
     // 设置控制台标题
     SetConsoleTitleW(L"游戏引擎控制台");
+
+    // 绘制输入行
+    _ClearInputLine();
+
+    Hide();
 }
 
 WindowsConsole::~WindowsConsole()
@@ -100,18 +99,10 @@ bool WindowsConsole::ReadInput(String& text)
 
     INPUT_RECORD inputRecords[32];
     DWORD eventCount = 0;
-    bool hasValidInput = false;
+    bool vaildInput = false;
 
-    CONSOLE_SCREEN_BUFFER_INFO csbi;
-    GetConsoleScreenBufferInfo(m_stdoutHandle, &csbi);
-
-    static bool isFirstInput = true;
-    if (isFirstInput)
-    {
-        ClearInputLine();
-        RedirectCout();
-        isFirstInput = false;
-    }
+    CONSOLE_SCREEN_BUFFER_INFO screenInfo;
+    GetConsoleScreenBufferInfo(m_stdoutHandle, &screenInfo);
 
     // 非阻塞检查输入
     if (!PeekConsoleInput(m_stdinHandle, inputRecords, 32, &eventCount) || eventCount == 0)
@@ -130,139 +121,88 @@ bool WindowsConsole::ReadInput(String& text)
     for (DWORD i = 0; i < readCount; ++i)
     {
         const INPUT_RECORD& record = inputRecords[i];
+        const KEY_EVENT_RECORD& keyEvent = record.Event.KeyEvent;
 
         // 仅处理按键事件，其他事件留给IME
         if (record.EventType != KEY_EVENT)
             continue;
 
-        const KEY_EVENT_RECORD& keyEvent = record.Event.KeyEvent;
         // 仅处理按键按下 + 非空字符
         if (!keyEvent.bKeyDown || keyEvent.uChar.UnicodeChar == 0)
             continue;
 
-        COORD lastLine = GetInputLine();
-        SpecialKey key = SpecialKey::None;
+        // 更新输入行位置
+        _UpdateInputLine();
+  
         WORD vkCode = keyEvent.wVirtualKeyCode;
         bool isCtrlPressed = (keyEvent.dwControlKeyState & (LEFT_CTRL_PRESSED | RIGHT_CTRL_PRESSED)) != 0;
 
-        // 特殊键处理（原有逻辑不变）
+        // 特殊键检测
+        SpecialKey key = SpecialKey::None;
         if (isCtrlPressed)
         {
-            if (vkCode == 0x56) key = SpecialKey::Paste;
-            if (vkCode == 0x43) key = SpecialKey::Copy;
-            if (vkCode == 0x41) key = SpecialKey::None;
+            switch (vkCode)
+            {
+            case 0x41: key = SpecialKey::CheckAll;  break;
+            case 0x43: key = SpecialKey::Copy;      break;
+            case 0x56: key = SpecialKey::Paste;     break;
+            }
         }
         else
         {
             switch (vkCode)
             {
-            case VK_UP:    key = SpecialKey::Up; break;
-            case VK_DOWN:  key = SpecialKey::Down; break;
-            case VK_LEFT:  key = SpecialKey::Left; break;
-            case VK_RIGHT: key = SpecialKey::Right; break;
+            
+            case VK_UP:    key = SpecialKey::Up;        break;
+            case VK_DOWN:  key = SpecialKey::Down;      break;
+            case VK_LEFT:  key = SpecialKey::Left;      break;
+            case VK_RIGHT: key = SpecialKey::Right;     break;
             case VK_BACK:  key = SpecialKey::Backspace; break;
-            case VK_RETURN:key = SpecialKey::Enter; break;
-            default: break;
+            case VK_RETURN:key = SpecialKey::Enter;
+                vaildInput = true;
+                break;
             }
         }
 
-        // 特殊键处理逻辑（原有不变）
+        // 特殊按键处理
         if (key != SpecialKey::None)
         {
             m_specialKeyQueue.push(key);
             switch (key)
             {
-            case SpecialKey::Copy:
-                CopyToClipboard(m_inputBuffer);
-                break;
-            case SpecialKey::Paste:
-            {
-                std::u16string pasteText = PasteFromClipboard();
-                if (!pasteText.empty() && m_inputBuffer.size() + pasteText.size() < 1024)
-                {
-                    int visualLen = GetVisualCharCount(m_inputBuffer);
-                    COORD pastePos = { static_cast<SHORT>(2 + visualLen), lastLine.Y };
-                    SetConsoleCursorPosition(m_stdoutHandle, pastePos);
-
-                    DWORD written = 0;
-                    WriteConsoleW(m_stdoutHandle, reinterpret_cast<const wchar_t*>(pasteText.data()),
-                        static_cast<DWORD>(pasteText.size()), &written, nullptr);
-                    m_inputBuffer += pasteText;
-                }
-                break;
-            }
-            case SpecialKey::Backspace:
-                if (!m_inputBuffer.empty()) {
-                    m_inputBuffer.pop_back();
-                    int visualLen = GetVisualCharCount(m_inputBuffer);
-                    COORD backPos = { static_cast<SHORT>(2 + visualLen), lastLine.Y };
-                    SetConsoleCursorPosition(m_stdoutHandle, backPos);
-
-                    const wchar_t backspaceSeq[] = { L'\b', L' ', L'\b' };
-                    DWORD written = 0;
-                    WriteConsoleW(m_stdoutHandle, backspaceSeq, _countof(backspaceSeq) - 1, &written, nullptr);
-                }
-                break;
-            case SpecialKey::Enter:
-                if (!m_inputBuffer.empty()) {
-                    COORD infoOutputPos = { 0, static_cast<SHORT>(lastLine.Y - 1) };
-                    SetConsoleCursorPosition(m_stdoutHandle, infoOutputPos);
-
-                    DWORD written = 0;
-                    WriteConsoleW(m_stdoutHandle, L"输入: ", 4, &written, nullptr);
-                    WriteConsoleW(m_stdoutHandle, reinterpret_cast<const wchar_t*>(m_inputBuffer.data()),
-                        static_cast<DWORD>(m_inputBuffer.size()), &written, nullptr);
-                    WriteConsoleW(m_stdoutHandle, L"\n", 1, &written, nullptr);
-
-                    hasValidInput = true;
-                    text = Convert::UTF16ToUTF8(m_inputBuffer); // 直接赋值
-                    m_inputBuffer.clear();
-                    ClearInputLine();
-                }
-                break;
-            default:
-                break;
+            case SpecialKey::Copy:      _CopyKeyHandle();       break;
+            case SpecialKey::Paste:     _PasteKeyHandle();      break;
+            case SpecialKey::Backspace: _BackspaceKeyHandle();  break;
+            case SpecialKey::Enter:     _EnterKeyHandle(text);  break;
+            case SpecialKey::Left:      _LeftKeyHandle();       break;
+            case SpecialKey::Right:     _RightKeyHandle();      break;
             }
             continue;
         }
 
-        // 处理普通可打印字符（兼容中文）
-        wchar_t wch = keyEvent.uChar.UnicodeChar;
+        // 处理普通可打印字符
+        wchar wch = keyEvent.uChar.UnicodeChar;
         if ((iswprint(static_cast<wint_t>(wch)) || wch == L' ') && m_inputBuffer.size() < 1024)
         {
-            int visualLen = GetVisualCharCount(m_inputBuffer);
-            COORD charPos = { static_cast<SHORT>(2 + visualLen), lastLine.Y };
-            SetConsoleCursorPosition(m_stdoutHandle, charPos);
+            int32 length = _GetVisualCharCount(m_inputBuffer);
+            _SetCursorPosition(2 + length, m_line.Y);
 
             DWORD written = 0;
             WriteConsoleW(m_stdoutHandle, &wch, 1, &written, nullptr);
             m_inputBuffer += static_cast<char16>(wch);
-            hasValidInput = true;
         }
     }
 
     // 光标位置最终校准
-    int finalVisualLen = GetVisualCharCount(m_inputBuffer);
-    COORD finalCursorPos = {
-        static_cast<SHORT>(2 + finalVisualLen),
-        GetInputLine().Y
-    };
-    SetConsoleCursorPosition(m_stdoutHandle, finalCursorPos);
+    int32 length = _GetVisualCharCount(m_inputBuffer);
+    _SetCursorPosition(2 + length, m_line.Y);
 
-    // 非回车时也返回输入内容
-    if (!text.IsEmpty() && hasValidInput)
-    {
-        text = Convert::UTF16ToUTF8(m_inputBuffer);
-    }
-
-    return hasValidInput;
+    return vaildInput;
 }
 
-void WindowsConsole::ReadLine(String& text)
+void WindowsConsole::Write(const String& text)
 {
-    std::string content;
-    std::cin >> content;
-    text = content;
+
 }
 
 bool WindowsConsole::KeyDetection(SpecialKey& keyCode)
@@ -277,7 +217,24 @@ bool WindowsConsole::KeyDetection(SpecialKey& keyCode)
     return true;
 }
 
-void WindowsConsole::SetOutputColor(Color color)
+void WindowsConsole::SetTitle(const String& title)
+{
+    std::u16string u16str = Convert::UTF8ToUTF16(title);
+    SetConsoleTitleW(reinterpret_cast<const wchar*>(u16str.c_str()));
+}
+
+void WindowsConsole::SetFontSize(int32 size)
+{
+    CONSOLE_FONT_INFOEX font = { sizeof(CONSOLE_FONT_INFOEX) };
+    // 获取当前字体信息
+    GetCurrentConsoleFontEx(m_stdoutHandle, FALSE, &font);
+    font.dwFontSize.Y = size; // Y轴高度决定字体大小
+    font.dwFontSize.X = size / 2; // 宽度自适应
+    // 应用新字体设置
+    SetCurrentConsoleFontEx(m_stdoutHandle, FALSE, &font);
+}
+
+void WindowsConsole::SetTextColor(Color color)
 {
 
 }
@@ -287,7 +244,7 @@ void WindowsConsole::SetThemeColor(Color color)
 
 }
 
-void WindowsConsole::ResetOutputColor(Color color)
+void WindowsConsole::ResetTextColor(Color color)
 {
 
 }
@@ -304,7 +261,19 @@ void WindowsConsole::ResetColor(Color color)
 
 void WindowsConsole::Clear()
 {
-
+    GetConsoleScreenBufferInfo(m_stdoutHandle, &m_screenInfo);
+    const DWORD bufferSize = m_screenInfo.dwSize.X * m_screenInfo.dwSize.Y;
+    COORD coordScreen = { 0, 0 }; // 清空起始位置：左上角
+    DWORD count = 0;
+    FillConsoleOutputCharacterW(
+        m_stdoutHandle,
+        L' ',               // 填充字符（宽字符）
+        bufferSize,         // 填充数量
+        coordScreen,        // 起始坐标
+        &count              // 实际填充数量
+    );
+    _UpdateInputLine();
+    _ClearInputLine();
 }
 
 void WindowsConsole::Hide()
@@ -323,17 +292,154 @@ void WindowsConsole::Show()
     }
 }
 
-void WindowsConsole::Active()
+void WindowsConsole::Focus()
+{
+    SetFocus(m_hwnd);
+    SetActiveWindow(m_hwnd);
+}
+
+bool WindowsConsole::IsVisible() const
+{
+    return (GetWindowLong(m_hwnd, GWL_STYLE) & WS_VISIBLE) != 0;
+}
+
+bool WindowsConsole::IsFocus() const
+{
+    HWND hFocusWnd = GetFocus();
+    return (hFocusWnd == m_hwnd) || (GetAncestor(hFocusWnd, GA_ROOT) == m_hwnd);
+}
+
+/* private */
+void WindowsConsole::_Copy(const std::u16string& text) const
+{
+    if (text.empty()) 
+        return;
+
+    // 打开剪贴板
+    if (!OpenClipboard(m_hwnd))  
+        return;
+    // 清空剪切板中的数据
+    EmptyClipboard();
+
+    // 分配全局内存（剪贴板需使用GMEM_MOVEABLE）
+    int64 size = (text.size() + 1) * sizeof(char16);
+    HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE, size);
+    if (hGlobal == nullptr)
+    {
+        CloseClipboard();
+        return;
+    }
+
+    // 拷贝内容到全局内存
+    wchar* buffer = static_cast<wchar*>(GlobalLock(hGlobal));
+    wcscpy_s(buffer, text.size() + 1, reinterpret_cast<const wchar*>(text.c_str()));
+    GlobalUnlock(hGlobal);
+
+    // 设置剪贴板数据
+    SetClipboardData(CF_UNICODETEXT, hGlobal);
+    CloseClipboard();
+}
+
+std::u16string WindowsConsole::_Paste() const
+{
+    std::u16string pasteText;
+    if (!OpenClipboard(m_hwnd)) 
+        return pasteText;
+
+    // 获取剪贴板中的Unicode文本
+    HANDLE hData = GetClipboardData(CF_UNICODETEXT);
+    if (hData != nullptr)
+    {
+        char16* buffer = static_cast<char16*>(GlobalLock(hData));
+        if (buffer != nullptr)
+        {
+            pasteText = buffer;
+            GlobalUnlock(hData);
+        }
+    }
+
+    CloseClipboard();
+    return pasteText;
+}
+
+void WindowsConsole::_CopyKeyHandle() const
 {
 
 }
 
-bool WindowsConsole::IsShown() const
+void WindowsConsole::_PasteKeyHandle()
 {
-    return m_hwnd && IsWindowVisible(m_hwnd);
+    std::u16string pasteText;
+    if (!OpenClipboard(m_hwnd))
+        return;
+
+    // 获取剪贴板中的Unicode文本
+    HANDLE hData = GetClipboardData(CF_UNICODETEXT);
+    if (hData != nullptr)
+    {
+        char16* buffer = static_cast<char16*>(GlobalLock(hData));
+        if (buffer != nullptr)
+        {
+            pasteText = buffer;
+            GlobalUnlock(hData);
+        }
+    }
+
+    CloseClipboard();
+
+    if (m_inputBuffer.size() + pasteText.size() < 1024)
+    {
+        int32 length = _GetVisualCharCount(m_inputBuffer);
+        _SetCursorPosition(2 + length, m_line.Y);
+
+        DWORD written = 0;
+        WriteConsoleW(m_stdoutHandle, reinterpret_cast<const wchar*>(pasteText.data()),
+            static_cast<DWORD>(pasteText.size()), &written, nullptr);
+        m_inputBuffer += pasteText;
+    }
 }
 
-bool WindowsConsole::IsAttached() const
+void WindowsConsole::_CheckAllKeyHandle() const
 {
-    return false;
+    
+}
+
+void WindowsConsole::_BackspaceKeyHandle()
+{
+    if (!m_inputBuffer.empty())
+    {
+        m_inputBuffer.pop_back();
+        int32 length = _GetVisualCharCount(m_inputBuffer);
+        _SetCursorPosition(2 + length, m_line.Y);
+
+        const wchar backspaceSeq[] = { L'\b', L' ', L'\b' };
+        DWORD written = 0;
+        WriteConsoleW(m_stdoutHandle, backspaceSeq, _countof(backspaceSeq) - 1, &written, nullptr);
+    }
+}
+
+void WindowsConsole::_EnterKeyHandle(String& text)
+{
+    if (!m_inputBuffer.empty()) 
+    {
+        DWORD written = 0;
+        WriteConsoleW(m_stdoutHandle, L"输入: ", 4, &written, nullptr);
+        WriteConsoleW(m_stdoutHandle, reinterpret_cast<const wchar*>(m_inputBuffer.data()),
+            static_cast<DWORD>(m_inputBuffer.size()), &written, nullptr);
+        WriteConsoleW(m_stdoutHandle, L"\n", 1, &written, nullptr);
+
+        text = Convert::UTF16ToUTF8(m_inputBuffer); // 直接赋值
+        m_inputBuffer.clear();
+        _ClearInputLine();
+    }
+}
+
+void WindowsConsole::_LeftKeyHandle() const
+{
+
+}
+
+void WindowsConsole::_RightKeyHandle() const
+{
+
 }

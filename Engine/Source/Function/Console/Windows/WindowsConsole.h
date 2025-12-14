@@ -13,49 +13,61 @@ public:
     virtual ~WindowsConsole();
 public:
     /// <summary>
-    /// 从标准输入流中读取一个字节（非阻塞读取）
+    /// 非阻塞读取输入
     /// </summary>
-    /// <param name="ch"></param>
+    /// <param name="content"></param>
     virtual bool ReadInput(String& text) override;
 
     /// <summary>
-    /// 从标准输入流中读取一行（阻塞读取）
+    /// 写入内容并换行
     /// </summary>
-    /// <param name="ch"></param>
-    virtual void ReadLine(String& text) override;
+    /// <param name="content"></param>
+    virtual void Write(const String& text) override;
 
     /// <summary>
     /// 按键检测
     /// </summary>
     /// <param name="keyCode"></param>
     /// <returns></returns>
-    bool KeyDetection(SpecialKey& keyCode) override;
+    virtual bool KeyDetection(SpecialKey& keyCode) override;
 
     /// <summary>
-    /// 设置控制台输出颜色
+    /// 设置控制台标题
+    /// </summary>
+    /// <param name="title"></param>
+    virtual void SetTitle(const String& title) override;
+
+    /// <summary>
+    /// 设置控制台字体大小
+    /// </summary>
+    /// <param name="size"></param>
+    virtual void SetFontSize(int32 size);
+
+    /// <summary>
+    /// 设置控制台文本输出颜色
     /// </summary>
     /// <param name="color"></param>
-    virtual void SetOutputColor(Color color) override;
+    virtual void SetTextColor(Color color) override;
 
     /// <summary>
-    /// 设置控制台主题颜色
+    /// 设置控制台主题背景颜色
     /// </summary>
     virtual void SetThemeColor(Color color) override;
 
     /// <summary>
-    /// 将控制台输出颜色重置为默认值
+    /// 将控制台文本输出颜色重置为默认值
     /// </summary>
     /// <param name="color"></param>
-    virtual void ResetOutputColor(Color color) override;
+    virtual void ResetTextColor(Color color) override;
 
     /// <summary>
-    /// 将控制台主题颜色重置为默认值
+    /// 将控制台主题背景颜色重置为默认值
     /// </summary>
     /// <param name="color"></param>
     virtual void ResetThemeColor(Color color) override;
 
     /// <summary>
-    /// 将控制台重置为默认值
+    /// 将控制台颜色重置为默认值
     /// </summary>
     /// <param name="color"></param>
     virtual void ResetColor(Color color) override;
@@ -76,70 +88,40 @@ public:
     virtual void Show() override;
 
     /// <summary>
-    /// 设置为活动窗口
+    /// 获取输入焦点
     /// <span>只有在控制台可见时有效</span>
     /// </summary>
-    virtual void Active();
+    virtual void Focus() override;
 
     /// <summary>
     /// 检查窗口可见性
     /// </summary>
     /// <returns></returns>
-    virtual bool IsShown() const override;
+    virtual bool IsVisible() const override;
 
     /// <summary>
-    /// 检查控制台是否附加到父进程控制台
+    /// 是否获取输入焦点
     /// </summary>
     /// <returns></returns>
-    virtual bool IsAttached() const override;
+    virtual bool IsFocus() const override;
 private:
-    void CopyToClipboard(const std::u16string& text)
-    {
-        if (text.empty()) return;
+    void _Copy(const std::u16string& text) const;
 
-        // 打开剪贴板
-        if (!OpenClipboard(m_hwnd)) return;
-        EmptyClipboard();
+    std::u16string _Paste() const;
 
-        // 分配全局内存（剪贴板需使用GMEM_MOVEABLE）
-        size_t bufSize = (text.size() + 1) * sizeof(wchar_t);
-        HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE, bufSize);
-        if (hGlobal == nullptr)
-        {
-            CloseClipboard();
-            return;
-        }
+    void _CopyKeyHandle() const;
 
-        // 拷贝内容到全局内存
-        wchar_t* pBuf = static_cast<wchar_t*>(GlobalLock(hGlobal));
-        wcscpy_s(pBuf, text.size() + 1, reinterpret_cast<const wchar*>(text.c_str()));
-        GlobalUnlock(hGlobal);
+    void _PasteKeyHandle();
 
-        // 设置剪贴板数据
-        SetClipboardData(CF_UNICODETEXT, hGlobal);
-        CloseClipboard();
-    }
+    void _CheckAllKeyHandle() const;
 
-    std::u16string PasteFromClipboard()
-    {
-        std::u16string pasteText;
-        if (!OpenClipboard(m_hwnd)) return pasteText;
+    void _BackspaceKeyHandle();
 
-        // 获取剪贴板中的Unicode文本
-        HANDLE hData = GetClipboardData(CF_UNICODETEXT);
-        if (hData != nullptr)
-        {
-            char16* pBuf = static_cast<char16*>(GlobalLock(hData));
-            if (pBuf != nullptr)
-            {
-                pasteText = pBuf;
-                GlobalUnlock(hData);
-            }
-        }
+    void _EnterKeyHandle(String& text);
 
-        CloseClipboard();
-        return pasteText;
-    }
+    void _LeftKeyHandle() const;
+
+    void _RightKeyHandle() const;
 
     static BOOL WINAPI ConsoleCtrlHandler(DWORD dwCtrlType)
     {
@@ -150,35 +132,43 @@ private:
         return FALSE;
     }
 
-    // 获取控制台最后一行位置
-    COORD GetInputLine() 
+    // 获取控制台窗口的最后一行位置
+    void _UpdateInputLine()
     {
-        CONSOLE_SCREEN_BUFFER_INFO csbi;
-        if (!GetConsoleScreenBufferInfo(m_stdoutHandle, &csbi)) {
-            return { 0, 0 };
+        // 更新控制台窗口信息
+        GetConsoleScreenBufferInfo(m_stdoutHandle, &m_screenInfo);
+        // 计算可视窗口最后一行的行号
+        // srWindow: 可视窗口在缓冲区中的坐标（Top=起始行，Bottom=结束行）
+        SHORT row = m_screenInfo.srWindow.Bottom;
+        // 若窗口未初始化，使用缓冲区最后一行
+        if (row <= 0)
+        {
+            row = m_screenInfo.dwSize.Y - 1;
         }
-        // 最后一行 = 缓冲区高度 - 1（可视区域最后一行）
-        return { 0, static_cast<SHORT>(csbi.dwSize.Y - 1) };
+        
+        m_line = { 0, row };
     }
-    // 清空最后一行并重新绘制>提示符
-    void ClearInputLine() {
-        COORD lastLine = GetInputLine();
-        CONSOLE_SCREEN_BUFFER_INFO csbi;
-        GetConsoleScreenBufferInfo(m_stdoutHandle, &csbi);
-
+    // 清空输入行
+    void _ClearInputLine() 
+    {
         // 清空最后一行所有字符（覆盖残留）
         DWORD written = 0;
-        std::wstring emptyLine(csbi.dwSize.X, L' ');
-        SetConsoleCursorPosition(m_stdoutHandle, lastLine);
+        std::wstring emptyLine(1024, L' ');
+        _SetCursorPosition(m_line.X, m_line.Y);
         WriteConsoleW(m_stdoutHandle, emptyLine.data(), static_cast<DWORD>(emptyLine.size()), &written, nullptr);
 
         // 重新绘制>提示符
-        SetConsoleCursorPosition(m_stdoutHandle, lastLine);
+        _SetCursorPosition(m_line.X, m_line.Y);
         WriteConsoleW(m_stdoutHandle, L">", 1, &written, nullptr);
 
         // 光标移到>后方
-        COORD inputPos = { lastLine.X + 1, lastLine.Y };
-        SetConsoleCursorPosition(m_stdoutHandle, inputPos);
+        _SetCursorPosition(m_line.X + 1, m_line.Y);
+    }
+
+    void _SetCursorPosition(int32 x, int32 y) const
+    {
+        COORD position = { x, y };
+        SetConsoleCursorPosition(m_stdoutHandle, position);
     }
 
     void RedirectCout()
@@ -186,8 +176,8 @@ private:
         // 确保cout使用UTF8编码
         std::cout.imbue(std::locale(".UTF8"));
     }
-    // 类内新增：计算UTF-16字符串的视觉字符数（中文/英文都按1个算）
-    int GetVisualCharCount(const std::u16string& utf16Str) const
+    // 类内新增：计算UTF-16字符串的视觉字符数 中文占2格，英文占1格
+    int32 _GetVisualCharCount(const std::u16string& utf16Str) const
     {
         int visualCount = 0;
         for (char16 ch : utf16Str)
@@ -195,7 +185,7 @@ private:
             if (ch < 0x20 || ch == 0x7F) continue;
 
             bool isChinese = (ch >= 0x4E00 && ch <= 0x9FFF) || (ch >= 0x3400 && ch <= 0x4DBF);
-            visualCount += isChinese ? 2 : 1; // 中文占2格，英文占1格
+            visualCount += isChinese ? 2 : 1; 
         }
         return visualCount;
     }
@@ -216,6 +206,12 @@ private:
     bool m_isShowPrompt = false;
     // 输入缓冲区
     std::u16string m_inputBuffer;
+    // 输入行信息
+    COORD m_line;
+    // 控制台窗口信息
+    CONSOLE_SCREEN_BUFFER_INFO m_screenInfo;
     // 特殊按键队列
     std::queue<SpecialKey> m_specialKeyQueue;
+    // 光标在输入缓冲区中的偏移量
+    int32 m_cursor = 0;
 };

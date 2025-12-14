@@ -63,6 +63,9 @@ xmake version 3.0.3+HEAD.de7aca410
     <Filter Include="Source\Function">
       <UniqueIdentifier>{2AC6D8D0-456D-4B9E-9B9D-967EF3CEEC91}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Function\Clipboard">
+      <UniqueIdentifier>{EBE3BEFD-FEE5-4F39-81FC-06463D4C825A}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\Function\Color">
       <UniqueIdentifier>{A7866F61-DB14-438C-A3EA-09D3C72E11F6}</UniqueIdentifier>
     </Filter>
@@ -227,6 +230,9 @@ xmake version 3.0.3+HEAD.de7aca410
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Time\TimePoint.h">
       <Filter>Source\Core\Time</Filter>
     </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Clipboard\Clipboard.h">
+      <Filter>Source\Function\Clipboard</Filter>
+    </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Color\Color.h">
       <Filter>Source\Function\Color</Filter>
     </ClInclude>
@@ -329,6 +335,9 @@ xmake version 3.0.3+HEAD.de7aca410
       <Filter>Source\Core\Memory</Filter>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Core\String\Char.cpp">
+      <Filter>Source\Core\String</Filter>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Core\String\Convert.cpp">
       <Filter>Source\Core\String</Filter>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Core\String\String.cpp">

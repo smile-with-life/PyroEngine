@@ -4,6 +4,7 @@
 
 int32 Application::Init()
 {
+    GConsoleServer->Init();
     return 0;
     
 }
@@ -15,7 +16,7 @@ void Application::Tick()
 
 void Application::Exit()
 {
-    
+    GConsoleServer->Exit();
 }
 
 bool Application::IsQuit() const

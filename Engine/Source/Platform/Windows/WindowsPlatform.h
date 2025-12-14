@@ -17,7 +17,6 @@ extern "C"
     extern CORE_API HINSTANCE GWindowsInstance;
 }
 
-namespace Platform
+namespace Windows
 {
-    using NativeText = std::wstring;
 }

@@ -3,7 +3,8 @@
 
 void ConsoleServer::Init()
 {
-
+    m_console.Show();
+    m_console.SetFontSize(24);
 }
 
 void ConsoleServer::Tick()
@@ -13,7 +14,7 @@ void ConsoleServer::Tick()
     {
         if (!inputText.IsEmpty())
         {
-            m_inputBuffer = inputText;// 追加到控制台输入缓冲区
+            m_inputBuffer = inputText;
         }
     }
 
