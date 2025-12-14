@@ -16,9 +16,8 @@ Console& Console::GetInstance()
 /* public */
 WindowsConsole::WindowsConsole()
 {
-    OutputDebugStringA("控制台创建失败: ");
     // 附加失败时创建新控制台
-    if (!GetConsoleWindow() && AllocConsole()) 
+    if (AllocConsole()) 
     {
         m_hwnd = GetConsoleWindow();
         m_isAttached = false;
@@ -81,6 +80,17 @@ WindowsConsole::WindowsConsole()
     // 设置控制台标题
     SetConsoleTitleW(L"游戏引擎控制台");
 
+    // 获取控制台缓冲区大小
+    CONSOLE_SCREEN_BUFFER_INFO screenInfo;
+    GetConsoleScreenBufferInfo(m_stdoutHandle, &screenInfo);
+    m_bufferWidth = screenInfo.dwSize.X; 
+    m_bufferHeight = screenInfo.dwSize.Y;
+    // 可视窗口高度 = 窗口底部 - 窗口顶部 + 1（总行数）
+    m_visibleHeight = screenInfo.srWindow.Bottom - screenInfo.srWindow.Top + 1;
+    m_visibleWidth = screenInfo.dwSize.X;
+    // 输入行固定在可视窗口最后一行
+    m_inputRow = screenInfo.srWindow.Bottom;
+    _UpdateInputLine();
     // 绘制输入行
     _ClearInputLine();
 
@@ -185,7 +195,7 @@ bool WindowsConsole::ReadInput(String& text)
         if ((iswprint(static_cast<wint_t>(wch)) || wch == L' ') && m_inputBuffer.size() < 1024)
         {
             int32 length = _GetVisualCharCount(m_inputBuffer);
-            _SetCursorPosition(2 + length, m_line.Y);
+            _SetCursorPosition(2 + length, m_inputRow);
 
             DWORD written = 0;
             WriteConsoleW(m_stdoutHandle, &wch, 1, &written, nullptr);
@@ -195,7 +205,7 @@ bool WindowsConsole::ReadInput(String& text)
 
     // 光标位置最终校准
     int32 length = _GetVisualCharCount(m_inputBuffer);
-    _SetCursorPosition(2 + length, m_line.Y);
+    _SetCursorPosition(2 + length, m_inputRow);
 
     return vaildInput;
 }
@@ -261,8 +271,7 @@ void WindowsConsole::ResetColor(Color color)
 
 void WindowsConsole::Clear()
 {
-    GetConsoleScreenBufferInfo(m_stdoutHandle, &m_screenInfo);
-    const DWORD bufferSize = m_screenInfo.dwSize.X * m_screenInfo.dwSize.Y;
+    const DWORD bufferSize = m_bufferWidth * m_bufferHeight;
     COORD coordScreen = { 0, 0 }; // 清空起始位置：左上角
     DWORD count = 0;
     FillConsoleOutputCharacterW(
@@ -390,7 +399,7 @@ void WindowsConsole::_PasteKeyHandle()
     if (m_inputBuffer.size() + pasteText.size() < 1024)
     {
         int32 length = _GetVisualCharCount(m_inputBuffer);
-        _SetCursorPosition(2 + length, m_line.Y);
+        _SetCursorPosition(2 + length, m_inputRow);
 
         DWORD written = 0;
         WriteConsoleW(m_stdoutHandle, reinterpret_cast<const wchar*>(pasteText.data()),
@@ -406,22 +415,35 @@ void WindowsConsole::_CheckAllKeyHandle() const
 
 void WindowsConsole::_BackspaceKeyHandle()
 {
-    if (!m_inputBuffer.empty())
-    {
-        m_inputBuffer.pop_back();
-        int32 length = _GetVisualCharCount(m_inputBuffer);
-        _SetCursorPosition(2 + length, m_line.Y);
+    if (m_inputBuffer.empty()) return;
 
-        const wchar backspaceSeq[] = { L'\b', L' ', L'\b' };
-        DWORD written = 0;
-        WriteConsoleW(m_stdoutHandle, backspaceSeq, _countof(backspaceSeq) - 1, &written, nullptr);
+    // 移除最后一个字符
+    char16 lastCh = m_inputBuffer.back();
+    m_inputBuffer.pop_back();
+
+    // 计算需要回退的列数（中文2格，英文1格）
+    int backCols = (lastCh >= 0x4E00 && lastCh <= 0x9FFF) || (lastCh >= 0x3400 && lastCh <= 0x4DBF) ? 2 : 1;
+
+    // 回退并清除字符
+    int32 length = _GetVisualCharCount(m_inputBuffer);
+    _SetCursorPosition(2 + length, m_inputRow);
+
+    DWORD written = 0;
+    std::wstring backspaceSeq;
+    for (int i = 0; i < backCols; ++i)
+    {
+        backspaceSeq += L'\b';  // 回退光标
+        backspaceSeq += L' ';   // 覆盖字符
+        backspaceSeq += L'\b';  // 再回退
     }
+    WriteConsoleW(m_stdoutHandle, backspaceSeq.data(), static_cast<DWORD>(backspaceSeq.size()), &written, nullptr);
 }
 
 void WindowsConsole::_EnterKeyHandle(String& text)
 {
     if (!m_inputBuffer.empty()) 
     {
+
         DWORD written = 0;
         WriteConsoleW(m_stdoutHandle, L"输入: ", 4, &written, nullptr);
         WriteConsoleW(m_stdoutHandle, reinterpret_cast<const wchar*>(m_inputBuffer.data()),
