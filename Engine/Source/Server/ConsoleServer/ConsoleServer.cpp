@@ -47,8 +47,7 @@ void ConsoleServer::Tick()
     {
         String cmd = m_commandQueue.front();
         m_commandQueue.pop();
-        std::cout << cmd << std::endl;
-        //m_console.Write(cmd);
+        m_console.Write("--");
     }
     
 }

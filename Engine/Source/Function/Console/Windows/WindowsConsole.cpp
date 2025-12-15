@@ -3,6 +3,7 @@
 #include "WindowsConsole.h"
 #include "Platform.h"
 #include "String/Convert.h"
+#include "Alog/Alog.h"
 #include <io.h>
 #include <fcntl.h>
 #include <signal.h>
@@ -73,10 +74,6 @@ WindowsConsole::WindowsConsole()
         }
     }
 
-    // 关闭Ctrl+C默认行为
-    signal(SIGINT, SIG_IGN);
-    SetConsoleCtrlHandler(ConsoleCtrlHandler, TRUE);
-
     // 设置控制台标题
     SetConsoleTitleW(L"游戏引擎控制台");
 
@@ -89,10 +86,9 @@ WindowsConsole::WindowsConsole()
     m_visibleHeight = screenInfo.srWindow.Bottom - screenInfo.srWindow.Top + 1;
     m_visibleWidth = screenInfo.dwSize.X;
     // 输入行固定在可视窗口最后一行
-    m_inputRow = screenInfo.srWindow.Bottom;
+    m_inputRow = screenInfo.srWindow.Bottom - 1;
+    m_outputRow = 1;
     _UpdateInputLine();
-    // 绘制输入行
-    _ClearInputLine();
 
     Hide();
 }
@@ -101,6 +97,17 @@ WindowsConsole::~WindowsConsole()
 {
     // 将当前进程从其关联的控制台分离
     FreeConsole();
+}
+
+String WindowsConsole::Read()
+{
+    return String();
+}
+
+void WindowsConsole::Write(const String& text)
+{
+    std::u16string u16str = Convert::UTF8ToUTF16(text);
+    _PrintOutput(u16str);
 }
 
 bool WindowsConsole::ReadInput(String& text)
@@ -141,8 +148,6 @@ bool WindowsConsole::ReadInput(String& text)
         if (!keyEvent.bKeyDown || keyEvent.uChar.UnicodeChar == 0)
             continue;
 
-        // 更新输入行位置
-        _UpdateInputLine();
   
         WORD vkCode = keyEvent.wVirtualKeyCode;
         bool isCtrlPressed = (keyEvent.dwControlKeyState & (LEFT_CTRL_PRESSED | RIGHT_CTRL_PRESSED)) != 0;
@@ -183,7 +188,7 @@ bool WindowsConsole::ReadInput(String& text)
             case SpecialKey::Copy:      _CopyKeyHandle();       break;
             case SpecialKey::Paste:     _PasteKeyHandle();      break;
             case SpecialKey::Backspace: _BackspaceKeyHandle();  break;
-            case SpecialKey::Enter:     _EnterKeyHandle(text);  break;
+            case SpecialKey::Enter:     _EnterKeyHandle();  break;
             case SpecialKey::Left:      _LeftKeyHandle();       break;
             case SpecialKey::Right:     _RightKeyHandle();      break;
             }
@@ -197,8 +202,7 @@ bool WindowsConsole::ReadInput(String& text)
             int32 length = _GetVisualCharCount(m_inputBuffer);
             _SetCursorPosition(2 + length, m_inputRow);
 
-            DWORD written = 0;
-            WriteConsoleW(m_stdoutHandle, &wch, 1, &written, nullptr);
+            _PrintInput(static_cast<char16>(wch));
             m_inputBuffer += static_cast<char16>(wch);
         }
     }
@@ -207,12 +211,15 @@ bool WindowsConsole::ReadInput(String& text)
     int32 length = _GetVisualCharCount(m_inputBuffer);
     _SetCursorPosition(2 + length, m_inputRow);
 
+    // 计算最终结果
+    if (vaildInput)
+    {
+        text = Convert::UTF16ToUTF8(m_inputBuffer); // 直接赋值
+        m_inputBuffer.clear();
+        _UpdateInputLine();
+    }
+
     return vaildInput;
-}
-
-void WindowsConsole::Write(const String& text)
-{
-
 }
 
 bool WindowsConsole::KeyDetection(SpecialKey& keyCode)
@@ -282,7 +289,6 @@ void WindowsConsole::Clear()
         &count              // 实际填充数量
     );
     _UpdateInputLine();
-    _ClearInputLine();
 }
 
 void WindowsConsole::Hide()
@@ -347,28 +353,6 @@ void WindowsConsole::_Copy(const std::u16string& text) const
     // 设置剪贴板数据
     SetClipboardData(CF_UNICODETEXT, hGlobal);
     CloseClipboard();
-}
-
-std::u16string WindowsConsole::_Paste() const
-{
-    std::u16string pasteText;
-    if (!OpenClipboard(m_hwnd)) 
-        return pasteText;
-
-    // 获取剪贴板中的Unicode文本
-    HANDLE hData = GetClipboardData(CF_UNICODETEXT);
-    if (hData != nullptr)
-    {
-        char16* buffer = static_cast<char16*>(GlobalLock(hData));
-        if (buffer != nullptr)
-        {
-            pasteText = buffer;
-            GlobalUnlock(hData);
-        }
-    }
-
-    CloseClipboard();
-    return pasteText;
 }
 
 void WindowsConsole::_CopyKeyHandle() const
@@ -439,20 +423,11 @@ void WindowsConsole::_BackspaceKeyHandle()
     WriteConsoleW(m_stdoutHandle, backspaceSeq.data(), static_cast<DWORD>(backspaceSeq.size()), &written, nullptr);
 }
 
-void WindowsConsole::_EnterKeyHandle(String& text)
+void WindowsConsole::_EnterKeyHandle()
 {
     if (!m_inputBuffer.empty()) 
     {
-
-        DWORD written = 0;
-        WriteConsoleW(m_stdoutHandle, L"输入: ", 4, &written, nullptr);
-        WriteConsoleW(m_stdoutHandle, reinterpret_cast<const wchar*>(m_inputBuffer.data()),
-            static_cast<DWORD>(m_inputBuffer.size()), &written, nullptr);
-        WriteConsoleW(m_stdoutHandle, L"\n", 1, &written, nullptr);
-
-        text = Convert::UTF16ToUTF8(m_inputBuffer); // 直接赋值
-        m_inputBuffer.clear();
-        _ClearInputLine();
+        _PrintOutput(m_inputBuffer);
     }
 }
 
@@ -464,4 +439,57 @@ void WindowsConsole::_LeftKeyHandle() const
 void WindowsConsole::_RightKeyHandle() const
 {
 
+}
+
+void WindowsConsole::_PrintOutput(const std::u16string& text)
+{
+    std::vector<std::u16string> lines = _SplitText(text);
+
+    if (lines.empty())
+        return;
+
+    // 逐行输出到控制台
+    for (const auto& line : lines)
+    {
+        // 判断输出行是否到达输入行位置
+        if (m_outputRow >= m_inputRow)
+        {
+            // 滚动输出区
+            _CalcOutputLine();
+            // 更新输入行
+            _UpdateInputLine();
+        }
+        // 定位光标到输出行起始位置
+        _SetCursorPosition(0, m_outputRow);
+
+        // 输出当前行内容
+        DWORD written = 0;
+        WriteConsoleW(
+            m_stdoutHandle,
+            reinterpret_cast<const wchar*>(line.data()),
+            static_cast<DWORD>(line.size()),
+            &written,
+            nullptr
+        );
+
+        // 清空输出行剩余区域（避免残留旧内容）
+        std::wstring emptyTail(m_visibleWidth - line.size(), L' ');
+        WriteConsoleW(m_stdoutHandle, emptyTail.data(), static_cast<DWORD>(emptyTail.size()), &written, nullptr);
+
+        // 输出后递增输出行（准备下一行输出）
+        m_outputRow++;
+    }
+}
+
+void WindowsConsole::_PrintInput(wchar wch)
+{
+    // 输出输入内容到输入行
+    DWORD written = 0;
+    WriteConsoleW(
+        m_stdoutHandle,
+        &wch,
+        1,
+        &written,
+        nullptr
+    );
 }

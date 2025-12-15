@@ -26,17 +26,19 @@ public:
 
     virtual ~Console() = default;
 public:
-    /// <summary>
-    /// 非阻塞读取输入
-    /// </summary>
-    /// <param name="content"></param>
-    virtual bool ReadInput(String& text);
+    virtual String Read();
 
     /// <summary>
     /// 写入内容并换行
     /// </summary>
     /// <param name="content"></param>
     virtual void Write(const String& text);
+
+    /// <summary>
+    /// 非阻塞读取输入
+    /// </summary>
+    /// <param name="content"></param>
+    virtual bool ReadInput(String& text);
 
     /// <summary>
     /// 按键检测

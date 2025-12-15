@@ -139,29 +139,29 @@ concept CopyableType = requires(const Type & obj)
 };
 
 
-//// 迭代器类型
-//template<class Iter>
-//concept IteratorType = requires(Iter iter) 
-//{
-//    typename std::iter_value_t<Iter>;     // 必须有值类型
-//    typename std::iter_reference_t<Iter>; // 必须有引用类型
-//    { *iter } -> std::same_as<std::iter_reference_t<Iter>>; // 必须可解引用
-//    { ++iter } -> std::same_as<Iter&>;    // 必须可递增
-//};
+// 迭代器类型
+template<class Iter>
+concept IteratorType = requires(Iter iter) 
+{
+    typename std::iter_value_t<Iter>;     // 必须有值类型
+    typename std::iter_reference_t<Iter>; // 必须有引用类型
+    { *iter } -> std::same_as<std::iter_reference_t<Iter>>; // 必须可解引用
+    { ++iter } -> std::same_as<Iter&>;    // 必须可递增
+};
 //
-//// 输出迭代器类型
-//template<class Iter, class Type>
-//concept OutputIteratorType = IteratorType<Iter> && requires(Iter iter, std::iter_value_t<Iter> value) 
-//{
-//    *iter = std::move(value);  // 必须可赋值
-//};
-//
-//// 输入迭代器类型
-//template<class Iter>
-//concept InputIteratorType = IteratorType<Iter> && requires(Iter iter) 
-//{
-//    { --iter } -> std::same_as<Iter&>;    // 必须可递减
-//};
+// 输出迭代器类型
+template<class Iter, class Type>
+concept OutputIteratorType = IteratorType<Iter> && requires(Iter iter, std::iter_value_t<Iter> value) 
+{
+    *iter = std::move(value);  // 必须可赋值
+};
+
+// 输入迭代器类型
+template<class Iter>
+concept InputIteratorType = IteratorType<Iter> && requires(Iter iter) 
+{
+    { --iter } -> std::same_as<Iter&>;    // 必须可递减
+};
 //
 //// 前向迭代器类型
 //template<class Iter, class Type>

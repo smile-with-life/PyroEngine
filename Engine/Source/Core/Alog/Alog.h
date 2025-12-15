@@ -22,7 +22,7 @@ constexpr const Type Max(std::initializer_list<Type> ilist)
 
 // 两个参数中的最小值
 template<Concept::SortComparableType Type>
-constexpr Type& Min(const Type& a, const Type& b)
+constexpr Type Min(const Type& a, const Type& b)
 {
     return (a < b) ? a : b;
 }

@@ -6,6 +6,11 @@ bool Console::ReadInput(String& text)
     return false;
 }
 
+String Console::Read()
+{
+    return String();
+}
+
 void Console::Write(const String& text)
 {
 
