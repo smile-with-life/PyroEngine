@@ -11,12 +11,21 @@
     #error "Windows 10 or newer required"
 #endif
 
-extern "C" 
-{
-    // Windows应用程序句柄
-    extern CORE_API HINSTANCE GWindowsInstance;
-}
+// Windows应用程序句柄
+extern "C" extern CORE_API HINSTANCE GWindowsInstance;
 
-namespace Windows
-{
-}
+// SEH 异常处理支持
+#define PLATFORM_SEH_EXCEPTIONS 1
+
+// COM 接口对象安全释放
+#define SAFE_RELEASE(p) { if(p) { (p)->Release(); (p)=NULL; } }
+
+// 兼容性适配，解决 Windows SDK 头文件在不同编译器下的编译错误
+#if defined(COMPILER_CLANG) || (defined(COMPILER_MSVC_VERSION) && (COMPILER_MSVC_VERSION >= 1900))
+    #include <intsafe.h>
+    #if defined(COMPILER_MSVC_VERSION) && (COMPILER_MSVC_VERSION >= 1940)
+        #define static inline
+    #endif
+    #include <strsafe.h>
+    #undef static
+#endif

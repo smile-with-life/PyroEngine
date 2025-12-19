@@ -481,13 +481,25 @@ void WindowsConsole::_PrintOutput(const std::u16string& text)
     }
 }
 
-void WindowsConsole::_PrintInput(wchar wch)
+void WindowsConsole::_PrintInput(TCHAR wch)
 {
     // 输出输入内容到输入行
     DWORD written = 0;
     WriteConsoleW(
         m_stdoutHandle,
         &wch,
+        1,
+        &written,
+        nullptr
+    );
+}
+
+void WindowsConsole::_PrintInput(const TCHAR* str)
+{
+    DWORD written = 0;
+    WriteConsoleW(
+        m_stdoutHandle,
+        str,
         1,
         &written,
         nullptr

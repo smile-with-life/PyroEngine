@@ -13,15 +13,6 @@ set_allowedarchs("x64")
 -- 设置代码语言标准：最新
 set_languages "cxxlatest"
 
-rule("mode.Test")
-    on_load(function(target)
-        -- 设置符号信息：添加调试符号
-        target:set("symbols", "debug")
-        -- 设置优化级别：禁用优化
-        target:set("optimize", "none")
-        -- 设置警告级别：启用全部支持的警告
-        target:set("warnings", "everything")
-    end)
 
 rule("mode.Debug")
     on_load(function(target)
@@ -33,20 +24,31 @@ rule("mode.Debug")
         target:set("warnings", "everything")
     end)
 
-rule("mode.Release")
+rule("mode.Development")
     on_load(function(target)
         -- 设置符号信息：添加调试符号
         target:set("symbols", "debug")
-        -- 设置优化级别：更快的优化
+        -- 设置优化级别：优化运行速度
         target:set("optimize", "faster")
         -- 设置警告级别：启用较少的警告
         target:set("warnings", "less")
     end)
 
-rule("mode.Dist")
+
+rule("mode.Release")
     on_load(function(target)
-        -- 设置符号信息：设置符号不可见
-        target:set("symbols", "hidden")
+        -- 设置符号信息：不添加调试符号
+        target:set("symbols", "none")
+        -- 设置优化级别：最快运行速度的优化
+        target:set("optimize", "fastest")
+        -- 设置警告级别：禁用所有警告
+        target:set("warnings", "none")
+    end)
+
+rule("mode.Test")
+    on_load(function(target)
+        -- 设置符号信息：不添加调试符号
+        target:set("symbols", "none")
         -- 设置优化级别：最快运行速度的优化
         target:set("optimize", "fastest")
         -- 设置警告级别：禁用所有警告

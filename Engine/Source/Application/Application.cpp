@@ -2,6 +2,12 @@
 
 #include "Application.h"
 
+Application& Application::GetInstance()
+{
+    static Application instance;
+    return instance;
+}
+
 int32 Application::Init()
 {
     GConsoleServer->Init();

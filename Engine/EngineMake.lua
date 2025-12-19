@@ -12,7 +12,7 @@ target "Engine"
     -- 设置依赖文件生成目录
     set_dependir "$(projectdir)/Engine/Build/$(os)/$(mode)/Dep"
     -- 指定编译配置
-    add_rules("mode.Test", "mode.Debug", "mode.Release", "mode.Dist")
+    add_rules("mode.Test", "mode.Debug", "mode.Release", "mode.Development")
     -- 添加第三方库的头文件搜索目录
     add_includedirs {
         "Dependencies",
@@ -50,25 +50,9 @@ target "Engine"
             -- 平台层：Windows平台
             "Source/Platform/Windows/**.cpp",
             -- Windows入口
-            "Source/Application/Launch/Windows/WindowsLaunch.cpp",
-            "Source/Application/Launch/Windows/WindowsExport.def"
+            "Source/Application/Windows/WindowsLaunch.cpp",
+            "Source/Application/Windows/WindowsExport.def"
         }     
-        -- Test配置
-        if is_mode("Test") then
-            set_runtimes "MDd"
-        end
-        -- Debug配置
-        if is_mode("Debug") then
-            set_runtimes "MDd"
-        end
-        -- Release配置
-        if is_mode("Release") then
-            set_runtimes "MD"
-        end
-        -- Dist配置
-        if is_mode("Dist") then
-            set_runtimes "MD"
-        end 
     end
     -- Linux设置
     if is_plat("linux") then
@@ -86,22 +70,24 @@ target "Engine"
     if is_plat("ios") then
         add_defines {"PLATFORM_IOS"}
     end
-    -- Test配置
-    if is_mode("Test") then
-        add_defines "BUILD_CONFIG_TEST=0"
-    end
+
     -- Debug配置
     if is_mode("Debug") then
-        add_defines "BUILD_CONFIG_DEBUG=1"
+        add_defines "BUILD_CONFIG_DEBUG=0"
+    end
+    -- Development配置
+    if is_mode("Development") then
+        add_defines "BUILD_CONFIG_DEVELOPMENT=1"
     end
     -- Release配置
     if is_mode("Release") then
         add_defines "BUILD_CONFIG_RELEASE=2"
     end
-    -- Dist配置
-    if is_mode("Dist") then
-        add_defines "BUILD_CONFIG_DIST=3"
-    end     
+    -- Test配置
+    if is_mode("Test") then
+        add_defines "BUILD_CONFIG_TEST=3"
+    end
+         
 
     add_headerfiles{
         -- 预编译头文件
@@ -131,5 +117,53 @@ target "Engine"
         -- 应用层
         "Source/Application/*.cpp"
     }
+
+    on_load(function (target)
+        -- Debug配置
+        if is_mode("Debug") then
+            print(target:toolchain().name)
+            if(target:toolchain().name == "msvc") then
+                set_runtimes "MDd"
+            elseif target:toolchain().name == "gcc" then
+                set_runtimes "stdc++_shared"
+            elseif target:toolchain().name == "clang" then
+                set_runtimes "c++_shared"
+            end
+
+        end
+        -- Development配置
+        if is_mode("Development") then
+
+            if(target:toolchain().name == "msvc") then
+                set_runtimes "MDd"
+            elseif target:toolchain().name == "gcc" then
+                set_runtimes "stdc++_shared"
+            elseif target:toolchain().name == "clang" then
+                set_runtimes "c++_shared"
+            end
+        end
+        -- Release配置
+        if is_mode("Release") then
+
+            if(target:toolchain().name == "msvc") then
+                set_runtimes "MD"
+            elseif target:toolchain().name == "gcc" then
+                set_runtimes "stdc++_shared"
+            elseif target:toolchain().name == "clang" then
+                set_runtimes "c++_shared"
+            end
+        end
+        -- Test配置
+        if is_mode("Test") then
+
+            if(target:toolchain().name == "msvc") then
+                set_runtimes "MD"
+            elseif target:toolchain().name == "gcc" then
+                set_runtimes "stdc++_shared"
+            elseif target:toolchain().name == "clang" then
+                set_runtimes "c++_shared"
+            end
+        end
+    end)
 
 

@@ -123,11 +123,11 @@ private:
 
     void _RightKeyHandle() const;
 
-    // 输出文本到输出区（核心输出）
     void _PrintOutput(const std::u16string& text);
 
-    // 回显输入内容到输出区（带标识）
-    void _PrintInput(wchar wch);
+    void _PrintInput(TCHAR wch);
+
+    void _PrintInput(const TCHAR* str);
 
     void _UpdateInputLine()
     {

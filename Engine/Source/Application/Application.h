@@ -55,6 +55,12 @@ public:
     /// </summary>
     /// <returns></returns>
     bool IsQuit() const;
+public:
+    static Application& GetInstance();
+protected:
+    Application() = default;
+
+    ~Application() = default;
 private:
     // 退出标志
     bool m_isQuit = false;

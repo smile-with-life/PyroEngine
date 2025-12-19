@@ -14,7 +14,7 @@ target "TestGame"
     -- 添加链接搜索目录
     add_linkdirs("$(projectdir)/Engine/Build/$(os)/$(mode)/Bin")
     -- 指定编译配置
-    add_rules("mode.Test", "mode.Debug", "mode.Release", "mode.Dist")
+    add_rules("mode.Test", "mode.Debug", "mode.Release", "mode.Development")
     -- 添加链接库
     add_links("Engine")
     -- 添加程序运行时动态库加载路径
@@ -26,7 +26,6 @@ target "TestGame"
         add_defines "PLATFORM_WINDOWS"
         add_syslinks("kernel32")  -- 链接 Windows API 库
         add_ldflags("/SUBSYSTEM:WINDOWS") -- 指定窗口子系统
-        -- set_runtimes "MDd"
     end
 
     if is_os("linux") then

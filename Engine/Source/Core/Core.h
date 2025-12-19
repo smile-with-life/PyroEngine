@@ -4,7 +4,7 @@
 
 enum class Comparsion
 {
-    Less = -1,
-    Equal = 0,
-    Greater = 1
+    Less = -1,      // 小于
+    Equal = 0,      // 等于
+    Greater = 1     // 大于
 };

@@ -6,7 +6,6 @@
 #include "Memory/ByteArray.h"
 class String;
 using StringList = Array<String>;
-class ByteArray;
 class String
 {
 public:
@@ -30,22 +29,22 @@ public:
     // 移动赋值
     String& operator=(String&& other);
 
-    // C 风格字符串构造
+    // 从 C 风格字符串构造
     String(const char* str);
 
-    // C 风格字符串赋值
+    // 从 C 风格字符串赋值
     String& operator=(const char* str);
 
-    // C++ 字符串构造
+    // 从 C++ 字符串构造
     String(const std::string& str);
 
-    // C++ 字符串赋值
+    // 从 C++ 字符串赋值
     String& operator=(const std::string& str);
 
-    // 字节数组构造
+    // 从字节数组构造
     String(const ByteArray& buffer);
 
-    // 字节数组赋值
+    // 从字节数组赋值
     String& operator=(const ByteArray& buffer);
 
     // 隐式转化为 const std::string
@@ -538,5 +537,3 @@ private:
     // Unicode 字符数量
     int64 m_count;
 };
-
-//using StringList = Array<String>;
