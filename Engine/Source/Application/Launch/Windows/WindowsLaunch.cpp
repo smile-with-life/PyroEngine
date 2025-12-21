@@ -20,7 +20,7 @@ void SetWindowsEnvironment()
 /// </summary>
 bool ProcessWindowsCommandLine()
 {
-
+    return false;
 }
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
@@ -38,8 +38,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     GWindowsInstance = hInstance;
 
     // 命令行解析
-    TCHAR* cmdLine = GetCommandLineW();
-
+    tchar* cmdLine = GetCommandLineW();
 
     // 获取应用程序单例
     Application& app = Application::GetInstance();

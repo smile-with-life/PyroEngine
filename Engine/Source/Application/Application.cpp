@@ -1,47 +1,47 @@
 #include "pch.h"
-
 #include "Application.h"
+#include "Engine/Engine.h"
 
+/* static */
 Application& Application::GetInstance()
 {
     static Application instance;
     return instance;
 }
-
-int32 Application::Init()
+/* member */
+Application::Application()
 {
-    GConsoleServer->Init();
-    return 0;
+    AllowServer();
+}
+
+Application::~Application()
+{
+    FreeServer();
+}
+
+int32 Application::Run()
+{
     
-}
+#ifdef BUILD_ENGINE
+    Engine engine;
 
-void Application::Tick()
-{
-    GConsoleServer->Tick();
-}
+    int32 error = engine.Init();
 
-void Application::Exit()
-{
-    GConsoleServer->Exit();
+    while (!m_isQuit)
+    {
+        engine.Tick();
+    }
+
+    engine.Exit();
+
+    return error;
+#endif
+   
 }
 
 bool Application::IsQuit() const
 {
     return m_isQuit;
-}
-
-int32 Application::Run()
-{
-    int32 error = Init();
-
-    while (!IsQuit())
-    {
-        Tick();
-    }
-
-    Exit();
-
-    return error;
 }
 
 ApplicationInfo Application::About()

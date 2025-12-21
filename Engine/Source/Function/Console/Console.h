@@ -7,7 +7,9 @@
 class Console
 {
 public:
-    // 特殊按键
+    /// <summary>
+    /// 特殊按键
+    /// </summary>
     enum class SpecialKey 
     { 
         None,           // 未知
@@ -26,6 +28,10 @@ public:
 
     virtual ~Console() = default;
 public:
+    /// <summary>
+    /// 读取一次输入（阻塞）
+    /// </summary>
+    /// <returns></returns>
     virtual String Read();
 
     /// <summary>

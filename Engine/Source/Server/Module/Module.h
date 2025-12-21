@@ -22,6 +22,16 @@ public:
 
     virtual void Exit() = 0;
 
+    virtual void LoadSettings()
+    {
+
+    }
+
+    virtual void SaveSettings()
+    {
+
+    }
+
     virtual bool IsSupportDynamicReload() override
     {
         return false;

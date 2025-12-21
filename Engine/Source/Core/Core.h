@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CoreType.h"
+#include "Platform/CoreType.h"
 
 enum class Comparsion
 {

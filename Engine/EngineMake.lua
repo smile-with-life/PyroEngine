@@ -1,7 +1,3 @@
-includes "Dependencies/xmake.lua"
-
-add_requires("GoogleTest", {configs = {shared = false}})
-
 target "Engine"
     -- 设置目标编译类型：动态库程序
     set_kind "shared"
@@ -18,7 +14,6 @@ target "Engine"
         "Dependencies",
         "Dependencies/GoogleTest/include" 
     }
-    add_packages("GoogleTest")
     -- 添加头文件搜索目录
     add_includedirs {
         "Source",
@@ -40,6 +35,12 @@ target "Engine"
         add_defines "PLATFORM_WINDOWS"
         -- 链接 Windows API 库
         add_syslinks("kernel32","User32")
+        -- CRT 库设置
+        if is_mode("Debug","Development") then
+            set_runtimes "MDd"
+        else
+            set_runtimes "MD"
+        end
         -- 添加头文件
         add_headerfiles{
             -- 平台层：Windows平台
@@ -50,8 +51,8 @@ target "Engine"
             -- 平台层：Windows平台
             "Source/Platform/Windows/**.cpp",
             -- Windows入口
-            "Source/Application/Windows/WindowsLaunch.cpp",
-            "Source/Application/Windows/WindowsExport.def"
+            "Source/Application/Launch/Windows/WindowsLaunch.cpp",
+            "Source/Application/Launch/Windows/WindowsExport.def"
         }     
     end
     -- Linux设置
@@ -101,7 +102,7 @@ target "Engine"
         -- 服务层
         "Source/Server/**.h",
         -- 应用层
-        "Source/Application/*.h"
+        "Source/Application/**.h"
     }
     add_files{
         -- 预编译文件(msvc专用)
@@ -115,55 +116,58 @@ target "Engine"
         -- 服务层
         "Source/Server/**.cpp",
         -- 应用层
-        "Source/Application/*.cpp"
+        "Source/Application/**.cpp"
     }
 
-    on_load(function (target)
-        -- Debug配置
-        if is_mode("Debug") then
-            print(target:toolchain().name)
-            if(target:toolchain().name == "msvc") then
-                set_runtimes "MDd"
-            elseif target:toolchain().name == "gcc" then
-                set_runtimes "stdc++_shared"
-            elseif target:toolchain().name == "clang" then
-                set_runtimes "c++_shared"
-            end
+    add_defines "BUILD_ENGINE"
+    
+    
+    -- on_config(function (target)
+    --     -- Debug配置
+    --     if is_mode("Debug") then
+    --         print(target.toolchain().name)
+    --         if(target.toolchain().name == "msvc") then
+    --             set_runtimes "MDd"
+    --         elseif target.toolchain().name == "gcc" then
+    --             set_runtimes "stdc++_shared"
+    --         elseif target.toolchain().name == "clang" then
+    --             set_runtimes "c++_shared"
+    --         end
 
-        end
-        -- Development配置
-        if is_mode("Development") then
+    --     end
+    --     -- Development配置
+    --     if is_mode("Development") then
 
-            if(target:toolchain().name == "msvc") then
-                set_runtimes "MDd"
-            elseif target:toolchain().name == "gcc" then
-                set_runtimes "stdc++_shared"
-            elseif target:toolchain().name == "clang" then
-                set_runtimes "c++_shared"
-            end
-        end
-        -- Release配置
-        if is_mode("Release") then
+    --         if(target.toolchain().name == "msvc") then
+    --             set_runtimes "MDd"
+    --         elseif target.toolchain().name == "gcc" then
+    --             set_runtimes "stdc++_shared"
+    --         elseif target.toolchain().name == "clang" then
+    --             set_runtimes "c++_shared"
+    --         end
+    --     end
+    --     -- Release配置
+    --     if is_mode("Release") then
 
-            if(target:toolchain().name == "msvc") then
-                set_runtimes "MD"
-            elseif target:toolchain().name == "gcc" then
-                set_runtimes "stdc++_shared"
-            elseif target:toolchain().name == "clang" then
-                set_runtimes "c++_shared"
-            end
-        end
-        -- Test配置
-        if is_mode("Test") then
+    --         if(target.toolchain().name == "msvc") then
+    --             set_runtimes "MD"
+    --         elseif target.toolchain().name == "gcc" then
+    --             set_runtimes "stdc++_shared"
+    --         elseif target.toolchain().name == "clang" then
+    --             set_runtimes "c++_shared"
+    --         end
+    --     end
+    --     -- Test配置
+    --     if is_mode("Test") then
 
-            if(target:toolchain().name == "msvc") then
-                set_runtimes "MD"
-            elseif target:toolchain().name == "gcc" then
-                set_runtimes "stdc++_shared"
-            elseif target:toolchain().name == "clang" then
-                set_runtimes "c++_shared"
-            end
-        end
-    end)
+    --         if(target.toolchain().name == "msvc") then
+    --             set_runtimes "MD"
+    --         elseif target.toolchain().name == "gcc" then
+    --             set_runtimes "stdc++_shared"
+    --         elseif target.toolchain().name == "clang" then
+    --             set_runtimes "c++_shared"
+    --         end
+    --     end
+    -- end)
 
 

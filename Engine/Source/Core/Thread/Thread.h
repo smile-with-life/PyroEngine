@@ -113,10 +113,14 @@ public:
         std::swap(m_thread, other.m_thread);
     }
 public:
-    // 强制当前线程休眠 msecs 毫秒
-    static void Sleep(uint64 msecs)
+    /// <summary>
+    /// 线程休眠
+    /// </summary>
+    /// <param name="msecs"></param>
+    template<class Time>
+    static void Sleep(Time time)
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(msecs));
+        std::this_thread::sleep_for(std::chrono::duration<int64, typename Time::period>(time));
     }
 
     static unsigned int HardwareConcurrency() noexcept

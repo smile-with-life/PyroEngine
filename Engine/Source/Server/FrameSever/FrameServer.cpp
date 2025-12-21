@@ -1,32 +1,32 @@
 #include "pch.h"
 #include "FrameServer.h"
+#include "Thread/Thread.h"
 
 void FrameServer::Init()
 {
+    LoadSettings();
+    m_frameTime = Microseconds(1000000) / m_fixedFPS;
     m_lastUpdateTime = SteadyClock::Now();
 }
 
 void FrameServer::Tick()
 {
+    // 获取当前时间
     auto currentTime = SteadyClock::Now();
-
+    // 计算本帧的耗时
     auto currentFrameTime = ConvertType<Microseconds>(currentTime - m_lastUpdateTime);
-    auto waitTime = m_frameTime - currentFrameTime;
-    if (waitTime > Microseconds(0))
+    // 判断是否为固定帧率模式
+    if (m_mode == FramePacingMode::Fixed)
     {
-        auto start = SteadyClock::Now();
-        while (1)
+        // 计算需要等待的时间
+        auto waitTime = m_frameTime - currentFrameTime;
+        if (waitTime > Microseconds(0))
         {
-            auto end = SteadyClock::Now(); 
-            auto duration = ConvertType<Microseconds>(end - start);
-            if (duration >= waitTime)
-            {
-                break;
-            }
+            Thread::Sleep(waitTime);
         }
-    }
+    }  
     m_frameCount++;
-
+    // 判断是否需要更新帧率
     auto now = SteadyClock::Now();
     auto updateTime = now - m_lastUpdateTime;
     if (updateTime >= Seconds(1))
@@ -39,5 +39,41 @@ void FrameServer::Tick()
 
 void FrameServer::Exit()
 {
+    SaveSettings();
+}
 
+void FrameServer::LoadSettings()
+{
+
+}
+
+void FrameServer::SaveSettings()
+{
+
+}
+
+FramePacingMode FrameServer::GetMode() const
+{
+    return m_mode;
+}
+
+int32 FrameServer::GetFixedFPS() const
+{
+    return m_fixedFPS;
+}
+
+int32 FrameServer::GetCurrentFPS() const
+{
+    return m_FPS;
+}
+
+void FrameServer::SetMode(FramePacingMode mode)
+{
+    m_mode = mode;
+}
+
+void FrameServer::SetFixedFPS(int32 fps)
+{
+    m_fixedFPS = fps > MaxFPS ? MaxFPS : fps;
+    m_frameTime = Microseconds(1000000) / m_fixedFPS;
 }

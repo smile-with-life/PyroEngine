@@ -3,6 +3,7 @@
 
 void ConsoleServer::Init()
 {
+    LoadSettings();
     m_console.Show();
     m_console.SetFontSize(24);
 }
@@ -47,12 +48,21 @@ void ConsoleServer::Tick()
     {
         String cmd = m_commandQueue.front();
         m_commandQueue.pop();
-        m_console.Write("--");
     }
     
 }
 
 void ConsoleServer::Exit()
+{
+    SaveSettings();
+}
+
+void ConsoleServer::LoadSettings()
+{
+
+}
+
+void ConsoleServer::SaveSettings()
 {
 
 }

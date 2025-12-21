@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Core.h"
 #include "Concept/Concept.h"
 #include "Iterator/Iterator.h"
@@ -272,6 +271,11 @@ template<class Type>
 class Array 
 {
 public:
+    using value_type = Type;
+    using reference = Type&;
+    using const_reference = const Type&;
+    using pointer = Type*;
+    using const_pointer = const Type*;
     using iterator = ArrayIterator<Type>;
     using const_iterator = ArrayConstIterator<Type>;
     using reverse_iterator = std::reverse_iterator<iterator>;
@@ -295,7 +299,7 @@ public:
     /// <summary>
     /// 拷贝构造函数
     /// </summary>
-    /// <param name="other">要拷贝的数组</param>
+    /// <param name="other">要拷贝的容器</param>
     constexpr Array(const Array& other)
         : m_alloc(other.m_alloc)
     {
@@ -316,7 +320,7 @@ public:
     /// <summary>
     /// 拷贝赋值运算符
     /// </summary>
-    /// <param name="other">要拷贝的数组</param>
+    /// <param name="other">要拷贝的容器</param>
     /// <returns>this</returns>
     constexpr Array& operator=(const Array& other)
     {
@@ -335,7 +339,7 @@ public:
     /// <summary>
     /// 移动构造函数
     /// </summary>
-    /// <param name="other">要移动的数组</param>
+    /// <param name="other">要移动的容器</param>
     constexpr Array(Array&& other)
         : m_alloc(std::move(other.m_alloc))
     {
@@ -349,7 +353,7 @@ public:
     /// <summary>
     /// 移动赋值运算符
     /// </summary>
-    /// <param name="other">要移动的数组</param>
+    /// <param name="other">要移动的容器</param>
     /// <returns>this</returns>
     constexpr Array& operator=(Array&& other)
     {
@@ -373,16 +377,16 @@ public:
         m_size = other.m_size;
         m_capacity = other.m_capacity;
         m_alloc = other.m_alloc;
-        // 将 other 置为空数组 
+        // 将 other 置为空容器 
         other.m_data = nullptr;
         other.m_size = 0;
         other.m_capacity = 0;
         return *this;
     }
     /// <summary>
-    /// 构造函数，创建指定大小的数组
+    /// 构造函数，创建指定大小的容器
     /// </summary>
-    /// <param name="count">数组初始大小</param>
+    /// <param name="count">容器初始大小</param>
     constexpr explicit Array(int32 count)
     {
         m_data = m_alloc.Allocate(count);
@@ -393,9 +397,9 @@ public:
         }
     }
     /// <summary>
-    /// 构造函数，指定数组大小并赋初值
+    /// 构造函数，指定容器大小并赋初值
     /// </summary>
-    /// <param name="count">数组初始大小</param>
+    /// <param name="count">容器初始大小</param>
     /// <param name="value">用于填充的初始值</param>
     constexpr Array(int32 count, const Type& value)
     {
@@ -485,7 +489,7 @@ public:
     /// 访问第一个元素
     /// </summary>
     /// <returns>返回首元素的引用</returns>
-    /// <exception cref="std::out_of_range">数组为空时抛出</exception>
+    /// <exception cref="std::out_of_range">容器为空时抛出</exception>
     Type& Front()
     {
         if (m_size == 0) [[unlikely]]
@@ -498,7 +502,7 @@ public:
     /// 访问第一个元素(const版本)
     /// </summary>
     /// <returns>返回首元素的const引用</returns>
-    /// <exception cref="std::out_of_range">数组为空时抛出</exception>
+    /// <exception cref="std::out_of_range">容器为空时抛出</exception>
     constexpr const Type& Front() const
     {
         if (m_size == 0) [[unlikely]]
@@ -511,7 +515,7 @@ public:
     /// 访问最后一个元素
     /// </summary>
     /// <returns>返回尾元素的引用</returns>
-    /// <exception cref="std::out_of_range">数组为空时抛出</exception>
+    /// <exception cref="std::out_of_range">容器为空时抛出</exception>
     constexpr Type& Back()
     {
         if (m_size == 0) [[unlikely]]
@@ -524,7 +528,7 @@ public:
     /// 访问最后一个元素(const版本)
     /// </summary>
     /// <returns>返回尾元素的const引用</returns>
-    /// <exception cref="std::out_of_range">数组为空时抛出</exception>
+    /// <exception cref="std::out_of_range">容器为空时抛出</exception>
     constexpr const Type& Back() const
     {
         if (m_size == 0) [[unlikely]]
@@ -534,23 +538,23 @@ public:
         return m_data[m_size - 1];
     }
     /// <summary>
-    /// 获取底层数组指针
+    /// 获取底层容器指针
     /// </summary>
-    /// <returns>指向数组首元素的指针</returns>
+    /// <returns>指向容器首元素的指针</returns>
     constexpr Type* Data()
     {
         return m_data;
     }
     /// <summary>
-    /// 获取底层数组指针(const版本)
+    /// 获取底层容器指针(const版本)
     /// </summary>
-    /// <returns>指向数组首元素的const指针</returns>
+    /// <returns>指向容器首元素的const指针</returns>
     constexpr const Type* Data() const
     {
         return m_data;
     }
     /// <summary>
-    /// 获取数组当前已使用的内存字节大小
+    /// 获取容器当前已使用的内存字节大小
     /// </summary>
     /// <returns>已使用的内存字节大小</returns>
     constexpr uint64 ByteSize() const
@@ -561,12 +565,12 @@ public:
     /// 获取模板参数类型Type的字节大小
     /// </summary>
     /// <returns>类型Type的字节大小</returns>
-    constexpr int32 TypeSize()
+    constexpr int32 TypeSize() const
     {
         return sizeof(Type);
     }
     /// <summary>
-    /// 获取数组当前元素数量
+    /// 获取容器当前元素数量
     /// </summary>
     /// <returns>元素数量</returns>
     constexpr int32 Size() const
@@ -582,7 +586,7 @@ public:
         return std::numeric_limits<int32>::max();
     }
     /// <summary>
-    /// 获取数组当前容量
+    /// 获取容器当前容量
     /// </summary>
     /// <returns>当前容量</returns>
     constexpr int32 Capacity() const
@@ -590,7 +594,7 @@ public:
         return m_capacity;
     }
     /// <summary>
-    /// 清空数组(元素被销毁，容量保持不变)
+    /// 清空容器(元素被销毁，容量保持不变)
     /// </summary>
     constexpr void Clear()
     {
@@ -677,9 +681,9 @@ public:
         m_capacity = new_capacity;    
     }
     /// <summary>
-    /// 调整数组大小
+    /// 调整容器大小
     /// </summary>
-    /// <param name="size">新的数组大小</param>
+    /// <param name="size">新的容器大小</param>
     constexpr void Resize(int32 size)
     {
         if (size < m_size)
@@ -727,39 +731,9 @@ public:
         }
     }
     /// <summary>
-    /// 在末尾添加元素(拷贝语义)
+    /// 在末尾追加另一个容器的所有元素(拷贝语义)
     /// </summary>
-    /// <param name="value">要添加的元素</param>
-    /// <returns>this</returns>
-    constexpr Array& Add(const Type& value)
-    {
-        if (m_size + 1 > m_capacity) [[unlikely]]
-        {
-            Reserve(m_size + 1);
-        }
-        std::construct_at(&m_data[m_size], value);
-        m_size++;
-        return *this;
-    }
-    /// <summary>
-    /// 在末尾添加元素(移动语义)
-    /// </summary>
-    /// <param name="value">要添加的元素</param>
-    /// <returns>this</returns>
-    constexpr Array& Add(Type&& value) noexcept
-    {
-        if (m_size + 1 > m_capacity) [[unlikely]] 
-        {
-            Reserve(m_size + 1);
-        }
-        std::construct_at(&m_data[m_size], std::move(value));
-        m_size++;
-        return *this;
-    }
-    /// <summary>
-    /// 在末尾追加另一个数组的所有元素(拷贝语义)
-    /// </summary>
-    /// <param name="other">要添加的数组</param>
+    /// <param name="other">要添加的容器</param>
     /// <returns>this</returns>
     constexpr Array& Append(const Array& other)
     {
@@ -770,7 +744,7 @@ public:
             return Append(temp);
         }
 
-        // 空数组处理
+        // 空容器处理
         if (other.m_size == 0) 
         { 
             return *this; 
@@ -789,16 +763,16 @@ public:
         {
             for (int32 i = 0; i < other.Size(); ++i)
             {
-                Add(other.m_data[i]);
+                Push(other.m_data[i]);
             }
         }
 
         return *this;
     }
     /// <summary>
-    /// 在末尾追加另一个数组的所有元素(移动语义)
+    /// 在末尾追加另一个容器的所有元素(移动语义)
     /// </summary>
-    /// <param name="other">要添加的数组</param>
+    /// <param name="other">要添加的容器</param>
     /// <returns>this</returns>
     constexpr Array& Append(Array&& other) noexcept
     {
@@ -808,7 +782,7 @@ public:
             return *this;
         }
 
-        // 空数组处理
+        // 空容器处理
         if (other.m_size == 0) {
             return *this;
         }
@@ -835,46 +809,46 @@ public:
         {
             for (int32 i = 0; i < other.Size(); ++i) 
             {
-                Add(std::move(other.m_data[i]));
+                Push(std::move(other.m_data[i]));
             }
             other.m_size = 0;
         }
         return *this;
     }
     /// <summary>
-    /// 在数组末尾追加从 first 到 last 范围内的元素
+    /// 在容器末尾追加从 first 到 last 范围内的元素
     /// </summary>
     /// <param name="first">起始迭代器</param>
     /// <param name="last">结束迭代器</param>
     /// <returns>this</returns>
-    template <std::random_access_iterator InputIt>
+    template <class InputIt>
     constexpr Array& Append(InputIt first, InputIt last)
     {
         // 计算要添加的元素数量
         const int32 count = last - first;
 
-        // 空数组处理
+        // 空容器处理
         if (count == 0)
         {
             return *this;
         }
 
-        // 检查并处理自引用（迭代器指向当前数组）
-        if constexpr (std::is_pointer_v<InputIt>) 
+        // 检查并处理自引用（迭代器指向当前容器）
+        if constexpr (std::is_pointer_v<InputIt>)
         {
             const auto* first_ptr = std::to_address(first);
             const auto* last_ptr = std::to_address(last);
             const bool is_self_ref = (first_ptr >= m_data) && (first_ptr < m_data + m_size);
 
-            if (is_self_ref) 
+            if (is_self_ref)
             {
                 Array temp;
                 temp.Reserve(count);
-                for (auto iter = first; iter != last; ++iter) 
+                for (auto iter = first; iter != last; ++iter)
                 {
-                    temp.Add(*iter);
+                    temp.Push(*iter);
                 }
-                return Append(temp); 
+                return Append(temp);
             }
         }
 
@@ -883,13 +857,13 @@ public:
         Reserve(new_size);
 
         // 批量添加元素（根据类型选择最优方式）
-        if constexpr (std::is_trivially_copyable_v<Type>) 
+        if constexpr (std::is_trivially_copyable_v<Type>)
         {
             // 平凡类型：使用内存拷贝
             std::memcpy(m_data + m_size, std::to_address(first), count * sizeof(Type));
             m_size = new_size;
         }
-        else 
+        else
         {
             // 非平凡类型：使用 uninitialized_copy
             std::uninitialized_copy(first, last, m_data + m_size);
@@ -899,11 +873,196 @@ public:
         return *this;
     }
     /// <summary>
-    /// 在数组末尾追加初始化列表中的元素
+    /// 在容器末尾追加初始化列表中的元素
     /// </summary>
     /// <param name="ilist">初始化列表</param>
     /// <returns>this</returns>
     constexpr Array& Append(std::initializer_list<Type> ilist)
+    {
+        return Append(ilist.begin(), ilist.end());
+    }
+    /// <summary>
+    /// 在起始追加另一个容器的所有元素(拷贝语义)
+    /// </summary>
+    /// <param name="other">要添加的容器</param>
+    /// <returns>this</returns>
+    constexpr Array& Prepend(const Array& other)
+    {
+        // 处理自赋值:创建临时副本，避免自引用导致的元素覆盖
+        if (this == &other)
+        {
+            Array temp(other);
+            return Prepend(temp);
+        }
+
+        // 空容器处理，直接返回
+        if (other.m_size == 0)
+        {
+            return *this;
+        }
+
+        const int32 new_size = m_size + other.Size();
+        const int32 prepend_count = other.Size();
+
+        // 预留足够空间
+        Reserve(new_size);
+
+        // 从后往前移动，避免元素覆盖
+        for (int32 i = m_size - 1; i >= 0; --i)
+        {
+            std::construct_at(&m_data[i + prepend_count], std::move_if_noexcept(m_data[i]));
+            std::destroy_at(&m_data[i]);
+        }
+
+        // 拷贝other的元素到头部
+        if constexpr (std::is_trivially_copyable_v<Type>)
+        {
+            // 平凡可复制类型，使用内存拷贝优化
+            std::memcpy(m_data, other.m_data, prepend_count * sizeof(Type));
+        }
+        else
+        {
+            // 非平凡类型，逐个拷贝构造
+            for (int32 i = 0; i < prepend_count; ++i)
+            {
+                std::construct_at(&m_data[i], std::as_const(other.m_data[i]));
+            }
+        }
+
+        // 更新元素数量
+        m_size = new_size;
+        return *this;
+    }
+    /// <summary>
+    /// 在起始追加另一个容器的所有元素(移动语义)
+    /// </summary>
+    /// <param name="other">要添加的容器</param>
+    /// <returns>this</returns>
+    constexpr Array& Prepend(Array&& other) noexcept
+    {
+        // 处理自移动:直接返回，避免资源混乱
+        if (this == &other)
+        {
+            return *this;
+        }
+
+        // 空容器处理，直接返回
+        if (other.m_size == 0)
+        {
+            return *this;
+        }
+
+        const int32 new_size = m_size + other.Size();
+        const int32 prepend_count = other.Size();
+
+        // 预留足够空间
+        Reserve(new_size);
+
+        // 移动现有元素，为前置元素腾出头部空间
+        for (int32 i = m_size - 1; i >= 0; --i)
+        {
+            std::construct_at(&m_data[i + prepend_count], std::move_if_noexcept(m_data[i]));
+            std::destroy_at(&m_data[i]);
+        }
+
+        // 移动other的元素到头部（避免拷贝，提升性能）
+        if constexpr (std::is_trivially_move_constructible_v<Type> && std::is_trivially_copyable_v<Type>)
+        {
+            // 平凡类型，使用内存拷贝优化（移动等价于拷贝）
+            std::memcpy(m_data, other.m_data, prepend_count * sizeof(Type));
+        }
+        else if constexpr (std::is_nothrow_move_constructible_v<Type>)
+        {
+            // 可 noexcept 移动的类型，批量移动
+            std::uninitialized_move_n(other.m_data, prepend_count, m_data);
+        }
+        else
+        {
+            // 通用情况，逐个移动构造
+            for (int32 i = 0; i < prepend_count; ++i)
+            {
+                std::construct_at(&m_data[i], std::move(other.m_data[i]));
+            }
+        }
+
+        // 更新当前容器大小
+        m_size = new_size;
+
+        // 重置other，使其处于空容器状态
+        other.m_size = 0;
+        return *this;
+    }
+    /// <summary>
+    /// 在容器起始追加从 first 到 last 范围内的元素
+    /// </summary>
+    /// <param name="first">起始迭代器</param>
+    /// <param name="last">结束迭代器</param>
+    /// <returns>this</returns>
+    template <class InputIt>
+    constexpr Array& Prepend(InputIt first, InputIt last)
+    {
+        // 计算要前置的元素数量
+        const int32 count = last - first;
+
+        // 空范围处理，直接返回
+        if (count == 0)
+        {
+            return *this;
+        }
+
+        // 检查并处理自引用（迭代器指向当前容器）
+        if constexpr (std::is_pointer_v<InputIt>)
+        {
+            const auto* first_ptr = std::to_address(first);
+            const auto* last_ptr = std::to_address(last);
+            const bool is_self_ref = (first_ptr >= m_data) && (first_ptr < m_data + m_size);
+
+            if (is_self_ref)
+            {
+                // 自引用时，先创建临时副本
+                Array temp(first, last);
+                return Prepend(temp);
+            }
+        }
+
+        const int32 new_size = m_size + count;
+
+        // 预留足够空间
+        Reserve(new_size);
+
+        // 移动现有元素，腾出头部空间
+        for (int32 i = m_size - 1; i >= 0; --i)
+        {
+            std::construct_at(&m_data[i + count], std::move_if_noexcept(m_data[i]));
+            std::destroy_at(&m_data[i]);
+        }
+
+        // 将迭代器范围的元素添加到头部
+        if constexpr (std::is_trivially_copyable_v<Type>)
+        {
+            // 平凡类型，内存拷贝优化
+            std::memcpy(m_data, std::to_address(first), count * sizeof(Type));
+        }
+        else
+        {
+            // 非平凡类型，逐个拷贝构造
+            InputIt iter = first;
+            for (int32 i = 0; i < count; ++i, ++iter)
+            {
+                std::construct_at(&m_data[i], *iter);
+            }
+        }
+
+        // 更新元素数量
+        m_size = new_size;
+        return *this;
+    }
+    /// <summary>
+    /// 在容器起始追加初始化列表中的元素
+    /// </summary>
+    /// <param name="ilist">初始化列表</param>
+    /// <returns>this</returns>
+    constexpr Array& Prepend(std::initializer_list<Type> ilist)
     {
         return Append(ilist.begin(), ilist.end());
     }
@@ -1097,23 +1256,35 @@ public:
         Insert(cbegin() + index, ilist);
     }
     /// <summary>
-    /// 在数组末尾添加一个元素(拷贝语义)
+    /// 在容器末尾添加一个元素(拷贝语义)
     /// </summary>
     /// <param name="value">要添加的值</param>
     constexpr void Push(const Type& value)
     {
-        Add(value);
+        if (m_size + 1 > m_capacity) [[unlikely]]
+        {
+            Reserve(m_size + 1);
+        }
+        std::construct_at(&m_data[m_size], value);
+        m_size++;
+        return *this;
     }
     /// <summary>
-    /// 在数组末尾添加一个元素(移动语义)
+    /// 在容器末尾添加一个元素(移动语义)
     /// </summary>
     /// <param name="value">要添加的值</param>
     constexpr void Push(Type&& value)
     {
-        Add(std::move(value));
+        if (m_size + 1 > m_capacity) [[unlikely]]
+        {
+            Reserve(m_size + 1);
+        }
+        std::construct_at(&m_data[m_size], std::move(value));
+        m_size++;
+        return *this;
     }
     /// <summary>
-    /// 移除数组末尾的元素
+    /// 移除容器末尾的元素
     /// </summary>
     constexpr void Pop()
     {
@@ -1122,7 +1293,7 @@ public:
         --m_size;
     }
     /// <summary>
-    /// 在数组开头添加一个元素(拷贝语义)
+    /// 在容器开头添加一个元素(拷贝语义)
     /// </summary>
     /// <param name="value">要添加的值</param>
     constexpr void Unshift(const Type& value)
@@ -1130,7 +1301,7 @@ public:
         Insert(cbegin(), value);
     }
     /// <summary>
-    /// 在数组开头添加一个元素(移动语义)
+    /// 在容器开头添加一个元素(移动语义)
     /// </summary>
     /// <param name="value">要添加的值</param>
     constexpr void Unshift(Type&& value)
@@ -1138,7 +1309,7 @@ public:
         Insert(cbegin(), std::move(value));
     }
     /// <summary>
-    /// 移除数组开头的元素
+    /// 移除容器开头的元素
     /// </summary>
     constexpr void Shift()
     {
@@ -1146,20 +1317,21 @@ public:
         Erase(cbegin());
     }
     /// <summary>
-    /// 在数组末尾就地构造一个元素
+    /// 在容器末尾就地构造一个元素
     /// </summary>
     /// <param name="args">构造元素的参数</param>
     /// <returns>指向新构造元素的迭代器</returns>
     template<class... Args>
-    constexpr iterator Emplace(Args&&... args)
+    constexpr iterator Emplace(const_iterator pos, Args&&... args)
     {
         if (m_size + 1 > m_capacity) 
         {
             Reserve(m_size + 1);
         }
-        std::construct_at(&m_data[m_size], std::forward<Args>(args)...);
+        int32 index = pos - begin();
+        std::construct_at(&m_data[index], std::forward<Args>(args)...);
         ++m_size;
-        return end() - 1;
+        return begin() + index;
     }
     /// <summary>
     /// 移除指定位置的元素
@@ -1219,7 +1391,7 @@ public:
         Erase(cbegin() + start, cbegin() + end);
     }
     /// <summary>
-    /// 检查数组中是否包含指定值
+    /// 检查容器中是否包含指定值
     /// </summary>
     /// <param name="value">要查找的值</param>
     /// <returns>如果找到返回 true，否则返回 false</returns>
@@ -1235,7 +1407,7 @@ public:
         return false;
     }
     /// <summary>
-    /// 检查数组中是否有元素满足指定条件
+    /// 检查容器中是否有元素满足指定条件
     /// </summary>
     /// <param name="condition">条件函数或谓词</param>
     /// <returns>如果有元素满足条件返回 true，否则返回 false</returns>
@@ -1338,10 +1510,173 @@ public:
         return FindLastIndex([&](const Type& element) { return element == value; });
     }
     /// <summary>
-    /// 过滤数组，保留满足条件的元素
+    /// 归并两个已排序容器
+    /// </summary>
+    /// <param name="other"></param>
+    void Merge(Array& other)
+    {
+        // 处理自归并：直接返回（无意义，且会导致逻辑混乱）
+        if (this == &other)
+        {
+            return;
+        }
+
+        // 空容器处理：待归并容器为空，直接返回
+        if (other.IsEmpty())
+        {
+            return;
+        }
+
+        // 当前容器为空：直接拷贝other的所有元素
+        if (this->IsEmpty())
+        {
+            *this = other;
+            return;
+        }
+
+        // 步骤1：预留足够空间，避免归并过程中多次重分配
+        const int32 new_total_size = m_size + other.m_size;
+        Reserve(new_total_size);
+
+        // 步骤2：创建临时缓冲区存储归并结果（避免覆盖原数据）
+        // 利用现有分配器分配临时内存
+        Type* temp_buffer = m_alloc.Allocate(new_total_size);
+        int32 i = 0; // 当前容器的遍历索引
+        int32 j = 0; // other容器的遍历索引
+        int32 k = 0; // 临时缓冲区的写入索引
+
+        // 步骤3：归并核心逻辑（升序归并，兼容可比较类型）
+        static_assert(std::is_copy_constructible_v<Type>, "Type must be copy constructible for merge(copy)");
+        static_assert(Concept::SortComparableType<Type>, "Type must be sort comparable for merge");
+
+        while (i < m_size && j < other.m_size)
+        {
+            if (m_data[i] <= other.m_data[j])
+            {
+                std::construct_at(&temp_buffer[k++], std::move_if_noexcept(m_data[i++]));
+            }
+            else
+            {
+                std::construct_at(&temp_buffer[k++], std::move_if_noexcept(other.m_data[j++]));
+            }
+        }
+
+        // 步骤4：拷贝剩余元素（当前容器未遍历完的部分）
+        while (i < m_size)
+        {
+            std::construct_at(&temp_buffer[k++], std::move_if_noexcept(m_data[i++]));
+        }
+
+        // 步骤5：拷贝剩余元素（other容器未遍历完的部分，拷贝语义）
+        while (j < other.m_size)
+        {
+            std::construct_at(&temp_buffer[k++], std::as_const(other.m_data[j++]));
+        }
+
+        // 步骤6：销毁原容器元素，释放原内存
+        Clear();
+        if (m_capacity != 0)
+        {
+            m_alloc.Deallocate(m_data, m_capacity);
+        }
+
+        // 步骤7：接管临时缓冲区的资源
+        m_data = temp_buffer;
+        m_size = new_total_size;
+        m_capacity = new_total_size;
+    }
+    /// <summary>
+    /// 归并两个已排序容器
+    /// </summary>
+    /// <param name="other"></param>
+    void Merge(Array&& other)
+    {
+        // 处理自移动归并：直接返回
+        if (this == &other)
+        {
+            return;
+        }
+
+        // 空容器处理：待归并容器为空，直接返回
+        if (other.IsEmpty())
+        {
+            return;
+        }
+
+        // 当前容器为空：直接接管other的资源（移动语义核心优化）
+        if (this->IsEmpty())
+        {
+            *this = std::move(other);
+            return;
+        }
+
+        // 步骤1：预留足够空间
+        const int32 new_total_size = m_size + other.m_size;
+        Reserve(new_total_size);
+
+        // 步骤2：创建临时缓冲区
+        Type* temp_buffer = m_alloc.Allocate(new_total_size);
+        int32 i = 0, j = 0, k = 0;
+
+        // 步骤3：归并核心逻辑（升序归并）
+        static_assert(std::is_move_constructible_v<Type>, "Type must be move constructible for merge(move)");
+        static_assert(Concept::SortComparableType<Type>, "Type must be sort comparable for merge");
+
+        while (i < m_size && j < other.m_size)
+        {
+            if (m_data[i] <= other.m_data[j])
+            {
+                std::construct_at(&temp_buffer[k++], std::move_if_noexcept(m_data[i++]));
+            }
+            else
+            {
+                std::construct_at(&temp_buffer[k++], std::move_if_noexcept(other.m_data[j++]));
+            }
+        }
+
+        // 步骤4：移动剩余元素（当前容器）
+        while (i < m_size)
+        {
+            std::construct_at(&temp_buffer[k++], std::move_if_noexcept(m_data[i++]));
+        }
+
+        // 步骤5：移动剩余元素（other容器，移动语义，无需保留other数据）
+        while (j < other.m_size)
+        {
+            std::construct_at(&temp_buffer[k++], std::move_if_noexcept(other.m_data[j++]));
+        }
+
+        // 步骤6：销毁并释放原容器资源
+        Clear();
+        if (m_capacity != 0)
+        {
+            m_alloc.Deallocate(m_data, m_capacity);
+        }
+
+        // 步骤7：接管临时缓冲区资源
+        m_data = temp_buffer;
+        m_size = new_total_size;
+        m_capacity = new_total_size;
+
+        // 步骤8：重置other为无效状态（移动语义要求）
+        other.m_data = nullptr;
+        other.m_size = 0;
+        other.m_capacity = 0;
+    }
+    /// <summary>
+    /// 移除满足指定的元素
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    int32 Remove(const Type& value)
+    {
+        
+    }
+    /// <summary>
+    /// 过滤容器，保留满足条件的元素
     /// </summary>
     /// <param name="condition">条件函数或谓词</param>
-    /// <returns>包含满足条件元素的新数组</returns>
+    /// <returns>包含满足条件元素的新容器</returns>
     template<class Condition>
     constexpr Array& With(Condition&& condition)
     {
@@ -1365,10 +1700,10 @@ public:
         return *this;
     }
     /// <summary>
-    /// 创建包含满足条件元素的新数组
+    /// 创建包含满足条件元素的新容器
     /// </summary>
     /// <param name="condition">条件函数或谓词</param>
-    /// <returns>包含满足条件元素的新数组</returns>
+    /// <returns>包含满足条件元素的新容器</returns>
     template<class Condition>
     constexpr Array Filter(Condition&& condition)
     {
@@ -1377,13 +1712,47 @@ public:
         {
             if (std::forward<Condition>(condition)(m_data[i])) 
             {
-                result.Add(m_data[i]);
+                result.Push(m_data[i]);
             }
         }
         return result;
     }
     /// <summary>
-    /// 根据条件对数组进行排序
+    /// 反转元素的顺序
+    /// </summary>
+    void Reverse()
+    {
+        // 空容器或只有一个元素，无需反转
+        if (m_size <= 1)
+        {
+            return;
+        }
+
+        // 双指针法：首尾交换，向中间靠拢
+        int32 left = 0;
+        int32 right = m_size - 1;
+
+        while (left < right)
+        {
+            // 优化：平凡可交换类型直接交换，非平凡类型移动交换
+            if constexpr (std::is_trivially_swappable_v<Type>)
+            {
+                std::swap(m_data[left], m_data[right]);
+            }
+            else
+            {
+                // 使用移动语义避免拷贝，提升效率
+                Type temp = std::move(m_data[left]);
+                m_data[left] = std::move(m_data[right]);
+                m_data[right] = std::move(temp);
+            }
+
+            ++left;
+            --right;
+        }
+    }
+    /// <summary>
+    /// 根据条件对容器进行排序
     /// </summary>
     /// <param name="condition">排序条件或比较函数</param>
     template<class Condition>
@@ -1392,9 +1761,9 @@ public:
         std::sort(begin(), end(), std::forward<Condition>(condition));
     }
     /// <summary>
-    /// 检查数组是否为空
+    /// 检查容器是否为空
     /// </summary>
-    /// <returns>true表示数组为空</returns>
+    /// <returns>true表示容器为空</returns>
     constexpr bool IsEmpty() const
     {
         return m_size == 0;
@@ -1409,9 +1778,9 @@ public:
         return index >= 0 && index < m_size;
     }
     /// <summary>
-    /// 交换两个数组的内容
+    /// 交换两个容器的内容
     /// </summary>
-    /// <param name="other">要交换的另一个数组</param>
+    /// <param name="other">要交换的另一个容器</param>
     constexpr void Swap(Array& other)
     {
         std::swap(m_size, other.m_size);

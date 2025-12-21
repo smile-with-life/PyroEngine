@@ -13,7 +13,7 @@ public:
     friend class TimePoint;
 public:
     using period = Period;
-    using type = std::chrono::duration<int64_t, Period>;
+    using type = std::chrono::duration<int64, Period>;
 public:
     Duration() = default;
 
@@ -32,8 +32,13 @@ public:
     {
 
     }
+
+    operator std::chrono::duration<int64, Period>() const
+    {
+        return m_duration;
+    }
 public:
-    int64_t Count() const
+    int64 Count() const
     {
         return m_duration.count();
     }
@@ -113,7 +118,7 @@ public:
     template<class Period1, class Period2>
     friend constexpr bool operator<=(const Duration<Period1>& left, const Duration<Period2>& right);
 private:
-    std::chrono::duration<int64_t, Period> m_duration;
+    std::chrono::duration<int64, Period> m_duration;
 };
 
 template<class ToDuration, class Period>

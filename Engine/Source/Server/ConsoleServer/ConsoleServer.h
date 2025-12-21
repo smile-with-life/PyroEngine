@@ -16,6 +16,10 @@ public:
 
     virtual void Exit() override;
 
+    virtual void LoadSettings() override;
+
+    virtual void SaveSettings() override;
+
     // 注册控制台命令
     void RegisterCommand(const String& cmdName, CommandFunc cmdFunc);
 

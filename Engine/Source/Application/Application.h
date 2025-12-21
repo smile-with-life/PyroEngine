@@ -3,7 +3,6 @@
 #include "Core.h"
 #include "Server.h"
 #include "String/String.h"
-#include "Memory/RAII.h"
 
 struct ApplicationInfo
 {
@@ -22,22 +21,10 @@ struct ApplicationInfo
 class Application
 {
 public:
-    /// <summary>
-    /// 初始化
-    /// </summary>
-    /// <returns></returns>
-    int32 Init();
+    Application();
 
-    /// <summary>
-    /// 帧更新
-    /// </summary>
-    void Tick();
-
-    /// <summary>
-    /// 退出清理
-    /// </summary>
-    void Exit();
-
+    ~Application();
+public:
     /// <summary>
     /// 运行
     /// </summary>
@@ -57,10 +44,6 @@ public:
     bool IsQuit() const;
 public:
     static Application& GetInstance();
-protected:
-    Application() = default;
-
-    ~Application() = default;
 private:
     // 退出标志
     bool m_isQuit = false;

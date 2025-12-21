@@ -18,6 +18,9 @@ xmake version 3.0.3+HEAD.de7aca410
     <Filter Include="Source\Application">
       <UniqueIdentifier>{608A61E3-7EA5-4E95-BD7B-2B3F1A948F03}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Application\Engine">
+      <UniqueIdentifier>{986A7281-59BE-4CF7-A1AA-ABE7B6E5EB7C}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\Application\Launch">
       <UniqueIdentifier>{EA203872-EE83-4AC2-8A55-5ABBCD95C2B1}</UniqueIdentifier>
     </Filter>
@@ -145,6 +148,9 @@ xmake version 3.0.3+HEAD.de7aca410
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Application\Application.h">
       <Filter>Source\Application</Filter>
     </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Application\Engine\Engine.h">
+      <Filter>Source\Application\Engine</Filter>
+    </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Alog\Alog.h">
       <Filter>Source\Core\Alog</Filter>
     </ClInclude>
@@ -164,9 +170,6 @@ xmake version 3.0.3+HEAD.de7aca410
       <Filter>Source\Core\Container</Filter>
     </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Core.h">
-      <Filter>Source\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Platform\CoreType.h">
       <Filter>Source\Core</Filter>
     </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Input\Input.h">
@@ -295,6 +298,9 @@ xmake version 3.0.3+HEAD.de7aca410
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Taskbar\Taskbar.h">
       <Filter>Source\Function\Taskbar</Filter>
     </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Platform\CoreType.h">
+      <Filter>Source\Platform</Filter>
+    </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Platform\Platform.h">
       <Filter>Source\Platform</Filter>
     </ClInclude>
@@ -316,12 +322,18 @@ xmake version 3.0.3+HEAD.de7aca410
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\pch.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Core\Container\List.h" />
+    <ClInclude Include="Source\Core\Container\Queue.h" />
+    <ClInclude Include="Source\Core\Container\Stack.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Application\Application.cpp">
       <Filter>Source\Application</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Application\Windows\WindowsLaunch.cpp">
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Application\Engine\Engine.cpp">
+      <Filter>Source\Application\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Application\Launch\Windows\WindowsLaunch.cpp">
       <Filter>Source\Application\Launch\Windows</Filter>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Core\Memory\ByteArray.cpp">

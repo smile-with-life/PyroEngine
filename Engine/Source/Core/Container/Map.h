@@ -64,6 +64,7 @@ public:
     constexpr Map& operator=(std::initializer_list<element_type> ilist)
     {
         m_data = ilist;
+        return *this;
     }
 
     constexpr ValueType& At(const KeyType& key)
