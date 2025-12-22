@@ -9,12 +9,14 @@ public:
 public:
     friend class Thread;
 public:
-    ThreadId() noexcept = default;
+    ThreadId() = default;
 
     ThreadId(const ThreadId& other) = default;
+
     ThreadId& operator=(const ThreadId& other) = default;
 
     ThreadId(ThreadId&& other) noexcept = default;
+
     ThreadId& operator=(ThreadId&& other) noexcept = default;
 public:
     friend bool operator==(ThreadId left, ThreadId right) noexcept
@@ -48,7 +50,7 @@ public:
     }
 private:
     explicit ThreadId(std::thread::id id) noexcept
-        : m_id(*(uint*)&id)
+        : m_id(*(uint32*)&id)
     {
 
     }
