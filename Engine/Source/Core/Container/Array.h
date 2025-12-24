@@ -263,7 +263,7 @@ public:
         return !(*this < right);
     }
 private:
-    Type* m_ptr;
+    const Type* m_ptr = nullptr;
 
 };
 
@@ -327,13 +327,18 @@ public:
         if (&other == this) [[unlikely]]
         {
             return *this;
-        }    
+        }
+
+        Clear();
+
         Reserve(other.m_size);
+
         m_size = other.m_size;
         for (int32 i = 0; i != m_size; i++)
         {
             std::construct_at(&m_data[i], std::as_const(other.m_data[i]));
         }
+
         return *this;
     }
     /// <summary>
@@ -554,22 +559,6 @@ public:
         return m_data;
     }
     /// <summary>
-    /// 获取容器当前已使用的内存字节大小
-    /// </summary>
-    /// <returns>已使用的内存字节大小</returns>
-    constexpr uint64 ByteSize() const
-    {
-        return m_size * sizeof(Type);
-    }
-    /// <summary>
-    /// 获取模板参数类型Type的字节大小
-    /// </summary>
-    /// <returns>类型Type的字节大小</returns>
-    constexpr int32 TypeSize() const
-    {
-        return sizeof(Type);
-    }
-    /// <summary>
     /// 获取容器当前元素数量
     /// </summary>
     /// <returns>元素数量</returns>
@@ -686,8 +675,9 @@ public:
     /// <param name="size">新的容器大小</param>
     constexpr void Resize(int32 size)
     {
-        if (size < m_size)
+        i    if (size < m_size)
         {
+            // 销毁多余元素
             for (int32 i = size; i != m_size; i++)
             {
                 std::destroy_at(&m_data[i]);
@@ -696,13 +686,14 @@ public:
         }
         else if (size > m_size)
         {
+            // 预留空间并构造新元素
             Reserve(size);
             for (int32 i = m_size; i != size; i++)
             {
                 std::construct_at(&m_data[i]);
             }
+            m_size = size; // 仅在扩容时更新m_size
         }
-        m_size = size;
     }
     /// <summary>
     /// 释放未使用的内存
@@ -1064,7 +1055,7 @@ public:
     /// <returns>this</returns>
     constexpr Array& Prepend(std::initializer_list<Type> ilist)
     {
-        return Append(ilist.begin(), ilist.end());
+        return Prepend(ilist.begin(), ilist.end());
     }
     /// <summary>
     /// 在指定位置插入一个元素(拷贝语义)
@@ -1267,7 +1258,6 @@ public:
         }
         std::construct_at(&m_data[m_size], value);
         m_size++;
-        return *this;
     }
     /// <summary>
     /// 在容器末尾添加一个元素(移动语义)
@@ -1281,7 +1271,6 @@ public:
         }
         std::construct_at(&m_data[m_size], std::move(value));
         m_size++;
-        return *this;
     }
     /// <summary>
     /// 移除容器末尾的元素
@@ -1324,13 +1313,30 @@ public:
     template<class... Args>
     constexpr iterator Emplace(const_iterator pos, Args&&... args)
     {
-        if (m_size + 1 > m_capacity) 
+        // 第一步：先计算索引（使用cbegin()，避免iterator与const_iterator不匹配）
+        int32 index = pos - cbegin();
+        if (index < 0 || index > m_size)
+        {
+            throw std::out_of_range("Emplace position out of range");
+        }
+
+        // 第二步：预留空间（Reserve可能导致m_data重新分配，迭代器失效，需先算索引）
+        if (m_size + 1 > m_capacity)
         {
             Reserve(m_size + 1);
         }
-        int32 index = pos - begin();
+
+        // 第三步：移动现有元素，腾出空间
+        for (int32 i = m_size; i > index; --i)
+        {
+            std::construct_at(&m_data[i], std::move(m_data[i - 1]));
+            std::destroy_at(&m_data[i - 1]);
+        }
+
+        // 第四步：就地构造新元素
         std::construct_at(&m_data[index], std::forward<Args>(args)...);
         ++m_size;
+
         return begin() + index;
     }
     /// <summary>
@@ -1480,7 +1486,7 @@ public:
     /// <param name="condition">条件函数或谓词</param>
     /// <returns>找到的元素的索引，如果未找到则行为未定义</returns>
     template<class Condition>
-    constexpr int32& FindLastIndex(Condition&& condition)
+    constexpr int32 FindLastIndex(Condition&& condition)
     {
         for (int32 i = m_size - 1; i >= 0; --i) 
         {
@@ -1670,7 +1676,29 @@ public:
     /// <returns></returns>
     int32 Remove(const Type& value)
     {
-        
+        int32 count = 0;
+        int32 newSize = 0;
+
+        for (int32 i = 0; i < m_size; ++i)
+        {
+            if (m_data[i] == value)
+            {
+                std::destroy_at(&m_data[i]);
+                count++;
+            }
+            else
+            {
+                if (newSize != i)
+                {
+                    std::construct_at(&m_data[newSize], std::move(m_data[i]));
+                    std::destroy_at(&m_data[i]);
+                }
+                newSize++;
+            }
+        }
+
+        m_size = newSize;
+        return count;
     }
     /// <summary>
     /// 过滤容器，保留满足条件的元素
@@ -1814,8 +1842,7 @@ public:
         return Append(other);
     }
 
-    template<Concept::EqualComparableType Type>
-    constexpr bool operator==(const Array<Type>& other)
+    constexpr friend bool operator==(const Array& other)
     {
         if (m_size != other.m_size) 
         {
@@ -1832,8 +1859,7 @@ public:
         return true;
     }
 
-    template<Concept::EqualComparableType Type>
-    constexpr bool operator!=(const Array<Type>& other)
+    constexpr friend bool operator!=(const Array<& other)
     {
         if (m_size != other.m_size)
         {
@@ -1850,20 +1876,7 @@ public:
         return false;
     }
 
-    template<Concept::SortComparableType Type>
-    constexpr bool operator>(const Array<Type>& other)
-    {
-        return other < *this;
-    }
-
-    template<Concept::SortComparableType Type>
-    constexpr bool operator>=(const Array<Type>& other)
-    {
-        return !(*this < other);
-    }
-
-    template<Concept::SortComparableType Type>
-    constexpr bool operator<(const Array<Type>& other)
+    constexpr friend bool operator<(const Array& other)
     {
         const int32 min_size = std::min(m_size, other.m_size);
 
@@ -1880,11 +1893,21 @@ public:
         return m_size < other.m_size;
     }
 
-    template<Concept::SortComparableType Type>
-    constexpr bool operator<=(const Array<Type>& other)
+    constexpr friend bool operator<=(const Array& other)
     {
         return !(other < *this);
     }
+
+    constexpr friend bool operator>(const Array& other)
+    {
+        return other < *this;
+    }
+
+    constexpr friend bool operator>=(const Array& other)
+    {
+        return !(*this < other);
+    }
+
 public:
     [[nodiscard]] constexpr iterator begin() noexcept
     {

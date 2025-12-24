@@ -137,22 +137,6 @@ public:
         return m_data.back();
     }
     /// <summary>
-    /// 获取容器当前已使用的内存字节大小
-    /// </summary>
-    /// <returns>已使用的内存字节大小</returns>
-    uint64 ByteSize() const
-    {
-        return m_data.size() * sizeof(Type);
-    }
-    /// <summary>
-    /// 获取模板参数类型Type的字节大小
-    /// </summary>
-    /// <returns>类型Type的字节大小</returns>
-    int32 TypeSize()
-    {
-        return sizeof(Type);
-    }
-    /// <summary>
     /// 获取容器当前元素数量
     /// </summary>
     /// <returns>元素数量</returns>
@@ -534,148 +518,106 @@ public:
     }
 public:
     template<class Type>
-    constexpr friend Array operator+(const Array<Type>& left, const Array<Type>& right)
+    friend List operator+(const List<Type>& left, const List<Type>& right)
     {
-        Array<Type> result;
+        List<Type> result;
         result.Reserve(left.Size() + right.Size());
         result.Append(left);
         result.Append(right);
         return result;
     }
 
-    constexpr Array& operator+=(const Array& other)
+    List& operator+=(const List& other)
     {
-        return Append(other);
+        return m_data += other.m_data;
     }
 
-    template<Concept::EqualComparableType Type>
-    constexpr bool operator==(const Array<Type>& other)
+    friend bool operator==(const List& other)
     {
-        if (m_size != other.m_size)
-        {
-            return false;
-        }
-
-        for (int32 i = 0; i < m_size; ++i)
-        {
-            if (m_data[i] != other.m_data[i])
-            {
-                return false;
-            }
-        }
-        return true;
+        return m_data == other.m_data;
     }
 
-    template<Concept::EqualComparableType Type>
-    constexpr bool operator!=(const Array<Type>& other)
+    friend bool operator!=(const List& other)
     {
-        if (m_size != other.m_size)
-        {
-            return true;
-        }
-
-        for (int32 i = 0; i < m_size; ++i)
-        {
-            if (m_data[i] != other.m_data[i])
-            {
-                return true;
-            }
-        }
-        return false;
+        return m_data != other.m_data;
     }
 
-    template<Concept::SortComparableType Type>
-    constexpr bool operator>(const Array<Type>& other)
+    friend bool operator<(const List& other)
     {
-        return other < *this;
+        return m_data < other.m_data;
     }
 
-    template<Concept::SortComparableType Type>
-    constexpr bool operator>=(const Array<Type>& other)
+    friend bool operator<=(const List& other)
     {
-        return !(*this < other);
+        return m_data <= other.m_data;
     }
 
-    template<Concept::SortComparableType Type>
-    constexpr bool operator<(const Array<Type>& other)
+    friend bool operator>(const List& other)
     {
-        const int32 min_size = std::min(m_size, other.m_size);
-
-        for (int32 i = 0; i < min_size; ++i) {
-            if (m_data[i] < other.m_data[i]) {
-                return true;
-            }
-            if (other.m_data[i] < m_data[i]) {
-                return false;
-            }
-        }
-
-        // 所有比较的元素都相等，比较长度
-        return m_size < other.m_size;
+        return m_data > other.m_data;
     }
 
-    template<Concept::SortComparableType Type>
-    constexpr bool operator<=(const Array<Type>& other)
+    friend bool operator>=(const List& other)
     {
-        return !(other < *this);
-    }
+        return m_data >= other.m_data;
+    }   
 public:
-    [[nodiscard]] constexpr iterator begin() noexcept
+    [[nodiscard]] iterator begin() noexcept
     {
         return iterator(m_data);
     }
 
-    [[nodiscard]] constexpr const_iterator begin() const noexcept
+    [[nodiscard]] const_iterator begin() const noexcept
     {
         return const_iterator(m_data);
     }
 
-    [[nodiscard]] constexpr iterator end() noexcept
+    [[nodiscard]] iterator end() noexcept
     {
         return iterator(m_data + m_size);
     }
 
-    [[nodiscard]] constexpr const_iterator end() const noexcept
+    [[nodiscard]] const_iterator end() const noexcept
     {
         return const_iterator(m_data + m_size);
     }
 
-    [[nodiscard]] constexpr const_iterator cbegin() const noexcept
+    [[nodiscard]] const_iterator cbegin() const noexcept
     {
         return const_iterator(m_data);
     }
 
-    [[nodiscard]] constexpr const_iterator cend() const noexcept
+    [[nodiscard]] const_iterator cend() const noexcept
     {
         return const_iterator(m_data + m_size);
     }
 
-    [[nodiscard]] constexpr reverse_iterator rbegin() noexcept
+    [[nodiscard]] reverse_iterator rbegin() noexcept
     {
         return reverse_iterator(end());
     }
 
-    [[nodiscard]] constexpr const_reverse_iterator rbegin() const noexcept
+    [[nodiscard]] const_reverse_iterator rbegin() const noexcept
     {
         return const_reverse_iterator(end());
     }
 
-    [[nodiscard]] constexpr reverse_iterator rend() noexcept
+    [[nodiscard]] reverse_iterator rend() noexcept
     {
         return reverse_iterator(begin());
     }
 
-    [[nodiscard]] constexpr const_reverse_iterator rend() const noexcept
+    [[nodiscard]] const_reverse_iterator rend() const noexcept
     {
         return const_reverse_iterator(begin());
     }
 
-    [[nodiscard]] constexpr const_reverse_iterator crbegin() const noexcept
+    [[nodiscard]] const_reverse_iterator crbegin() const noexcept
     {
         return const_reverse_iterator(end());
     }
 
-    [[nodiscard]] constexpr const_reverse_iterator crend() const noexcept
+    [[nodiscard]] const_reverse_iterator crend() const noexcept
     {
         return const_reverse_iterator(begin());
     }

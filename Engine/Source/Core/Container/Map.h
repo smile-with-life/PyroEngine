@@ -6,237 +6,379 @@ template<class KeyType, class ValueType>
 class Map
 {
 public:
+    using key_Type = KeyType;
+    using mapped_Type = ValueType;
+    using value_type = std::pair<KeyType, ValueType>;
+    using reference = value_type&;
+    using const_reference = const value_type&;
+    using pointer = value_type*;
+    using const_pointer = const value_type*;
     using iterator = std::map<KeyType, ValueType>::iterator;
     using const_iterator = std::map<KeyType, ValueType>::const_iterator;
     using reverse_iterator = std::map<KeyType, ValueType>::reverse_iterator;
     using const_reverse_iterator = std::map<KeyType, ValueType>::const_reverse_iterator;
-    using element_type = std::pair<KeyType, ValueType>;
 public:
+    /// <summary>
+    /// 默认构造函数
+    /// </summary>
     Map() = default;
-
+    /// <summary>
+    /// 析构函数
+    /// </summary>
     ~Map() = default;
-
-    Map(const Map& other)
-        : m_data(other.m_data)
-    {
-
-    }
-
-    Map& operator=(const Map& other)
-    {
-        if (this == &other) [[unlikely]]
-        {
-            return *this;
-        }
-
-        m_data = other.m_data;
-    }
-
-    Map(Map&& other) noexcept
-        : m_data(std::move(other.m_data))
-    {
-
-    }
-
-    Map& operator=(Map&& other) noexcept
-    {
-        if (this == &other) [[unlikely]]
-        {
-            return *this;
-        }
-
-        m_data = std::move(other.m_data);
-    }
-
+    /// <summary>
+    /// 拷贝构造函数
+    /// </summary>
+    /// <param name="other">要拷贝的容器</param>
+    Map(const Map& other) = default;
+    /// <summary>
+    /// 拷贝赋值运算符
+    /// </summary>
+    /// <param name="other">要拷贝的容器</param>
+    /// <returns>this</returns>
+    Map& operator=(const Map& other) = default;
+    /// <summary>
+    /// 移动构造函数
+    /// </summary>
+    /// <param name="other">要移动的容器</param>
+    Map(Map&& other) = default;
+    /// <summary>
+    /// 移动赋值运算符
+    /// </summary>
+    /// <param name="other">要移动的容器</param>
+    /// <returns>this</returns>
+    Map& operator=(Map&& other) = default;
+    /// <summary>
+    /// 迭代器范围构造函数
+    /// </summary>
+    /// <typeparam name="InputIt">随机访问迭代器类型</typeparam>
+    /// <param name="first">起始迭代器</param>
+    /// <param name="last">结束迭代器</param>
     template<class InputIt>
     constexpr Map(InputIt first, InputIt last)
         : m_data(first, last)
     {
 
     }
-
-    constexpr Map(std::initializer_list<element_type> ilist)
+    /// <summary>
+    /// 初始化列表构造函数
+    /// </summary>
+    /// <param name="ilist">初始化列表</param>
+    constexpr Map(std::initializer_list<value_type> ilist)
         : m_data(ilist)
     {
 
     }
-
-    constexpr Map& operator=(std::initializer_list<element_type> ilist)
+    /// <summary>
+    /// 初始化列表赋值运算符
+    /// </summary>
+    /// <param name="ilist">初始化列表</param>
+    /// <returns>this</returns>
+    constexpr Map& operator=(std::initializer_list<value_type> ilist)
     {
         m_data = ilist;
         return *this;
     }
-
+public:
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
     constexpr ValueType& At(const KeyType& key)
     {
         return m_data.at(key);
     }
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
     constexpr const ValueType& At(const KeyType& key) const
     {
         return m_data.at(key);
     }
-
-    /*template<class Key>
-    constexpr ValueType& At(const Key& key)
-    {
-        return m_data.at(key);
-    }
-
-    template<class Key>
-    constexpr const ValueType& At(const Key& key) const
-    {
-        return m_data.at(key);
-    }*/
-
-    constexpr ValueType& operator[](const KeyType& key)
-    {
-        return m_data[key];
-    }
-
-    /*constexpr const ValueType& operator[](const KeyType& key) const
-    {
-        return m_data.at(key);
-    }*/
-
-    constexpr ValueType& operator[](KeyType&& key)
-    {
-        return m_data[key];
-    }
-
-    /*template<class Key>
-    constexpr ValueType& operator[](Key&& key)
-    {
-        return m_data[key];
-    }*/
-
-    bool Contains(const KeyType& key) const
-    {
-        return m_data.contains(key);
-    }
-
-    constexpr bool IsEmpty() const
-    {
-        return m_data.empty();
-    }
-
-    constexpr int64 Size() const
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    constexpr int32 Size() const
     {
         return m_data.size();
     }
-
-    constexpr int64 Max() const
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    constexpr int32 Max() const
     {
-        return m_data.max_size();
+        return std::numeric_limits<int32>::max();
     }
-
+    /// <summary>
+    /// 
+    /// </summary>
     constexpr void Clear()
     {
         m_data.clear();
     }
-
-    constexpr iterator Insert(const element_type& value)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    constexpr iterator Insert(const value_type& value)
     {
         return m_data.insert(value).first;
     }
-
-    constexpr iterator Insert(element_type&& value)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    constexpr iterator Insert(value_type&& value)
     {
         return m_data.insert(value).first;
     }
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="iter"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    constexpr iterator Insert(const_iterator iter, const value_type& value)
+    {
+        return m_data.insert(iter, value);
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="iter"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    constexpr iterator Insert(const_iterator iter, value_type&& value)
+    {
+        return m_data.insert(iter, value);
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="InputIt"></typeparam>
+    /// <param name="first"></param>
+    /// <param name="last"></param>
     template<class InputIt>
     constexpr void Insert(InputIt first, InputIt last)
     {
         return m_data.insert(first, last);
     }
-
-    constexpr void Insert(std::initializer_list<element_type> ilist)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="ilist"></param>
+    constexpr void Insert(std::initializer_list<value_type> ilist)
     {
         return m_data.insert(ilist);
     }
-
-    constexpr iterator Insert(const_iterator iter, const element_type& value)
-    {
-        return m_data.insert(iter, value);
-    }
-
-    constexpr iterator Insert(const_iterator iter, element_type&& value)
-    {
-        return m_data.insert(iter, value);
-    }
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="...Args"></typeparam>
+    /// <param name="...args"></param>
+    /// <returns></returns>
     template<class... Args>
     constexpr iterator Emplace(Args&&... args)
     {
         return m_data.try_emplace(std::forward<Args>(args)...).first;
     }
-
-    constexpr int64 Erase(const KeyType& key)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    constexpr int32 Erase(const KeyType& key)
     {
         return m_data.erase(key);
     }
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="iter"></param>
+    /// <returns></returns>
     constexpr iterator Erase(const_iterator iter)
     {
         return m_data.erase(iter);
     }
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="firstIter"></param>
+    /// <param name="lastIter"></param>
+    /// <returns></returns>
     constexpr iterator Erase(const_iterator firstIter, const_iterator lastIter)
     {
         return m_data.erase(firstIter, lastIter);
     }
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    constexpr bool Contains(const KeyType& key) const
+    {
+        return m_data.contains(key);
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    constexpr iterator Find(const KeyType& key)
+    {
+        return m_data.find(key);
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    constexpr const_iterator Find(const KeyType& key)
+    {
+        return m_data.find(key);
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="other"></param>
     constexpr void Merge(Map& other)
     {
         m_data.merge(other.m_data);
     }
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="other"></param>
     constexpr void Merge(Map&& other)
     {
         m_data.merge(std::forward<Map>(other.m_data));
     }
-
+    /// <summary>
+    /// 过滤容器，保留满足条件的元素
+    /// </summary>
+    /// <param name="condition">条件函数或谓词</param>
+    /// <returns>包含满足条件元素的新容器</returns>
+    template<class Condition>
+    constexpr Map& With(Condition&& condition)
+    {
+        
+    }
+    /// <summary>
+    /// 创建包含满足条件元素的新容器
+    /// </summary>
+    /// <param name="condition">条件函数或谓词</param>
+    /// <returns>包含满足条件元素的新容器</returns>
+    template<class Condition>
+    constexpr Map Filter(Condition&& condition)
+    {
+        
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    constexpr bool IsEmpty() const
+    {
+        return m_data.empty();
+    }
+    /// <summary>
+    /// 检查键值是否有效
+    /// </summary>
+    /// <param name="key">要检查的键值</param>
+    /// <returns>如果键值有效返回 true，否则返回 false</returns>
+    constexpr bool IsValidIndex(const KeyType& key) const
+    {
+        
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="other"></param>
     constexpr void Swap(Map& other) noexcept
     {
         m_data.swap(other.m_data);
     }
 public:
-    template<Concept::EqualComparableType KeyType, Concept::EqualComparableType ValueType>
-    bool operator==(const Map<KeyType, ValueType>& other)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    constexpr ValueType& operator[](const KeyType& key)
+    {
+        return m_data[key];
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    constexpr ValueType& operator[](KeyType&& key)
+    {
+        return m_data[key];
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="other"></param>
+    /// <returns></returns>
+    constexpr friend bool operator==(const Map& other)
     {
         return m_data == other.m_data;
     }
-
-    template<Concept::EqualComparableType KeyType, Concept::EqualComparableType ValueType>
-    bool operator!=(const Map<KeyType, ValueType>& other)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="other"></param>
+    /// <returns></returns>
+    constexpr friend bool operator!=(const Map& other)
     {
         return m_data != other.m_data;
     }
-
-    template<Concept::SortComparableType KeyType>
-    bool operator>(const Map<KeyType, ValueType>& other)
-    {
-        return m_data > other.m_data;
-    }
-
-    template<Concept::SortComparableType KeyType>
-    bool operator>=(const Map<KeyType, ValueType>& other)
-    {
-        return m_data >= other.m_data;
-    }
-
-    template<Concept::SortComparableType KeyType>
-    bool operator<(const Map<KeyType, ValueType>& other)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="other"></param>
+    /// <returns></returns>
+    constexpr friend bool operator<(const Map& other)
     {
         return m_data < other.m_data;
     }
-
-    template<Concept::SortComparableType KeyType>
-    bool operator<=(const Map<KeyType, ValueType>& other)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="other"></param>
+    /// <returns></returns>
+    constexpr friend bool operator<=(const Map& other)
     {
         return m_data <= other.m_data;
     }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="other"></param>
+    /// <returns></returns>
+    constexpr bool operator>(const Map& other)
+    {
+        return m_data > other.m_data;
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="other"></param>
+    /// <returns></returns>
+    constexpr friend bool operator>=(const Map& other)
+    {
+        return m_data >= other.m_data;
+    }
+    
 public:
     [[nodiscard]] constexpr iterator begin() noexcept
     {
