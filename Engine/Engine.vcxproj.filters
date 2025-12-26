@@ -45,8 +45,8 @@ xmake version 3.0.3+HEAD.de7aca410
     <Filter Include="Source\Core\Container\Iterator">
       <UniqueIdentifier>{EA6739B1-4129-4EE9-8922-3BBE86240686}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Core\Input">
-      <UniqueIdentifier>{04B71CD4-2B59-4E98-B0A9-09C1CB1AB686}</UniqueIdentifier>
+    <Filter Include="Source\Core\Diagnosis">
+      <UniqueIdentifier>{D5F0D99E-EE3C-4FE9-8199-DC08B976313B}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Core\Math">
       <UniqueIdentifier>{B444B4EC-240C-4959-9063-FF53A03E3EFF}</UniqueIdentifier>
@@ -93,6 +93,9 @@ xmake version 3.0.3+HEAD.de7aca410
     <Filter Include="Source\Function\GUID">
       <UniqueIdentifier>{146D6B53-5D3A-41FA-B325-26E5A424D2AA}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Function\Input">
+      <UniqueIdentifier>{DEE186FC-BB0D-4743-9F47-FB5C0F051370}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\Function\JSON">
       <UniqueIdentifier>{4409A35C-50D6-4D5D-B3EC-E0192436EE62}</UniqueIdentifier>
     </Filter>
@@ -126,9 +129,16 @@ xmake version 3.0.3+HEAD.de7aca410
     <Filter Include="Source\Server\FrameSever">
       <UniqueIdentifier>{3F7D789B-C8C1-4D2F-82F4-28C819D7FE4D}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Server\LogServer">
+      <UniqueIdentifier>{4BDB7E1A-C6C6-46DA-8539-D6430568AED8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Server\LogServer\Appender">
+      <UniqueIdentifier>{53515436-C516-4F5C-BA12-001C21860454}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\Server\Module">
       <UniqueIdentifier>{9A634F74-4F3F-49C3-BDFA-76C72EDA89A0}</UniqueIdentifier>
     </Filter>
+
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildProjectDirectory)\Xmake.Custom.props">
@@ -141,6 +151,9 @@ xmake version 3.0.3+HEAD.de7aca410
       <Filter>Properties</Filter>
     </None>
     <None Include="$(MSBuildProjectDirectory)\Xmake.Custom.items.filters">
+      <Filter>Properties</Filter>
+    </None>
+    <None Include="$(XmakeScriptDir)\xmake.lua">
       <Filter>Properties</Filter>
     </None>
   </ItemGroup>
@@ -166,14 +179,23 @@ xmake version 3.0.3+HEAD.de7aca410
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Container\Iterator\Iterator.h">
       <Filter>Source\Core\Container\Iterator</Filter>
     </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Container\List.h">
+      <Filter>Source\Core\Container</Filter>
+    </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Container\Map.h">
+      <Filter>Source\Core\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Container\Queue.h">
+      <Filter>Source\Core\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Container\Stack.h">
       <Filter>Source\Core\Container</Filter>
     </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Core.h">
       <Filter>Source\Core</Filter>
     </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Input\Input.h">
-      <Filter>Source\Core\Input</Filter>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Diagnosis\SourceInfo.h">
+      <Filter>Source\Core\Diagnosis</Filter>
     </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Math\Math.h">
       <Filter>Source\Core\Math</Filter>
@@ -280,6 +302,9 @@ xmake version 3.0.3+HEAD.de7aca410
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\GUID\GUID.h">
       <Filter>Source\Function\GUID</Filter>
     </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Input\Input.h">
+      <Filter>Source\Function\Input</Filter>
+    </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\JSON\JSON.h">
       <Filter>Source\Function\JSON</Filter>
     </ClInclude>
@@ -313,6 +338,12 @@ xmake version 3.0.3+HEAD.de7aca410
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Server\FrameSever\FrameServer.h">
       <Filter>Source\Server\FrameSever</Filter>
     </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Server\LogServer\Appender\Appender.h">
+      <Filter>Source\Server\LogServer\Appender</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Server\LogServer\LogServer.h">
+      <Filter>Source\Server\LogServer</Filter>
+    </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Server\Module\Module.h">
       <Filter>Source\Server\Module</Filter>
     </ClInclude>
@@ -322,14 +353,11 @@ xmake version 3.0.3+HEAD.de7aca410
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\pch.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Core\Container\List.h" />
-    <ClInclude Include="Source\Core\Container\Queue.h" />
-    <ClInclude Include="Source\Core\Container\Stack.h" />
-    <ClInclude Include="Source\Server\LogServer\LogServer.h" />
-    <ClInclude Include="Source\Core\Diagnosis\SourceInfo.h" />
-    <ClInclude Include="Source\Server\LogServer\Appender\Appender.h" />
+
+
   </ItemGroup>
   <ItemGroup>
+
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Application\Application.cpp">
       <Filter>Source\Application</Filter>
     </ClCompile>
@@ -357,6 +385,9 @@ xmake version 3.0.3+HEAD.de7aca410
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Function\Console\Windows\WindowsConsole.cpp">
       <Filter>Source\Function\Console\Windows</Filter>
     </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Function\Input\Input.cpp">
+      <Filter>Source\Function\Input</Filter>
+    </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Platform\Windows\WindowsPlatform.cpp">
       <Filter>Source\Platform\Windows</Filter>
     </ClCompile>
@@ -366,14 +397,25 @@ xmake version 3.0.3+HEAD.de7aca410
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Server\FrameSever\FrameServer.cpp">
       <Filter>Source\Server\FrameSever</Filter>
     </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Server\LogServer\LogServer.cpp">
+      <Filter>Source\Server\LogServer</Filter>
+    </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\pch.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Server\LogServer\LogServer.cpp" />
+
+
+
   </ItemGroup>
   <ItemGroup>
+
   </ItemGroup>
   <ItemGroup>
+
+
+
+
   </ItemGroup>
-  <Import Condition="Exists('$(MSBuildThisFileDirectory)\Xmake.Custom.files.filters')" Project="$(MSBuildThisFileDirectory)\Xmake.Custom.files.filters" />
+  <Import Condition="Exists('$(MSBuildThisFileDirectory)\Xmake.Custom.files.filters')"
+    Project="$(MSBuildThisFileDirectory)\Xmake.Custom.files.filters" />
 </Project>

@@ -37,7 +37,7 @@ enum class KeyCode : uint16
 	NumPad0, NumPad1, NumPad2, NumPad3, NumPad4, NumPad5, NumPad6, NumPad7, NumPad8, NumPad9,
 	NumLock, NumPadAdd, NumPadSubtract, NumPadMultiply, NumPadDivide, NumPadDecimal, NumPadEnter,
 };
-
+static inline constexpr int32 KeyCount = 115;
 enum class KeyState
 {
 	Up,			// 松开
@@ -46,10 +46,40 @@ enum class KeyState
 	Toggled		// 切换
 };
 
-class Input
+class Keyboard
 {
 public:
-	virtual bool IsKeyPressed(KeyCode code);
+	KeyState GetKeyState(KeyCode code)
+	{
 
-	virtual bool IsMouseButtonPressed(KeyCode code);
+	}
+
+	bool IsKeyDown(KeyCode code);
+
+	bool IsKeyUp(KeyCode code);
+
+	bool IsKeyRepeat(KeyCode code);
+
+	bool IsKeyToggled(KeyCode code);
+
+	std::array<KeyCode, KeyCount> m_keyStates;
+};
+
+enum class MouseCode
+{
+	None,
+	LeftButton,
+	RightButton,
+	MiddleButton,
+	ExpandButton1,
+	ExpandButton2,
+	Scroll
+};
+
+enum class MouseState
+{
+	Up,				// 松开
+	Down,			// 按下
+	DoubleClick,	// 双击
+	Move			// 移动
 };
