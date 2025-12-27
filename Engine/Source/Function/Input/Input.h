@@ -83,3 +83,22 @@ enum class MouseState
 	DoubleClick,	// 双击
 	Move			// 移动
 };
+
+enum class MouseLockMode
+{
+	None,			// 默认模式，自由移动
+	Lock,			// 锁定到游戏窗口中心
+	Clipped			// 限制在游戏窗口边界内
+};
+
+enum class GamepadAxis
+{
+	None = 0,          // 无轴（默认/无效值）
+	LeftStickX = 1,    // 左摇杆X轴
+	LeftStickY = 2,    // 左摇杆Y轴
+	RightStickX = 3,   // 右摇杆X轴
+	RightStickY = 4,   // 右摇杆Y轴
+	LeftTrigger = 5,   // 左扳机键（线性轴）
+	RightTrigger = 6,  // 右扳机键（线性轴）
+	MAX                // 枚举值数量标记（未赋值，自动为7）
+};

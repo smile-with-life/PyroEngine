@@ -102,7 +102,7 @@ public:
     /// 
     /// </summary>
     /// <returns></returns>
-    constexpr int32 Size() const
+    constexpr int64 Size() const
     {
         return m_data.size();
     }
@@ -110,9 +110,9 @@ public:
     /// 
     /// </summary>
     /// <returns></returns>
-    constexpr int32 Max() const
+    constexpr int64 Max() const
     {
-        return std::numeric_limits<int32>::max();
+        return std::numeric_limits<int64>::max();
     }
     /// <summary>
     /// 
@@ -194,7 +194,7 @@ public:
     /// </summary>
     /// <param name="key"></param>
     /// <returns></returns>
-    constexpr int32 Erase(const KeyType& key)
+    constexpr int64 Erase(const KeyType& key)
     {
         return m_data.erase(key);
     }
@@ -232,15 +232,6 @@ public:
     /// <param name="key"></param>
     /// <returns></returns>
     constexpr iterator Find(const KeyType& key)
-    {
-        return m_data.find(key);
-    }
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="key"></param>
-    /// <returns></returns>
-    constexpr const_iterator Find(const KeyType& key)
     {
         return m_data.find(key);
     }
@@ -329,54 +320,54 @@ public:
     /// </summary>
     /// <param name="other"></param>
     /// <returns></returns>
-    constexpr friend bool operator==(const Map& other)
+    constexpr friend bool operator==(const Map& left, const Map& right)
     {
-        return m_data == other.m_data;
+        return left.m_data == right.m_data;
     }
     /// <summary>
     /// 
     /// </summary>
     /// <param name="other"></param>
     /// <returns></returns>
-    constexpr friend bool operator!=(const Map& other)
+    constexpr friend bool operator!=(const Map& left, const Map& right)
     {
-        return m_data != other.m_data;
+        return left.m_data != right.m_data;
     }
     /// <summary>
     /// 
     /// </summary>
     /// <param name="other"></param>
     /// <returns></returns>
-    constexpr friend bool operator<(const Map& other)
+    constexpr friend bool operator<(const Map& left, const Map& right)
     {
-        return m_data < other.m_data;
+        return left.m_data < right.m_data;
     }
     /// <summary>
     /// 
     /// </summary>
     /// <param name="other"></param>
     /// <returns></returns>
-    constexpr friend bool operator<=(const Map& other)
+    constexpr friend bool operator<=(const Map& left, const Map& right)
     {
-        return m_data <= other.m_data;
+        return left.m_data <= right.m_data;
     }
     /// <summary>
     /// 
     /// </summary>
     /// <param name="other"></param>
     /// <returns></returns>
-    constexpr bool operator>(const Map& other)
+    constexpr friend bool operator>(const Map& left, const Map& right)
     {
-        return m_data > other.m_data;
+        return left.m_data > right.m_data;
     }
     /// <summary>
     /// 
     /// </summary>
     /// <param name="other"></param>
     /// <returns></returns>
-    constexpr friend bool operator>=(const Map& other)
+    constexpr friend bool operator>=(const Map& left, const Map& right)
     {
-        return m_data >= other.m_data;
+        return left.m_data >= right.m_data;
     }
     
 public:

@@ -1,23 +1,27 @@
 #include "pch.h"
 #include "Engine.h"
-#include "Server/Server.h"
+#include "Service/Service.h"
 
 int32 Engine::Init()
 {
-    GConsoleServer->Init();
-    GFrameServer->Init();
+    GFrameService->Init();
+    GWindowService->Init();
+
+    GWindowService->CreateOSWindow("GameWindow");
+
     return 0;
 }
 
 void Engine::Tick()
 {
-    GConsoleServer->Tick();
-
-    GFrameServer->Tick();
+    GFrameService->Tick();
+    GWindowService->Tick();
 }
 
 void Engine::Exit()
 {
-    GConsoleServer->Exit();
-    GFrameServer->Exit();
+    GWindowService->DestroyOSWindow("GameWindow");
+
+    GFrameService->Exit();
+    GWindowService->Exit();
 }

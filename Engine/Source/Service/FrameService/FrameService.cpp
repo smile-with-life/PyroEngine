@@ -1,15 +1,15 @@
 #include "pch.h"
-#include "FrameServer.h"
+#include "FrameService.h"
 #include "Thread/Thread.h"
 
-void FrameServer::Init()
+void FrameService::Init()
 {
     LoadSettings();
     m_frameTime = Microseconds(1000000) / m_fixedFPS;
     m_lastUpdateTime = SteadyClock::Now();
 }
 
-void FrameServer::Tick()
+void FrameService::Tick()
 {
     // 获取当前时间
     auto currentTime = SteadyClock::Now();
@@ -37,42 +37,42 @@ void FrameServer::Tick()
     }
 }
 
-void FrameServer::Exit()
+void FrameService::Exit()
 {
     SaveSettings();
 }
 
-void FrameServer::LoadSettings()
+void FrameService::LoadSettings()
 {
 
 }
 
-void FrameServer::SaveSettings()
+void FrameService::SaveSettings()
 {
 
 }
 
-FramePacingMode FrameServer::GetMode() const
+FramePacingMode FrameService::GetMode() const
 {
     return m_mode;
 }
 
-int32 FrameServer::GetFixedFPS() const
+int32 FrameService::GetFixedFPS() const
 {
     return m_fixedFPS;
 }
 
-int32 FrameServer::GetCurrentFPS() const
+int32 FrameService::GetCurrentFPS() const
 {
     return m_FPS;
 }
 
-void FrameServer::SetMode(FramePacingMode mode)
+void FrameService::SetMode(FramePacingMode mode)
 {
     m_mode = mode;
 }
 
-void FrameServer::SetFixedFPS(int32 fps)
+void FrameService::SetFixedFPS(int32 fps)
 {
     m_fixedFPS = fps > MaxFPS ? MaxFPS : fps;
     m_frameTime = Microseconds(1000000) / m_fixedFPS;

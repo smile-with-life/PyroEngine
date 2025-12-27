@@ -462,7 +462,7 @@ StringList String::Split(char sep) const
 
     while (std::getline(ss, str, sep))
     {
-        result.Emplace(str);
+        result.Push(str);
     }
 
     return result;

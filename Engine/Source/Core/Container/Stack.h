@@ -66,7 +66,7 @@ public:
     /// 获取容器当前元素数量
     /// </summary>
     /// <returns>元素数量</returns>
-    int32 Size() const
+    int64 Size() const
     {
         return m_data.size();
     }
@@ -74,9 +74,9 @@ public:
     /// 获取容器能够容纳的最大元素数量
     /// </summary>
     /// <returns>最大元素数量</returns>
-    int32 Max() const
+    int64 Max() const
     {
-        return std::numeric_limits<int32>::max();
+        return std::numeric_limits<int64>::max();
     }
     /// <summary>
     /// 清空容器(元素被销毁，容量保持不变)

@@ -41,11 +41,11 @@ public:
 
     constexpr WithSourceInfo(const WithSourceInfo& other) = default;
 
-    constexpr operator=(const WithSourceInfo& other) = default;
+    constexpr WithSourceInfo& operator=(const WithSourceInfo& other) = default;
 
     constexpr WithSourceInfo(WithSourceInfo&& other) noexcept = default;
 
-    constexpr operator=(WithSourceInfo&& other) noexcept = default;
+    constexpr WithSourceInfo& operator=(WithSourceInfo&& other) noexcept = default;
 public:       
     constexpr const Type& Inner() const
     {

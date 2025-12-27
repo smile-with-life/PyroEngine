@@ -16,7 +16,7 @@ enum class FramePacingMode
 /// 帧率控制服务
 /// <para>在每帧结束时调用</para>
 /// </summary>
-class FrameServer : public CoreModule
+class FrameService : public CoreModule
 {
 public:
     virtual void Init() override;

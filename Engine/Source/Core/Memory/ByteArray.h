@@ -24,7 +24,7 @@ public:
 public:
     void Add(char byte)
     {
-        m_data.Add(byte);
+        m_data.Push(byte);
     }
 
     char* Data()

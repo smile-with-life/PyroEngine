@@ -53,7 +53,7 @@ public:
     /// 构造函数，创建指定大小的容器
     /// </summary>
     /// <param name="count">容器初始大小</param>
-    explicit List(int32 count)
+    explicit List(int64 count)
         : m_data(count)
     {
         
@@ -63,7 +63,7 @@ public:
     /// </summary>
     /// <param name="count">容器初始大小</param>
     /// <param name="value">用于填充的初始值</param>
-    List(int32 count, const Type& value)
+    List(int64 count, const Type& value)
         : m_data(count, value)
     {
         
@@ -140,7 +140,7 @@ public:
     /// 获取容器当前元素数量
     /// </summary>
     /// <returns>元素数量</returns>
-    int32 Size() const
+    int64 Size() const
     {
         return m_data.size();
     }
@@ -148,9 +148,9 @@ public:
     /// 获取容器能够容纳的最大元素数量
     /// </summary>
     /// <returns>最大元素数量</returns>
-    int32 Max() const
+    int64 Max() const
     {
-        return std::numeric_limits<int32>::max();
+        return std::numeric_limits<int64>::max();
     }
     /// <summary>
     /// 清空容器(元素被销毁，容量保持不变)
@@ -163,7 +163,7 @@ public:
     /// 调整容器大小
     /// </summary>
     /// <param name="size">新的容器大小</param>
-    void Resize(int32 size)
+    void Resize(int64 size)
     {
         m_data.resize(size);
     }
@@ -279,7 +279,7 @@ public:
     /// <param name="count">要插入的元素数量</param>
     /// <param name="value">要插入的值</param>
     /// <returns>指向第一个新插入元素的迭代器</returns>
-    iterator Insert(const_iterator iter, int32 count, const Type& value)
+    iterator Insert(const_iterator iter, int64 count, const Type& value)
     {
         return m_data.insert(iter, count, value);
     }
@@ -451,38 +451,9 @@ public:
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
-    int32 Remove(const Type& value)
+    int64 Remove(const Type& value)
     {
         return m_data.remove(value);
-    }
-    /// <summary>
-    /// 过滤容器，保留满足条件的元素
-    /// </summary>
-    /// <param name="condition">条件函数或谓词</param>
-    /// <returns>包含满足条件元素的新容器</returns>
-    template<class Condition>
-    List& With(Condition&& condition)
-    {
-        m_data.remove_if([&](const Type& elem) { return !condition(elem); });
-        return *this;
-    }
-    /// <summary>
-    /// 创建包含满足条件元素的新容器
-    /// </summary>
-    /// <param name="condition">条件函数或谓词</param>
-    /// <returns>包含满足条件元素的新容器</returns>
-    template<class Condition>
-    List Filter(Condition&& condition)
-    {
-        List<Type> result;
-        for (const auto& elem : m_data)
-        {
-            if (condition(elem))
-            {
-                result.Push(elem);
-            }
-        }
-        return result;
     }
     /// <summary>
     /// 反转元素的顺序
@@ -490,15 +461,6 @@ public:
     void Reverse()
     {
         m_data.reverse();
-    }
-    /// <summary>
-    /// 根据条件对容器进行排序
-    /// </summary>
-    /// <param name="condition">排序条件或比较函数</param>
-    template<class Condition>
-    void Sort(Condition&& condition)
-    {
-        m_data.sort(std::forward<Condition>(condition));
     }
     /// <summary>
     /// 检查容器是否为空
@@ -532,34 +494,34 @@ public:
         return m_data += other.m_data;
     }
 
-    friend bool operator==(const List& other)
+    friend bool operator==(const List& left, const List& right)
     {
-        return m_data == other.m_data;
+        return left.m_data == right.m_data;
     }
 
-    friend bool operator!=(const List& other)
+    friend bool operator!=(const List& left, const List& right)
     {
-        return m_data != other.m_data;
+        return left.m_data != right.m_data;
     }
 
-    friend bool operator<(const List& other)
+    friend bool operator<(const List& left, const List& right)
     {
-        return m_data < other.m_data;
+        return left.m_data < right.m_data;
     }
 
-    friend bool operator<=(const List& other)
+    friend bool operator<=(const List& left, const List& right)
     {
-        return m_data <= other.m_data;
+        return left.m_data <= right.m_data;
     }
 
-    friend bool operator>(const List& other)
+    friend bool operator>(const List& left, const List& right)
     {
-        return m_data > other.m_data;
+        return left.m_data > right.m_data;
     }
 
-    friend bool operator>=(const List& other)
+    friend bool operator>=(const List& left, const List& right)
     {
-        return m_data >= other.m_data;
+        return left.m_data >= right.m_data;
     }   
 public:
     [[nodiscard]] iterator begin() noexcept

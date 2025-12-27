@@ -18,7 +18,7 @@ public:
     /// <returns>指向分配内存的指针</returns>
     /// <exception cref="std::bad_alloc">当内存分配失败时抛出</exception>
     template<class Type>
-    constexpr Type* Allocate(int32 count)
+    constexpr Type* Allocate(int64 count)
     {
         // 参数校验
         if (count <= 0) [[unlikely]]
@@ -61,7 +61,7 @@ public:
     /// <returns>无返回值</returns>
     /// <exception cref="std::invalid_argument">当ptr为空指针时可能抛出</exception>
     template<class Type>
-    constexpr void Deallocate(Type* ptr, int32 count)
+    constexpr void Deallocate(Type* ptr, int64 count)
     {
         // 参数校验
         if (!ptr) [[unlikely]] 

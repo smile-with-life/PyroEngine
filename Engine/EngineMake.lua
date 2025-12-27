@@ -20,13 +20,13 @@ target "Engine"
         "Source/Core",
         "Source/Platform",
         "Source/Function",
-        "Source/Server",
+        "Source/Service",
         "Source/Application"
     }
     -- 设置 C++ 预编译头文件
     set_pcxxheader "Source/pch.h"
     -- 自动导出所有的动态库符号
-    -- add_rules("utils.symbols.export_all")
+    add_rules("utils.symbols.export_all")
     -- 动态库设置
     add_defines "BUILD_EXPORT_DLL"
     -- Windows设置
@@ -38,6 +38,8 @@ target "Engine"
         -- CRT 库设置
         if is_mode("Debug","Development") then
             set_runtimes "MDd"
+            set_symbols "debug"
+            
         else
             set_runtimes "MD"
         end
@@ -100,7 +102,7 @@ target "Engine"
         -- 功能层
         "Source/Function/**.h",
         -- 服务层
-        "Source/Server/**.h",
+        "Source/Service/**.h",
         -- 应用层
         "Source/Application/**.h"
     }
@@ -114,7 +116,7 @@ target "Engine"
         -- 功能层
         "Source/Function/**.cpp",
         -- 服务层
-        "Source/Server/**.cpp",
+        "Source/Service/**.cpp",
         -- 应用层
         "Source/Application/**.cpp"
     }

@@ -101,7 +101,6 @@ std::u16string UTF8ToUTF16(const std::string& u8str)
     return u16str;
 }
 
-
 std::string UTF16ToUTF8(const std::u16string& u16str)
 {
     std::string u8str;
@@ -176,5 +175,13 @@ std::string UTF16ToUTF8(const std::u16string& u16str)
     }
 
     return u8str;
+}
+
+const tchar* ToNativeString(const String& str)
+{
+#ifdef PLATFORM_WINDOWS
+    std::u16string u16str = UTF8ToUTF16(str);
+    return reinterpret_cast<const tchar*>(u16str.c_str());
+#endif
 }
 }// namespace Convert

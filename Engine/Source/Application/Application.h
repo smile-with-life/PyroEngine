@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core.h"
-#include "Server.h"
+#include "Service.h"
 #include "String/String.h"
 
 struct ApplicationInfo
