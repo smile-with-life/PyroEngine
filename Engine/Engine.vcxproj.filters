@@ -90,6 +90,9 @@ xmake version 3.0.5+dev.7ee27a5e5
     <Filter Include="Source\Function\Device\InputDevice">
       <UniqueIdentifier>{F195EC9E-945E-48F1-830B-C62D431AA63C}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Function\Event">
+      <UniqueIdentifier>{D1568CC8-73EA-4B50-BF31-A97B30982D17}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\Function\FileSystem">
       <UniqueIdentifier>{27BBE2AF-66D8-4801-BC0A-D352D445CCBA}</UniqueIdentifier>
     </Filter>
@@ -286,6 +289,9 @@ xmake version 3.0.5+dev.7ee27a5e5
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Device\InputDevice\InputDevice.h">
       <Filter>Source\Function\Device\InputDevice</Filter>
     </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Event\Event.h">
+      <Filter>Source\Function\Event</Filter>
+    </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\FileSystem\DeviceFile.h">
       <Filter>Source\Function\FileSystem</Filter>
     </ClInclude>
@@ -301,10 +307,7 @@ xmake version 3.0.5+dev.7ee27a5e5
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\FileSystem\FileSystem.h">
       <Filter>Source\Function\FileSystem</Filter>
     </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\FileSystem\FileSystemEntry.h">
-      <Filter>Source\Function\FileSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\FileSystem\Path.h">
+    <ClInclude Include="Source\Function\FileSystem\FileEntry.h">
       <Filter>Source\Function\FileSystem</Filter>
     </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\FileSystem\SocketFile.h">
@@ -432,6 +435,8 @@ xmake version 3.0.5+dev.7ee27a5e5
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\pch.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Function\Settings\Settings.cpp" />
+    <ClCompile Include="Source\Function\FileSystem\FileSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

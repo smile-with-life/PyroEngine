@@ -92,6 +92,11 @@ public:
         return !m_data.IsEmpty();
     }
 
+    operator const tchar* () const
+    {
+        return m_data.IsEmpty() ? nullptr : m_data.Data();
+    }
+
     const tchar* CStr() const
     {
         return m_data.IsEmpty() ? nullptr : m_data.Data();

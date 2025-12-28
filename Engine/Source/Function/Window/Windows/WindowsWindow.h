@@ -6,13 +6,15 @@
 class WindowsWindow : public Window
 {
 public:
-	WindowsWindow();
-
 	virtual ~WindowsWindow();
 
-	WindowsWindow(WindowProps props);
+	explicit WindowsWindow(const String& name);
+
+	WindowsWindow(const String& name, WindowProps props);
 public:
+	// 处理消息循环
 	virtual void PumpMessage() override;
+
 	// 设置窗口标题
 	virtual void SetTitle(const String& title) override;
 
@@ -93,9 +95,15 @@ public:
 
 	// 获取与窗口关联的原生操作系统句柄
 	virtual void* GetNativeHandle() const override;
-public:
+protected:
+	// 友元函数
+	friend LRESULT WinWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 	// 窗口过程函数
-	static LRESULT CALLBACK WndProc(HWND hwnd, uint32 msg, WPARAM wParam, LPARAM lParam);
+	static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+	// 消息处理函数
+	LRESULT HandleMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 private:
 	void _CreatePlatformWindow();
 private:

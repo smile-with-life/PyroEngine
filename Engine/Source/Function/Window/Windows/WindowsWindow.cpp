@@ -2,30 +2,37 @@
 #include "WindowsWindow.h"
 #include "String/Convert.h"
 /* static */
-Window* Window::Create()
+WindowsWindow* _WindowPtr = nullptr;
+
+Window* Window::Create(const String& name)
 {
-    return new WindowsWindow();
+    _WindowPtr = new WindowsWindow(name);
+    return _WindowPtr;
 }
 
-Window* Window::Create(WindowProps props)
+Window* Window::Create(const String& name, WindowProps props)
 {
-    return new WindowsWindow(props);
+    return new WindowsWindow(name, props);
 }
+
 
 /* public */
-WindowsWindow::WindowsWindow()
-    : Window()
+WindowsWindow::~WindowsWindow()
+{
+    if (m_hWnd)
+    {
+        ::DestroyWindow(m_hWnd);
+    }
+}
+
+WindowsWindow::WindowsWindow(const String& name)
+    : Window(name)
 {
     _CreatePlatformWindow();
 }
 
-WindowsWindow::~WindowsWindow()
-{
-
-}
-
-WindowsWindow::WindowsWindow(WindowProps props)
-    : Window(props)
+WindowsWindow::WindowsWindow(const String& name, WindowProps props)
+    : Window(name, props)
 {
     _CreatePlatformWindow();
 }
@@ -191,7 +198,17 @@ void* WindowsWindow::GetNativeHandle() const
     return m_hWnd;
 }
 
-LRESULT WindowsWindow::WndProc(HWND hwnd, uint32 msg, WPARAM wParam, LPARAM lParam)
+/* protected */
+LRESULT WinWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+    return _WindowPtr->HandleMessage(hwnd, msg, wParam, lParam);
+}
+LRESULT CALLBACK WindowsWindow::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+    return WinWndProc(hwnd, msg, wParam, lParam);
+}
+
+LRESULT WindowsWindow::HandleMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
@@ -250,7 +267,9 @@ LRESULT WindowsWindow::WndProc(HWND hwnd, uint32 msg, WPARAM wParam, LPARAM lPar
     }
     case WM_CLOSE:// 窗口关闭时发送
     {
-        SendMessage(hwnd, WM_QUIT, 0, 0);
+        WindowCloseEvent event;
+        event.Name = m_name;
+        EventSystem::GetInstance().SendEvent(event);
         break;
     }
     case WM_NCCALCSIZE:// 计算窗口工作区的大小和位置时发送
@@ -542,7 +561,7 @@ LRESULT WindowsWindow::WndProc(HWND hwnd, uint32 msg, WPARAM wParam, LPARAM lPar
     }
     }
 
-    return DefWindowProc(hwnd, msg, wParam, lParam);
+    return DefWindowProcW(hwnd, msg, wParam, lParam);
 }
 
 /* private */
@@ -552,9 +571,9 @@ void WindowsWindow::_CreatePlatformWindow()
     ZeroMemory(&wc, sizeof(WNDCLASSEXW));
 
     // 窗口类设置
-    wc.cbSize = sizeof(WNDCLASSEXW);                                // 窗口类结构的大小
+    wc.cbSize = sizeof(WNDCLASSEXW);                               // 窗口类结构的大小
     wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;                 // 窗口样式
-    wc.lpfnWndProc = WndProc;                                      // 窗口消息处理函数
+    wc.lpfnWndProc = WindowsWindow::WndProc;                       // 窗口消息处理函数
     wc.cbClsExtra = 0;                                             // 窗口类结构的额外字节数
     wc.cbWndExtra = 0;                                             // 窗口实例后分配的额外字节数
     wc.hInstance = GWindowsInstance;                               // 应用程序实例句柄
@@ -596,7 +615,7 @@ void WindowsWindow::_CreatePlatformWindow()
         WindowExStyle |= WS_EX_TOPMOST;// 窗口应放置在所有非最顶层的窗口之上，并且应保持其上方
     }
 
-    WindowStyle = WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+    WindowStyle = WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
 
     if (!m_props.IsAcceptInput)
     {
@@ -633,7 +652,7 @@ void WindowsWindow::_CreatePlatformWindow()
     // 创建窗口
     m_hWnd = ::CreateWindowExW(WindowExStyle,   // 窗口扩展样式
         TEXT("PyroEngineWindow"),               // 窗口类名
-        L"qwe",                             // 窗口标题
+        Convert::ToNativeString(m_props.Title), // 窗口标题
         WindowStyle,                            // 窗口样式
         m_props.PositionX,                      // 窗口的初始水平位置
         m_props.PositionY,                      // 窗口的初始垂直位置
@@ -649,12 +668,12 @@ void WindowsWindow::_CreatePlatformWindow()
     }
     // 设置透明度
     SetOpacity(m_props.Opacity);
-    
+
     if (m_props.IsVisible)
     {
         ShowWindow();
     }
-    
+
     wchar_t actualTitle[256];
     int titleLength = ::GetWindowTextW(m_hWnd, actualTitle, 256);
 

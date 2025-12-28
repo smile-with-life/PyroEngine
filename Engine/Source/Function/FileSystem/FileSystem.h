@@ -1,7 +1,7 @@
 #pragma once
 #include "Core.h"
 #include "String/String.h"
-#include "FileSystemEntry.h"
+#include "FileEntry.h"
 #include "File.h"
 #include "Directory.h"
 
@@ -44,9 +44,13 @@ public:
 public:
     static String AbsolutePath(const String& path);
 
-    static void Copy(const String& filePath, const String& newPath);
+    static String FileDir(const String& path);
 
-    static void Move(const String& filePath, const String& newPath);
+    static String FileName(const String& path);
+
+    static void Copy(const String& filePath, const String& newPath, bool overwrite = true);
+
+    static void Move(const String& filePath, const String& newPath, bool overwrite = true);
 
     static void CreateFile(const String& path);
 
@@ -76,7 +80,7 @@ public:
 
     static bool IsSymlink(const String& path);
 
-    static SpaceInfo Space();
+    static SpaceInfo Space(const String& path);
 
     static FilePermission Permission();
 

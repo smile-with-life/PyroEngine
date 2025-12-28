@@ -20,7 +20,6 @@ public:
 
     File(const String& path);
 
-
     // 复制构造函数被删除
     File(const File& other) = delete;
 
@@ -68,4 +67,10 @@ public:
     bool IsOpen();
 
     bool IsEOF();  
+private:
+    // 文件的路径
+    String m_path;
+
+    // 文件流
+    std::fstream m_file{};
 };

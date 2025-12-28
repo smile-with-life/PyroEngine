@@ -1,7 +1,8 @@
 #include "pch.h"
 #include "Window.h"
 
-Window::Window()
+Window::Window(const String& name)
+    : m_name(name)
 {
 
 }
@@ -11,9 +12,10 @@ Window::~Window()
 
 }
 
-Window::Window(WindowProps props)
+Window::Window(const String& name, WindowProps props)
+    : m_name(name), m_props(props)
 {
-    m_props = props;
+
 }
 
 void Window::PumpMessage()

@@ -1,6 +1,30 @@
 #pragma once
 #include "Core.h"
 #include "String/String.h"
+#include "Event/Event.h"
+
+class WindowCloseEvent : public Event
+{
+public:
+	WindowCloseEvent() = default;
+
+	virtual EventType GetType() const override
+	{
+		return EventType::Window;
+	}
+
+	static const char* GetStaticName()
+	{
+		return "WindowCloseEvent";
+	}
+
+	virtual const char* GetName() const override
+	{
+		return "WindowCloseEvent";
+	}
+public:
+	String Name;
+};
 
 /// <summary>
 /// 窗口状态
@@ -13,7 +37,9 @@ enum class WindowState
 	Fullscreen
 };
 
-//窗口属性
+/// <summary>
+/// 窗口属性
+/// </summary>
 struct WindowProps
 {
 	String Title = "Default Window";//窗口的标题
@@ -36,15 +62,15 @@ struct WindowProps
 	bool IsHasMaximizeButton = true;//是否有最大化按钮	
 };
 
-//窗口类
+//窗口类 
 class Window
 {
 public:
-	Window();
-
 	virtual ~Window();
 
-	explicit Window(WindowProps props);
+	explicit Window(const String& name);
+
+	Window(const String& name, WindowProps props);
 public:
 	virtual void PumpMessage();
 
@@ -129,9 +155,11 @@ public:
 	// 获取与窗口关联的原生操作系统句柄
 	virtual void* GetNativeHandle() const;
 public:
-	static Window* Create();
+	static Window* Create(const String& name);
 
-	static Window* Create(WindowProps props);
+	static Window* Create(const String& name, WindowProps props);
 protected:
+	String m_name;
+
 	WindowProps m_props;
 };

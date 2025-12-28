@@ -31,13 +31,13 @@ public:
 
     Directory GetDirectory(const String& name);
 
-    FileSystemEntry GetEntry(const String& name);
+    FileEntry GetEntry(const String& name);
 
     Array<File> GetFiles(const String& searchPattern);
 
     Array<Directory> GetDirectories(const String& searchPattern);
 
-    Array<FileSystemEntry> GetEntries(const String& name);
+    Array<FileEntry> GetEntries(const String& name);
 
     bool CreateSymlink(const String& path);
 };

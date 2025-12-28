@@ -47,6 +47,8 @@ public:
     // 从字节数组赋值
     String& operator=(const ByteArray& buffer);
 
+    operator std::filesystem::path() const;
+
     // 隐式转化为 const std::string
     operator const std::string() const;
 

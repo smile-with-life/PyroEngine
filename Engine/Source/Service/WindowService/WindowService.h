@@ -6,13 +6,18 @@
 #include "Window/Window.h"
 #include "Memory/RAII.h"
 #include "Container/Map.h"
+#include "Event/Event.h"
 
 class WindowService : public CoreModule
 {
 public:
     virtual void Init() override
     {
-        
+        EventSystem::GetInstance().Subscribe("WindowCloseEvent", 
+            [this](Event& event)
+            {
+                this->OnWindowClose(static_cast<WindowCloseEvent&>(event));
+            });
     }
 
     virtual void Tick() override
@@ -25,7 +30,7 @@ public:
 
     virtual void Exit() override
     {
-
+        EventSystem::GetInstance().Unsubscribe("WindowCloseEvent");
     }
 public:
     bool CreateOSWindow(const String& name)
@@ -33,7 +38,7 @@ public:
         if (!m_windows.Contains(name))
         {
             // 创建操作系统原生窗口
-            ScopePtr<Window> window = ScopePtr<Window>(Window::Create());
+            ScopePtr<Window> window = ScopePtr<Window>(Window::Create(name));
 
             m_windows[name] = std::move(window);
             return true;
@@ -46,7 +51,7 @@ public:
         if (!m_windows.Contains(name))
         {
             // 创建操作系统原生窗口
-            ScopePtr<Window> window = ScopePtr<Window>(Window::Create());
+            ScopePtr<Window> window = ScopePtr<Window>(Window::Create(name, props));
 
             m_windows[name] = std::move(window);
             return true;
@@ -82,6 +87,17 @@ public:
     bool IsHasWindow(const String& name)
     {
         return m_windows.Contains(name);
+    }
+
+    /*void OnEvent(Event& event)
+    {
+        EventDispatcher dispatcher(event);
+        dispatcher.Dispatch<WindowCloseEvent>(EventCallback(WindowService::OnWindowClose));
+    }*/
+
+    void OnWindowClose(WindowCloseEvent& event)
+    {
+        DestroyOSWindow(event.Name);
     }
 private:
     Map<String, ScopePtr<Window>> m_windows;

@@ -5,26 +5,26 @@
 
 class DateTime;
 // 文件系统条目
-class FileSystemEntry
+class FileEntry
 {
 public:
     // 析构函数
-    ~FileSystemEntry();
+    ~FileEntry();
 
     // 构造函数
-    FileSystemEntry(const String& path);
+    FileEntry(const String& path);
 
     // 复制构造函数被删除
-    FileSystemEntry(const FileSystemEntry& other) = delete;
+    FileEntry(const FileEntry& other) = delete;
 
     // 拷贝赋值运算符被删除
-    FileSystemEntry& operator=(const FileSystemEntry& other) = delete;
+    FileEntry& operator=(const FileEntry& other) = delete;
 
     // 移动构造函数
-    FileSystemEntry(FileSystemEntry&& other);
+    FileEntry(FileEntry&& other);
 
     // 移动赋值运算符
-    FileSystemEntry& operator=(FileSystemEntry&& other);
+    FileEntry& operator=(FileEntry&& other);
 public:
     // 创建文件
     virtual bool Create() const;

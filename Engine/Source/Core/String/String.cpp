@@ -91,6 +91,11 @@ String& String::operator=(const ByteArray& buffer)
     return *this;
 }
 
+String::operator std::filesystem::path() const
+{
+    return std::filesystem::path(m_data);
+}
+
 String::operator const std::string() const
 {
     return m_data;

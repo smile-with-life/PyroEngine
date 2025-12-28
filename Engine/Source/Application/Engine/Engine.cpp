@@ -20,8 +20,6 @@ void Engine::Tick()
 
 void Engine::Exit()
 {
-    GWindowService->DestroyOSWindow("GameWindow");
-
     GFrameService->Exit();
     GWindowService->Exit();
 }
