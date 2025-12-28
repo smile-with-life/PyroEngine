@@ -1,5 +1,6 @@
 #pragma once
 #include "Core.h"
+#include "Platform.h"
 #include "String/String.h"
 #include "Module/Module.h"
 #include "Window/Window.h"
@@ -11,12 +12,15 @@ class WindowService : public CoreModule
 public:
     virtual void Init() override
     {
-
+        
     }
 
     virtual void Tick() override
     {
-
+        for (const auto& iter : m_windows)
+        {
+            iter.second->PumpMessage();
+        }
     }
 
     virtual void Exit() override

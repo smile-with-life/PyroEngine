@@ -39,6 +39,7 @@ os._mkdir    = os._mkdir or os.mkdir
 os._rmdir    = os._rmdir or os.rmdir
 os._touch    = os._touch or os.touch
 os._tmpdir   = os._tmpdir or os.tmpdir
+os._curdir   = os._curdir or os.curdir
 os._fscase   = os._fscase or os.fscase
 os._setenv   = os._setenv or os.setenv
 os._getenvs  = os._getenvs or os.getenvs
@@ -52,6 +53,16 @@ os.SYSERR_NONE        = 0
 os.SYSERR_NOT_PERM    = 1
 os.SYSERR_NOT_FILEDIR = 2
 os.SYSERR_NOT_ACCESS  = 3
+
+-- get the async task
+function os._async_task()
+    local async_task = os._ASYNC_TASK
+    if async_task == nil then
+        async_task = require("base/private/async_task")
+        os._ASYNC_TASK = async_task
+    end
+    return async_task
+end
 
 -- copy single file or directory
 function os._cp(src, dst, rootdir, opt)
@@ -71,6 +82,7 @@ function os._cp(src, dst, rootdir, opt)
     -- is file or link?
     local symlink = opt.symlink
     local writeable = opt.writeable
+    local copy_if_different = opt.copy_if_different
     if os.isfile(src) or (symlink and os.islink(src)) then
 
         -- the destination is directory? append the filename
@@ -86,7 +98,7 @@ function os._cp(src, dst, rootdir, opt)
         if opt.force and os.isfile(dst) then
             os.rmfile(dst)
         end
-        if not os.cpfile(src, dst, symlink, writeable) then
+        if not os.cpfile(src, dst, symlink, writeable, copy_if_different) then
             local errors = os.strerror()
             if symlink and os.islink(src) then
                 local reallink = os.readlink(src)
@@ -108,7 +120,7 @@ function os._cp(src, dst, rootdir, opt)
         end
 
         -- copy directory
-        if not os.cpdir(src, dst, symlink) then
+        if not os.cpdir(src, dst, symlink, copy_if_different) then
             return false, string.format("cannot copy directory %s to %s,  %s", src, dst, os.strerror())
         end
     else
@@ -195,6 +207,14 @@ end
 -- set on change directory callback for scheduler
 function os._sched_chdir_set(chdir)
     os._SCHED_CHDIR = chdir
+end
+
+-- notify the current directory have been changed
+function os._notify_curdir_changed()
+    os._CURDIR = nil
+    if os._SCHED_CHDIR then
+        os._SCHED_CHDIR(os.curdir())
+    end
 end
 
 -- notify envs have been changed
@@ -380,7 +400,15 @@ end
 --              end)
 -- @endcode
 --
-function os.match(pattern, mode, callback)
+function os.match(pattern, mode, opt)
+
+    -- do it in the asynchronous task
+    if type(opt) == "table" and opt.async and xmake.in_main_thread() then
+        return os._async_task().match(pattern, mode)
+    end
+
+    -- extract callback
+    local callback = type(opt) == "function" and opt or (type(opt) == "table" and opt.callback or nil)
 
     -- support path instance
     pattern = tostring(pattern)
@@ -473,27 +501,37 @@ end
 --
 -- @note only return {} without count to simplify code, e.g. table.unpack(os.dirs(""))
 --
-function os.dirs(pattern, callback)
-    return (os.match(pattern, 'd', callback))
+function os.dirs(pattern, opt)
+    return (os.match(pattern, 'd', opt))
 end
 
 -- match files
-function os.files(pattern, callback)
-    return (os.match(pattern, 'f', callback))
+function os.files(pattern, opt)
+    return (os.match(pattern, 'f', opt))
 end
 
 -- match files and directories
-function os.filedirs(pattern, callback)
-    return (os.match(pattern, 'a', callback))
+function os.filedirs(pattern, opt)
+    return (os.match(pattern, 'a', opt))
 end
 
 -- copy files or directories and we can reserve the source directory structure
+--
+-- @param srcpath   the source file path
+-- @param dstpath   the destination file path
+-- @param opt       the copy option. e.g. {rootdir, symlink, writeable, force, copy_if_different}
+--
 -- e.g. os.cp("src/**.h", "/tmp/", {rootdir = "src", symlink = true})
 function os.cp(srcpath, dstpath, opt)
 
     -- check arguments
     if not srcpath or not dstpath then
         return false, string.format("invalid arguments!")
+    end
+
+    -- do it in the asynchronous task
+    if opt and opt.async and xmake.in_main_thread() then
+        return os._async_task().cp(srcpath, dstpath, {detach = opt.detach})
     end
 
     -- reserve the source directory structure if opt.rootdir is given
@@ -549,14 +587,19 @@ end
 
 -- remove files or directories
 function os.rm(filepath, opt)
+    opt = opt or {}
 
     -- check arguments
     if not filepath then
         return false, string.format("invalid arguments!")
     end
 
+    -- do it in the asynchronous task
+    if opt.async and xmake.in_main_thread() then
+       return os._async_task().rm(filepath, {detach = opt.detach})
+    end
+
     -- remove file or directories
-    opt = opt or {}
     filepath = tostring(filepath)
     local filepathes = os._match_wildcard_pathes(filepath)
     if type(filepathes) == "string" then
@@ -602,44 +645,42 @@ end
 function os.cd(dir)
     assert(dir)
 
+    -- we can only change directory in main thread
+    if not xmake.in_main_thread() then
+        local thread = require("base/thread")
+        os.raise("we cannot change directory in non-main thread(%s)", thread.running() or "unknown")
+    end
+
     -- support path instance
     dir = tostring(dir)
 
-    -- the previous directory
-    local oldir = os.curdir()
-
     -- change to the previous directory?
+    local oldir = os.curdir()
     if dir == "-" then
-        -- exists the previous directory?
         if os._PREDIR then
             dir = os._PREDIR
             os._PREDIR = nil
         else
-            -- error
             return nil, string.format("not found the previous directory %s", os.strerror())
         end
     end
 
-    -- is directory?
-    if os.isdir(dir) then
+    -- no changed?
+    if dir == oldir then
+        return oldir
+    end
 
-        -- change to directory
+    -- do change directory
+    if os.isdir(dir) then
         if not os.chdir(dir) then
             return nil, string.format("cannot change directory %s %s", dir, os.strerror())
         end
-
-        -- save the previous directory
         os._PREDIR = oldir
-
-    -- not exists?
     else
         return nil, string.format("cannot change directory %s, not found this directory %s", dir, os.strerror())
     end
 
-    -- do chdir callback for scheduler
-    if os._SCHED_CHDIR then
-        os._SCHED_CHDIR(os.curdir())
-    end
+    os._notify_curdir_changed()
     return oldir
 end
 
@@ -675,11 +716,16 @@ function os.mkdir(dir)
 end
 
 -- remove directories
-function os.rmdir(dir)
+function os.rmdir(dir, opt)
 
     -- check arguments
     if not dir then
         return false, string.format("invalid arguments!")
+    end
+
+    -- do it in the asynchronous task
+    if opt and opt.async and xmake.in_main_thread() then
+        return os._async_task().rmdir(dir, {detach = opt.detach})
     end
 
     -- support path instance
@@ -693,6 +739,16 @@ function os.rmdir(dir)
         end
     end
     return true
+end
+
+-- get the current directory
+function os.curdir()
+    local curdir = os._CURDIR
+    if curdir == nil then
+        curdir = os._curdir()
+        os._CURDIR = curdir
+    end
+    return curdir
 end
 
 -- get the temporary directory
@@ -751,7 +807,8 @@ function os.tmpfile(opt_or_key)
         key = opt_or_key.key
         opt = opt_or_key
     end
-    return path.join(os.tmpdir(opt), "_" .. (hash.uuid4(key):gsub("-", "")))
+    local filename = "_" .. (key and hash.strhash128(key) or (hash.rand128()))
+    return path.join(os.tmpdir(opt), filename)
 end
 
 -- exit program
@@ -817,17 +874,10 @@ function os.runv(program, argv, opt)
             errors = string.format("cannot runv(%s), %s", cmd, errors and errors or "unknown reason")
         end
 
-        -- remove the temporary log file
         os.rm(logfile)
-
-        -- failed
         return false, errors
     end
-
-    -- remove the temporary log file
     os.rm(logfile)
-
-    -- ok
     return true
 end
 
@@ -1289,23 +1339,29 @@ function os.term()
     return require("base/tty").term()
 end
 
--- get all current environment variables
--- e.g. envs["PATH"] = "/xxx:/yyy/foo"
+-- get all current environments variables
 function os.getenvs()
-    local envs = {}
-    for _, line in ipairs(os._getenvs()) do
-        local p = line:find('=', 1, true)
-        if p then
-            local key = line:sub(1, p - 1):trim()
-            -- only translate Path to PATH on windows
-            -- @see https://github.com/xmake-io/xmake/issues/3752
-            if os.host() == "windows" and key:lower() == "path" then
-                key = key:upper()
+    local envs = os._getenvs()
+    if envs then
+        -- we need to be compatible with the old binary core, if it's array (<= v3.0.3)
+        if envs[1] ~= nil then
+            local result = {}
+            for _, line in ipairs(envs) do
+                local p = line:find('=', 1, true)
+                if p then
+                    local key = line:sub(1, p - 1):trim()
+                    -- only translate Path to PATH on windows
+                    -- @see https://github.com/xmake-io/xmake/issues/3752
+                    if os.host() == "windows" and key:lower() == "path" then
+                        key = key:upper()
+                    end
+                    local values = line:sub(p + 1):trim()
+                    if #key > 0 then
+                        result[key] = values
+                    end
+                end
             end
-            local values = line:sub(p + 1):trim()
-            if #key > 0 then
-                envs[key] = values
-            end
+            envs = result
         end
     end
     return envs

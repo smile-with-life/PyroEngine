@@ -115,7 +115,6 @@ function cachekey(program, cppinfo, envs)
             table.insert(items, cppflag)
         end
     end
-    table.sort(items)
     table.insert(items, hash.xxhash128(cppfile))
     if envs then
         local basename = path.basename(program)
@@ -128,7 +127,7 @@ function cachekey(program, cppinfo, envs)
             end
         end
     end
-    return hash.xxhash128(bytes(table.concat(items, "")))
+    return hash.strhash128(table.concat(items, ""))
 end
 
 -- get cache root directory
@@ -340,7 +339,7 @@ function build(program, argv, opt)
                 _g.cache_miss_total_time = (_g.cache_miss_total_time or 0) + (os.mclock() - cache_miss_start_time)
             end
         end
-        os.rm(cppinfo.cppfile)
+        os.tryrm(cppinfo.cppfile)
     else
         _g.preprocess_error_count = (_g.preprocess_error_count or 0) + 1
     end

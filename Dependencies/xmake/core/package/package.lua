@@ -83,7 +83,7 @@ function _instance.new(name, info, opt)
 end
 
 -- get memcache
-function _instance:_memcache()
+function _instance:memcache()
     local cache = self._MEMCACHE
     if not cache then
         cache = memcache.cache("core.package.package." .. tostring(self))
@@ -484,13 +484,13 @@ end
 -- get library dep
 function _instance:librarydep(name, opt)
     local key = "librarydeps_map_" .. ((opt and opt.private) and "private" or "")
-    local librarydeps_map = self:_memcache():get(key)
+    local librarydeps_map = self:memcache():get(key)
     if not librarydeps_map then
         librarydeps_map = {}
         for _, dep in ipairs(self:librarydeps()) do
             librarydeps_map[dep:name()] = dep
         end
-        self:_memcache():set(key, librarydeps_map)
+        self:memcache():set(key, librarydeps_map)
     end
     return librarydeps_map[name]
 end
@@ -830,9 +830,9 @@ function _instance:builddir()
         if self:is_local() then
             local name = self:name():lower():gsub("::", "_")
             local rootdir = path.join(config.builddir({absolute = true}), ".packages", name:sub(1, 1):lower(), name, self:version_str())
-            builddir = path.join(rootdir, "cache", "build_" .. self:buildhash():sub(1, 8))
+            builddir = path.join(rootdir, "cache", "build_" .. hash.rand32())
         else
-            builddir = "build_" .. self:buildhash():sub(1, 8)
+            builddir = "build_" .. hash.rand32()
         end
         self._BUILDDIR = builddir
     end
@@ -929,9 +929,13 @@ end
 function _instance:rulesdir()
     local rulesdir = self._RULESDIR
     if rulesdir == nil then
-        rulesdir = path.join(self:scriptdir(), "rules")
-        if not os.isdir(rulesdir) and self:base() then
+        if self:repo() == nil and self:base() then
             rulesdir = self:base():rulesdir()
+        else
+            rulesdir = path.join(self:scriptdir(), "rules")
+            if not os.isdir(rulesdir) and self:base() then
+                rulesdir = self:base():rulesdir()
+            end
         end
         if rulesdir == nil or not os.isdir(rulesdir) then
             rulesdir = false
@@ -990,7 +994,9 @@ function _instance:manifest_save()
     manifest.mode        = self:mode()
     manifest.configs     = self:configs()
     manifest.envs        = self:_rawenvs()
-    manifest.pathenvs    = self:_pathenvs():to_array()
+
+    -- ensure pathenvs are written deterministically
+    manifest.pathenvs = table.to_array(self:_pathenvs():orderitems())
 
     -- save enabled library deps
     if self:librarydeps() then
@@ -1242,16 +1248,33 @@ function _instance:build_envs(lazy_loading)
     if build_envs == nil then
         -- lazy loading the given environment value and cache it
         build_envs = {}
+        local builtin_configs = hashset.of("cflags", "cxflags", "cxxflags", "ldflags", "shflags", "asflags")
         setmetatable(build_envs, { __index = function (tbl, key)
+            local result = {}
             local value = config.get(key)
             if value == nil then
                 value = self:tool(key)
             end
-            value = table.unique(table.join(table.wrap(value), table.wrap(self:config(key)), self:toolconfig(key)))
-            if #value > 0 then
-                value = table.unwrap(value)
-                rawset(tbl, key, value)
-                return value
+            if value then
+                table.join2(result, value)
+            end
+            -- we can only get the builtin config values
+            -- https://github.com/xmake-io/xmake/issues/6897
+            if builtin_configs:has(key) then
+                value = self:config(key)
+                if value then
+                    table.join2(result, value)
+                end
+            end
+            value = self:toolconfig(key)
+            if value then
+                table.join2(result, value)
+            end
+            result = table.unique(result)
+            if #result > 0 then
+                result = table.unwrap(result)
+                rawset(tbl, key, result)
+                return result
             end
             return rawget(tbl, key)
         end})
@@ -1275,7 +1298,7 @@ end
 
 -- get runtimes
 function _instance:runtimes()
-    local runtimes = self:_memcache():get("runtimes")
+    local runtimes = self:memcache():get("runtimes")
     if runtimes == nil then
         runtimes = self:config("runtimes")
         if runtimes then
@@ -1283,17 +1306,17 @@ function _instance:runtimes()
             runtimes = table.unwrap(runtimes_current)
         end
         runtimes = runtimes or false
-        self:_memcache():set("runtimes", runtimes)
+        self:memcache():set("runtimes", runtimes)
     end
     return runtimes or nil
 end
 
 -- has the given runtime for the current toolchains?
 function _instance:has_runtime(...)
-    local runtimes_set = self:_memcache():get("runtimes_set")
+    local runtimes_set = self:memcache():get("runtimes_set")
     if runtimes_set == nil then
         runtimes_set = hashset.from(table.wrap(self:runtimes()))
-        self:_memcache():set("runtimes_set", runtimes_set)
+        self:memcache():set("runtimes_set", runtimes_set)
     end
     for _, v in ipairs(table.pack(...)) do
         if runtimes_set:has(v) then
@@ -1304,7 +1327,7 @@ end
 
 -- get the given toolchain
 function _instance:toolchain(name)
-    local toolchains_map = self:_memcache():get("toolchains_map")
+    local toolchains_map = self:memcache():get("toolchains_map")
     if toolchains_map == nil then
         toolchains_map = {}
         local toolchains = self:toolchains()
@@ -1313,7 +1336,7 @@ function _instance:toolchain(name)
                 toolchains_map[toolchain_inst:name()] = toolchain_inst
             end
         end
-        self:_memcache():set("toolchains_map", toolchains_map)
+        self:memcache():set("toolchains_map", toolchains_map)
     end
     if not toolchains_map[name] then
         toolchains_map[name] = toolchain.load(name, {plat = self:plat(), arch = self:arch()})
@@ -1368,7 +1391,7 @@ end
 
 -- get the package compiler
 function _instance:compiler(sourcekind)
-    local compilerinst = self:_memcache():get2("compiler", sourcekind)
+    local compilerinst = self:memcache():get2("compiler", sourcekind)
     if not compilerinst then
         if not sourcekind then
             os.raise("please pass sourcekind to the first argument of package:compiler(), e.g. cc, cxx, as")
@@ -1378,14 +1401,14 @@ function _instance:compiler(sourcekind)
             os.raise(errors)
         end
         compilerinst = instance
-        self:_memcache():set2("compiler", sourcekind, compilerinst)
+        self:memcache():set2("compiler", sourcekind, compilerinst)
     end
     return compilerinst
 end
 
 -- get the package linker
 function _instance:linker(targetkind, sourcekinds)
-    local linkerinst = self:_memcache():get3("linker", targetkind, sourcekinds)
+    local linkerinst = self:memcache():get3("linker", targetkind, sourcekinds)
     if not linkerinst then
         if not sourcekinds then
             os.raise("please pass sourcekinds to the second argument of package:linker(), e.g. cc, cxx, as")
@@ -1395,7 +1418,7 @@ function _instance:linker(targetkind, sourcekinds)
             os.raise(errors)
         end
         linkerinst = instance
-        self:_memcache():set3("linker", targetkind, sourcekinds, linkerinst)
+        self:memcache():set3("linker", targetkind, sourcekinds, linkerinst)
     end
     return linkerinst
 end
@@ -1408,14 +1431,13 @@ end
 --    ...
 -- end
 function _instance:has_tool(toolkind, ...)
-    local _, toolname = self:tool(toolkind)
-    if toolname then
-        for _, v in ipairs(table.join(...)) do
-            if v and toolname:find("^" .. v:gsub("%-", "%%-") .. "$") then
-                return true
-            end
-        end
+    local target_utils = package._target_utils
+    if target_utils == nil then
+        target_utils = sandbox_module.import("private.utils.target", {anonymous = true})
+        package._target_utils = target_utils
     end
+    local _, toolname = self:tool(toolkind)
+    return target_utils.has_tool(toolname, table.pack(...))
 end
 
 -- get the user private data
@@ -1455,7 +1477,7 @@ function _instance:_versions_list()
                 if not path.is_absolute(versionfile) then
                     local subpath = versionfile
                     versionfile = path.join(self:scriptdir(), subpath)
-                    if not os.isfile(versionfile) then
+                    if not os.isfile(versionfile) and self:base() then
                         versionfile = path.join(self:base():scriptdir(), subpath)
                     end
                 end
@@ -1480,8 +1502,10 @@ end
 -- get versions
 function _instance:versions()
     if self._VERSIONS == nil then
+        -- we need to sort the build number in semver list
+        -- https://github.com/xmake-io/xmake/issues/6953
         local versions = {}
-        for version, _ in pairs(self:_versions_list()) do
+        for version, _ in table.orderpairs(self:_versions_list()) do
             -- remove the url alias prefix if exists
             local pos = version:find(':', 1, true)
             if pos then
@@ -1688,6 +1712,12 @@ function _instance:_compute_buildhash()
     self:buildhash()
 end
 
+-- hash.strhash128 has been switched to xxhash.
+-- For compatibility, the old hash algorithm is still used here.
+function _instance:_strhash128(str)
+    return hash.uuid4(str):replace("-", "", {plain = true}):lower()
+end
+
 -- get the build hash
 function _instance:buildhash()
     local buildhash = self._BUILDHASH
@@ -1749,7 +1779,7 @@ function _instance:buildhash()
                 table.sort(toolchains)
                 str = str .. "_" .. table.concat(toolchains, "_")
             end
-            return hash.strhash128(str)
+            return self:_strhash128(str)
         end
         local function _get_installdir(...)
             local name = self:name():lower():gsub("::", "_")
@@ -2427,21 +2457,8 @@ end
 
 -- generate sanitizer configs
 function _instance:_generate_sanitizer_configs(checkmode, sourcekind)
-
-    -- add cflags
-    local configs = {}
-    if sourcekind and self:has_tool(sourcekind, "cl", "clang", "clangxx", "gcc", "gxx") then
-        local cflag = sourcekind == "cxx" and "cxxflags" or "cflags"
-        configs[cflag] = "-fsanitize=" .. checkmode
-    end
-
-    -- add ldflags and shflags
-    -- msvc does not have an fsanitize linker flag, so the 'link' tool is excluded
-    if self:has_tool("ld", "clang", "clangxx", "gcc", "gxx") then
-        configs.ldflags = "-fsanitize=" .. checkmode
-        configs.shflags = "-fsanitize=" .. checkmode
-    end
-    return configs
+    local toolchain_utils = sandbox_module.import("private.utils.toolchain", {anonymous = true})
+    return toolchain_utils.get_sanitizer_flags(self, {checkmode = checkmode, sourcekind = sourcekind})
 end
 
 -- generate building configs for has_xxx/check_xxx
@@ -3064,7 +3081,7 @@ function package.load_from_project(packagename, project)
     end
 
     -- new an instance
-    instance = _instance.new(packagename, packageinfo)
+    instance = _instance.new(packagename, packageinfo, {scriptdir = os.projectdir()})
     package._memcache():set2("packages", instance)
     return instance
 end
@@ -3079,11 +3096,6 @@ function package.load_from_repository(packagename, packagedir, opt)
         return instance
     end
 
-    -- load repository first for checking the xmake minimal version (deprecated)
-    local repo = opt.repo
-    if repo then
-        repo:load()
-    end
 
     -- find the package script path
     local scriptpath = opt.packagefile

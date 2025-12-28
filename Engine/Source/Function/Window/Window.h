@@ -46,6 +46,8 @@ public:
 
 	explicit Window(WindowProps props);
 public:
+	virtual void PumpMessage();
+
 	// 设置窗口标题
 	virtual void SetTitle(const String& title);
 

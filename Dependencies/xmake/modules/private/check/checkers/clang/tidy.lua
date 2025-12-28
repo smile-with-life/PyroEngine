@@ -36,12 +36,14 @@ local options = {
     {"j", "jobs",       "kv", tostring(os.default_njob()),
                                     "Set the number of parallel check jobs."},
     {"q", "quiet",      "k",  nil,  "Run clang-tidy in quiet mode."},
+    {"v", "verbose",    "k",  nil,  "Print lots of verbose information for users."},
+    {"D", "diagnosis",  "k",  nil,  "Print lots of diagnosis information (backtrace, check info ..) only for developers."},
     {nil, "fix",        "k",  nil,  "Apply suggested fixes."},
     {nil, "fix_errors", "k",  nil,  "Apply suggested errors fixes."},
     {nil, "fix_notes",  "k",  nil,  "Apply suggested notes fixes."},
     {nil, "create",     "k",  nil,  "Create a .clang-tidy file."},
-    {nil, "configfile", "kv", nil,  "Specify the path of .clang-tidy or custom config file"},
-    {nil, "compdb",     "kv", nil,  "Specify the path of the compile_commands.json file"},
+    {nil, "configfile", "kv", nil,  "Specify the path of .clang-tidy or custom config file."},
+    {nil, "compdb",     "kv", nil,  "Specify the path of the compile_commands.json file or the directory containing the file."},
     {nil, "checks",     "kv", nil,  "Set the given checks.",
                                     "e.g.",
                                     "    - xmake check clang.tidy --checks=\"*\""},
@@ -83,17 +85,46 @@ function _add_target_files(sourcefiles, target)
     end
 end
 
-function _run_clang_tidy(clang_tidy, argv, opt)
-    -- https://github.com/llvm/llvm-project/pull/120547
-    if clang_tidy.version and semver.compare(clang_tidy.version, "19.1.6") > 0 and #argv > 10 then
-        local argsfile = os.tmpfile() .. ".args.txt"
-        io.writefile(argsfile, os.args(argv))
-        argv = {"@" .. argsfile}
-        os.vrunv(clang_tidy.program, argv, opt)
-        os.rm(argsfile)
-    else
-        os.vrunv(clang_tidy.program, argv, opt)
-    end
+-- check a single sourcefile
+function _check_sourcefile(clang_tidy, sourcefile, opt)
+    progress.show(opt.progress, "clang-tidy.analyzing %s", sourcefile)
+    try
+    {
+        function ()
+            local outdata, errdata = os.iorunv(clang_tidy.program, opt.tidy_argv, {curdir = opt.projectdir})
+            return (outdata or "") .. (errdata or "")
+        end,
+        catch
+        {
+            function (errors)
+                -- execution failed or returned non-zero
+                local error_text = ""
+                if type(errors) == "table" then
+                    error_text = (errors.stdout or "") .. (errors.stderr or "")
+                    if #error_text:trim() == 0 then
+                        error_text = errors.errors or "check failed"
+                    end
+                else
+                    error_text = tostring(errors)
+                end
+                progress.show_output("${color.error}%s:\n%s", sourcefile, error_text)
+                progress.show_abort()
+                raise(error_text)
+            end
+        },
+        finally
+        {
+            function (ok, outdata, errdata)
+                -- show output if any
+                if ok then
+                    local output = (outdata or "") .. (errdata or "")
+                    if output and #output:trim() > 0 then
+                        progress.show_output("${color.warning}%s:\n%s", sourcefile, output)
+                    end
+                end
+            end
+        }
+    }
 end
 
 -- check sourcefiles
@@ -124,30 +155,25 @@ function _check_sourcefiles(clang_tidy, sourcefiles, opt)
         table.insert(argv, "--quiet")
     end
 
-    -- split sourcefiles
-    local arguments_maxn = 32
-    local sourcefiles_argv = {}
-    local sourcefiles_jobs = {}
-    for _, sourcefile in ipairs(sourcefiles) do
-        if not path.is_absolute(sourcefile) then
-            sourcefile = path.absolute(sourcefile, projectdir)
-        end
-        table.insert(sourcefiles_argv, sourcefile)
-        if #sourcefiles_argv >= arguments_maxn then
-            table.insert(sourcefiles_jobs, sourcefiles_argv)
-            sourcefiles_argv = {}
-        end
-    end
-    if #sourcefiles_argv > 0 then
-        table.insert(sourcefiles_jobs, sourcefiles_argv)
-    end
-
     -- run clang-tidy
-    runjobs("checker.tidy", function (index, total, opt)
-        local tidy_argv = sourcefiles_jobs[index]
-        progress.show(index * 100 / total, "clang-tidy.analyzing %s .. %d", tidy_argv[1], #tidy_argv)
-        _run_clang_tidy(clang_tidy, tidy_argv, {curdir = projectdir})
-    end, {total = #sourcefiles_jobs, comax = opt.jobs or os.default_njob()})
+    local analyze_time = os.mclock()
+    local runjobs_opt = {
+        total = #sourcefiles,
+        comax = opt.jobs or os.default_njob(),
+        showtips = false,
+        progress_refresh = true
+    }
+    runjobs("checker.tidy", function (index, total, job_opt)
+        local sourcefile = sourcefiles[index]
+        local tidy_argv = table.join(argv, {sourcefile})
+        _check_sourcefile(clang_tidy, sourcefile, {
+            tidy_argv = tidy_argv,
+            projectdir = projectdir,
+            progress = job_opt.progress
+        })
+    end, runjobs_opt)
+    analyze_time = os.mclock() - analyze_time
+    progress.show(100, "${color.success}clang-tidy analyzed %d files, spent %.3fs", #sourcefiles, analyze_time / 1000)
 end
 
 -- do check
@@ -155,8 +181,8 @@ function _check(clang_tidy, opt)
     opt = opt or {}
 
     -- generate compile_commands.json first
-    local filepath = option.get("compdb")
-    if not filepath then
+    local db_path = opt.compdb
+    if not db_path then
         -- @see https://github.com/xmake-io/xmake/issues/5583#issuecomment-2337696628
         local outputdir
         local extraconf = project.extraconf("target.rules", "plugin.compile_commands.autoupdate")
@@ -164,19 +190,25 @@ function _check(clang_tidy, opt)
             outputdir = extraconf.outputdir
         end
         if outputdir then
-            filepath = path.join(outputdir, "compile_commands.json")
+            db_path = path.join(outputdir, "compile_commands.json")
         end
     end
-    if not filepath then
-        filepath = "compile_commands.json"
+    if not db_path then
+        db_path = "compile_commands.json"
     end
-    if not os.isfile(filepath) then
+    if os.isdir(db_path) then
+        local db_file_path = path.join(db_path, "compile_commands.json")
+        if os.isfile(db_file_path) then
+            db_path = db_file_path
+        end
+    end
+    if not os.isfile(db_path) then
         local outputdir = os.tmpfile() .. ".dir"
-        local filename = path.filename(filepath)
-        filepath = outputdir and path.join(outputdir, filename) or filename
+        local filename = path.filename(db_path)
+        db_path = outputdir and path.join(outputdir, filename) or filename
         task.run("project", {quiet = true, kind = "compile_commands", lsp = "clangd", outputdir = outputdir})
     end
-    opt.compdbfile = path.absolute(filepath)
+    opt.compdbfile = path.absolute(db_path)
 
     -- get sourcefiles
     local sourcefiles = {}
@@ -212,6 +244,17 @@ function main(argv)
                                            , ""
                                            , "Usage: xmake check clang.tidy [options]")
 
+    -- save option context
+    option.save()
+
+    -- set verbose and diagnosis if specified
+    if args.verbose then
+        option.set("verbose", true)
+    end
+    if args.diagnosis then
+        option.set("diagnosis", true)
+    end
+
     -- enter the environments of llvm
     local oldenvs = packagenv.enter("llvm")
 
@@ -242,5 +285,7 @@ function main(argv)
         _check(clang_tidy, args)
     end
     os.setenvs(oldenvs)
-end
 
+    -- restore option context
+    option.restore()
+end

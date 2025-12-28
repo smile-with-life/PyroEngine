@@ -90,7 +90,8 @@ function strippeable_flags()
         "fmodule-mapper",
         "fmodules-ts",
         "fmodules",
-        "fPIC"
+        "fPIC",
+        "fsanitize"
     }
     local splitted_strippeable_flags = {
         "I",
@@ -167,9 +168,6 @@ function _get_std_module_manifest_path(target)
 end
 
 function get_stdmodules(target)
-    if not target:policy("build.c++.modules.std") then
-        return
-    end
     local modules_json_path = _get_std_module_manifest_path(target)
     if modules_json_path then
         local modules_json = json.loadfile(modules_json_path)

@@ -20,33 +20,76 @@
 
 -- imports
 import("core.base.option")
+import("core.base.binutils")
 import("private.tools.vstool")
+
+-- merge *.a archive libraries using libtool
+function _merge_for_ar_libtool(target, program, outputfile, libraryfiles, opt)
+    os.vrunv("libtool", table.join("-static", "-o", outputfile, libraryfiles))
+end
+
+-- merge *.a archive libraries using fallback method (extract and repack)
+-- Used for platforms where ar does not support -M option (e.g., Solaris)
+function _merge_for_ar_fallback(target, program, outputfile, libraryfiles, opt)
+
+    -- extract all archives to the temporary directory
+    local tmpdir = os.tmpfile() .. ".dir"
+    os.mkdir(tmpdir)
+    for _, libraryfile in ipairs(libraryfiles) do
+        binutils.extractlib(libraryfile, tmpdir)
+    end
+
+    -- collect all object files
+    local objectfiles = {}
+    for _, objectfile in ipairs(os.files(path.join(tmpdir, "*.o"))) do
+        table.insert(objectfiles, path.filename(objectfile))
+    end
+
+    -- create new archive with all object files
+    if #objectfiles > 0 then
+        os.mkdir(path.directory(outputfile))
+        local outputfile_abs = path.absolute(outputfile)
+        -- remove output file if exists to avoid appending
+        os.tryrm(outputfile_abs)
+        -- create new archive with -c (create) and -r (replace/insert)
+        -- use relative paths for object files since curdir = tmpdir
+        os.vrunv(program, table.join("-cr", outputfile_abs, objectfiles), {curdir = tmpdir})
+    end
+    os.rm(tmpdir)
+end
+
+-- merge *.a archive libraries for GNU ar (using -M interactive mode)
+function _merge_for_ar_gnu(target, program, outputfile, libraryfiles, opt)
+    -- we can't generate directly to outputfile,
+    -- because on windows/ndk, llvm-ar.exe may fail to write with no permission, even though it's a writable temp file.
+    --
+    -- @see https://github.com/xmake-io/xmake/issues/1973
+    local archivefile = target.autogenfile and target:autogenfile((hash.uuid(outputfile):gsub("%-", ""))) .. ".a" or (os.tmpfile() .. ".a")
+    os.mkdir(path.directory(archivefile))
+    local tmpfile = os.tmpfile()
+    local mrifile = io.open(tmpfile, "w")
+    mrifile:print("create %s", archivefile)
+    for _, libraryfile in ipairs(libraryfiles) do
+        mrifile:print("addlib %s", libraryfile)
+    end
+    mrifile:print("save")
+    mrifile:print("end")
+    mrifile:close()
+    os.vrunv(program, {"-M"}, {stdin = tmpfile})
+    os.cp(archivefile, outputfile)
+    os.rm(tmpfile)
+    os.rm(archivefile)
+end
 
 -- merge *.a archive libraries for ar
 function _merge_for_ar(target, program, outputfile, libraryfiles, opt)
     opt = opt or {}
     if target:is_plat("macosx", "iphoneos", "watchos", "appletvos") then
-        os.vrunv("libtool", table.join("-static", "-o", outputfile, libraryfiles))
+        _merge_for_ar_libtool(target, program, outputfile, libraryfiles, opt)
+    elseif target:is_plat("solaris") then
+        _merge_for_ar_fallback(target, program, outputfile, libraryfiles, opt)
     else
-        -- we can't generate directly to outputfile,
-        -- because on windows/ndk, llvm-ar.exe may fail to write with no permission, even though it's a writable temp file.
-        --
-        -- @see https://github.com/xmake-io/xmake/issues/1973
-        local archivefile = target.autogenfile and target:autogenfile((hash.uuid(outputfile):gsub("%-", ""))) .. ".a" or (os.tmpfile() .. ".a")
-        os.mkdir(path.directory(archivefile))
-        local tmpfile = os.tmpfile()
-        local mrifile = io.open(tmpfile, "w")
-        mrifile:print("create %s", archivefile)
-        for _, libraryfile in ipairs(libraryfiles) do
-            mrifile:print("addlib %s", libraryfile)
-        end
-        mrifile:print("save")
-        mrifile:print("end")
-        mrifile:close()
-        os.vrunv(program, {"-M"}, {stdin = tmpfile})
-        os.cp(archivefile, outputfile)
-        os.rm(tmpfile)
-        os.rm(archivefile)
+        _merge_for_ar_gnu(target, program, outputfile, libraryfiles, opt)
     end
 end
 

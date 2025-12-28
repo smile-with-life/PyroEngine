@@ -392,6 +392,14 @@ function _fix_cxx_compiler_cmake(package, envs)
     end
 end
 
+-- @see https://github.com/ziglang/zig/issues/22213
+function _fix_zigcc_linker_cmake(package, envs)
+    if package:has_tool("cc", "zig_cc") then
+        envs.CMAKE_C_LINKER_DEPFILE_SUPPORTED = "FALSE"
+        envs.CMAKE_CXX_LINKER_DEPFILE_SUPPORTED = "FALSE"
+    end
+end
+
 -- insert configs from envs
 function _insert_configs_from_envs(configs, envs, opt)
     opt = opt or {}
@@ -418,6 +426,11 @@ function _get_configs_for_generic(package, configs, opt)
     if package:is_library() then
         envs.BUILD_SHARED_LIBS = package:config("shared") and "ON" or "OFF"
     end
+    -- https://cmake.org/cmake/help/latest/variable/CMAKE_LINKER_TYPE.html
+    if package:has_tool("ld", "link") then
+        envs.CMAKE_LINKER_TYPE = "MSVC"
+    end
+    _fix_zigcc_linker_cmake(package, envs)
     _insert_configs_from_envs(configs, envs, opt)
 end
 
@@ -472,8 +485,6 @@ function _get_configs_for_windows(package, configs, opt)
 
     if package:is_cross() then
         _get_configs_for_cross(package, configs, opt)
-    else
-        _get_configs_for_generic(package, configs, opt)
     end
 end
 
@@ -510,7 +521,6 @@ function _get_configs_for_android(package, configs, opt)
         table.insert(configs, "-DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=BOTH")
         table.insert(configs, "-DCMAKE_FIND_ROOT_PATH_MODE_PROGRAM=NEVER")
     end
-    _get_configs_for_generic(package, configs, opt)
 end
 
 -- get configs for appleos
@@ -609,7 +619,6 @@ function _get_configs_for_wasm(package, configs, opt)
     envs.CMAKE_FIND_ROOT_PATH_MODE_LIBRARY = "BOTH"
     envs.CMAKE_FIND_ROOT_PATH_MODE_INCLUDE = "BOTH"
     envs.CMAKE_FIND_ROOT_PATH_MODE_PROGRAM = "NEVER"
-    _get_configs_for_generic(package, configs, opt)
     _insert_configs_from_envs(configs, envs, opt)
 end
 
@@ -618,15 +627,16 @@ function _get_configs_for_cross(package, configs, opt)
     opt = opt or {}
     opt.cross                      = true
     local envs                     = {}
-    envs.CMAKE_BUILD_TYPE          = package:is_debug() and "Debug" or "Release"
-    envs.BUILD_SHARED_LIBS         = package:config("shared") and "ON" or "OFF"
     local sdkdir                   = _translate_paths(package:build_getenv("sdk"))
     envs.CMAKE_C_COMPILER          = _translate_bin_path(package:build_getenv("cc"))
     envs.CMAKE_CXX_COMPILER        = _translate_bin_path(package:build_getenv("cxx"))
     envs.CMAKE_ASM_COMPILER        = _translate_bin_path(package:build_getenv("as"))
     envs.CMAKE_AR                  = _translate_bin_path(package:build_getenv("ar"))
-    if package:is_plat("windows") and package:has_tool("cxx", "cl") then
-        envs.CMAKE_AR = path.join(path.directory(envs.CMAKE_CXX_COMPILER), "lib.exe")
+    if package:is_plat("windows") then
+        envs.CMAKE_RC_COMPILER = _translate_bin_path(package:build_getenv("mrc"))
+        if package:has_tool("cxx", "cl") then
+            envs.CMAKE_AR = path.join(path.directory(envs.CMAKE_CXX_COMPILER), "lib.exe")
+        end
     end
     _fix_cxx_compiler_cmake(package, envs)
     -- @note The link command line is set in Modules/CMake{C,CXX,Fortran}Information.cmake and defaults to using the compiler, not CMAKE_LINKER,
@@ -651,9 +661,6 @@ function _get_configs_for_cross(package, configs, opt)
         end
         envs.CMAKE_SYSTEM_NAME = system_name
         envs.CMAKE_SYSTEM_PROCESSOR = _get_cmake_system_processor(package)
-    end
-    if not package:is_plat("windows", "mingw") and package:config("pic") ~= false then
-        table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
     end
     -- avoid find and add system include/library path
     -- @see https://github.com/xmake-io/xmake/issues/2037
@@ -701,9 +708,6 @@ function _get_configs_for_host_toolchain(package, configs, opt)
     -- https://github.com/xmake-io/xmake/issues/2170
     if package:is_cross() then
         envs.CMAKE_SYSTEM_NAME     = "Linux"
-    end
-    if not package:is_plat("windows", "mingw") and package:config("pic") ~= false then
-        table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
     end
     _insert_configs_from_envs(configs, envs, opt)
 end
@@ -848,31 +852,7 @@ end
 
 function _get_envs_for_default_flags(package, configs, opt)
     local buildtype = _get_cmake_buildtype(package)
-    local envs = {}
-    local default_flags = _get_default_flags(package, configs, buildtype, opt)
-    if default_flags then
-        if not opt.cxxflags and not opt.cxflags then
-            envs.CMAKE_CXX_FLAGS = default_flags.CMAKE_CXX_FLAGS
-            envs["CMAKE_CXX_FLAGS_" .. buildtype] = default_flags["CMAKE_CXX_FLAGS_" .. buildtype]
-        end
-        if not opt.cflags and not opt.cxflags then
-            envs.CMAKE_C_FLAGS = default_flags.CMAKE_C_FLAGS
-            envs["CMAKE_C_FLAGS_" .. buildtype] = default_flags["CMAKE_C_FLAGS_" .. buildtype]
-        end
-        if not opt.ldflags then
-            envs.CMAKE_EXE_LINKER_FLAGS = default_flags.CMAKE_EXE_LINKER_FLAGS
-            envs["CMAKE_EXE_LINKER_FLAGS_" .. buildtype] = default_flags["CMAKE_EXE_LINKER_FLAGS_" .. buildtype]
-        end
-        if not opt.arflags then
-            envs.CMAKE_STATIC_LINKER_FLAGS = default_flags.CMAKE_STATIC_LINKER_FLAGS
-            envs["CMAKE_STATIC_LINKER_FLAGS_" .. buildtype] = default_flags["CMAKE_STATIC_LINKER_FLAGS_" .. buildtype]
-        end
-        if not opt.shflags then
-            envs.CMAKE_SHARED_LINKER_FLAGS = default_flags.CMAKE_SHARED_LINKER_FLAGS
-            envs["CMAKE_SHARED_LINKER_FLAGS_" .. buildtype] = default_flags["CMAKE_SHARED_LINKER_FLAGS_" .. buildtype]
-        end
-    end
-    return envs
+    return table.clone(_get_default_flags(package, configs, buildtype, opt)) or {}
 end
 
 function _get_envs_for_runtime_flags(package, opt)
@@ -892,7 +872,7 @@ end
 
 function _get_envs_for_flags(package, configs, opt)
     -- get the default envs
-    local envs = _get_envs_for_default_flags(package, configs, opt) or {}
+    local envs = _get_envs_for_default_flags(package, configs, opt)
     local runtime_envs = _get_envs_for_runtime_flags(package, opt)
     if runtime_envs then
         for name, value in pairs(runtime_envs) do
@@ -906,10 +886,10 @@ function _get_envs_for_flags(package, configs, opt)
         -- use clang-cl or clang, and we need pass --target=xxx flags
         if package:has_tool("cc", "clang", "clang_cl") then
             -- @see https://github.com/xmake-io/xmake-repo/issues/7662
-            platform_envs.CMAKE_C_FLAGS = _get_cflags(package, {cross = true})
+            platform_envs.CMAKE_C_FLAGS = _get_cflags(package, table.join({cross = true}, opt))
         end
         if package:has_tool("cxx", "clang", "clang_cl") then
-            platform_envs.CMAKE_CXX_FLAGS = _get_cxxflags(package, {cross = true})
+            platform_envs.CMAKE_CXX_FLAGS = _get_cxxflags(package, table.join({cross = true}, opt))
         end
     elseif package:is_plat("wasm") then
         -- pass toolchain flags cross-compilation
@@ -934,6 +914,8 @@ function _get_configs(package, configs, opt)
     opt._configs_str = string.serialize(configs, {indent = false, strip = true})
     _get_configs_for_install(package, configs, opt)
     _get_configs_for_generator(package, configs, opt)
+    _get_configs_for_generic(package, configs, opt)
+
     if package:is_plat("windows") then
         _get_configs_for_windows(package, configs, opt)
     elseif package:is_plat("android") then
@@ -956,8 +938,6 @@ function _get_configs(package, configs, opt)
         else
             _get_configs_for_cross(package, configs, opt)
         end
-    else
-        _get_configs_for_generic(package, configs, opt)
     end
 
     -- fix error for cmake 4.x

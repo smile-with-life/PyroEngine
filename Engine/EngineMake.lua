@@ -26,7 +26,7 @@ target "Engine"
     -- 设置 C++ 预编译头文件
     set_pcxxheader "Source/pch.h"
     -- 自动导出所有的动态库符号
-    add_rules("utils.symbols.export_all")
+    --add_rules("utils.symbols.export_all")
     -- 动态库设置
     add_defines "BUILD_EXPORT_DLL"
     -- Windows设置
@@ -37,9 +37,7 @@ target "Engine"
         add_syslinks("kernel32","User32")
         -- CRT 库设置
         if is_mode("Debug","Development") then
-            set_runtimes "MDd"
-            set_symbols "debug"
-            
+            set_runtimes "MDd"          
         else
             set_runtimes "MD"
         end

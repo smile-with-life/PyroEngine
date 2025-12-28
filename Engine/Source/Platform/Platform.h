@@ -153,7 +153,7 @@
 
 namespace Platform
 {
-inline int64 StrLength(const tchar* str)
+inline int64 TStrLength(const tchar* str)
 {
     if (!str)
         return 0;

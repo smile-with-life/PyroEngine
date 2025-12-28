@@ -39,8 +39,8 @@ rule("platform.windows.subsystem")
             assert(valid, "Invalid subsystem " .. subsystem)
 
             if target:has_tool("ld", "clang", "clangxx", "clang_cl") then
-                target:add("ldflags", "-Xlinker", "-subsystem:" .. subsystem, {force = true})
-            elseif target:has_tool("ld", "link", "lld-link") then
+                target:add("ldflags", {"-Xlinker", "-subsystem:" .. subsystem}, {force = true, expand = false})
+            elseif target:has_tool("ld", "link", "lld_link") then
                 target:add("ldflags", "/SUBSYSTEM:" .. subsystem:upper(), {force = true})
             elseif target:has_tool("ld", "gcc", "gxx") then
                 target:add("ldflags", "-m" .. subsystem, {force = true})

@@ -38,7 +38,7 @@ function _get_toolchain_includedirs_for_stlheaders(target, includedirs, clang)
     local tmpfile = os.tmpfile() .. ".cc"
     io.writefile(tmpfile, "#include <vector>")
     local argv = {"-E", "-x", "c++", tmpfile}
-    local cpplib = _get_cpplibrary_name(target)
+    local cpplib = get_cpplibrary_name(target)
     if cpplib then
         if cpplib == "c++" then
             table.insert(argv, 1, "-stdlib=libc++")
@@ -60,24 +60,6 @@ function _get_toolchain_includedirs_for_stlheaders(target, includedirs, clang)
         end
     end
     os.tryrm(tmpfile)
-end
-
-function _get_cpplibrary_name(target)
-    -- libc++ come first because on windows, if we use libc++ clang will still use msvc crt so MD / MT / MDd / MTd can be set
-    if target:has_runtime("c++_shared", "c++_static") then
-        return "c++"
-    elseif target:has_runtime("stdc++_shared", "stdc++_static") then
-        return "stdc++"
-    elseif target:has_runtime("MD", "MT", "MDd", "MTd") then
-        return "msstl"
-    end
-    if target:is_plat("macosx", "iphoneos", "appletvos") then
-        return "c++"
-    elseif target:is_plat("linux") then
-        return "stdc++"
-    elseif target:is_plat("windows") then
-        return "msstl"
-    end
 end
 
 function _get_std_module_manifest_path(target)
@@ -149,6 +131,7 @@ function strippeable_flags()
         "Q",
         "fmodule-file",
         "fPIC",
+        "fsanitize"
     }
     local splitted_strippeable_flags = {
         "I",
@@ -168,7 +151,7 @@ function toolchain_includedirs(target)
         local clang, toolname = target:tool("cxx")
         assert(toolname:startswith("clang"))
         _get_toolchain_includedirs_for_stlheaders(target, includedirs, clang)
-        local cpplib = _get_cpplibrary_name(target)
+        local cpplib = get_cpplibrary_name(target)
         local runtime_flag
         if cpplib then
             if cpplib == "c++" then
@@ -241,11 +224,15 @@ function get_clang_scan_deps(target)
                 basename = "clang"
             end
             local extension = path.extension(program)
-            program = (basename:rtrim("+"):gsub("clang", "clang-scan-deps")) .. extension
+            program = (basename:gsub("%+%+", ""):gsub("clang", "clang-scan-deps")) .. extension
             if dir and dir ~= "." and os.isdir(dir) then
                 program = path.join(dir, program)
             end
             local result = find_tool("clang-scan-deps", {program = program, version = true})
+            if not result then
+                -- find a system wide alternative
+                result = find_tool("clang-scan-deps", {version = true})
+            end
             if result then
                 clang_scan_deps = result.program
             end
@@ -256,27 +243,60 @@ function get_clang_scan_deps(target)
     return clang_scan_deps or nil
 end
 
-function get_stdmodules(target)
-
-    if not target:policy("build.c++.modules.std") then
-        return
+function parse_link_files(filepath)
+    if not os.islink(filepath) then
+        return filepath
     end
-    local cpplib = _get_cpplibrary_name(target)
+    local target = os.readlink(filepath)
+    if path.is_absolute(target) then
+        return target
+    end
+    return path.join(path.directory(filepath), target)
+end
+
+function get_original_file(filepath)
+    while os.islink(filepath) do
+        filepath = parse_link_files(filepath)
+    end
+    return filepath
+end
+
+function get_stdmodules(target)
+    local cpplib = get_cpplibrary_name(target)
     if cpplib then
         if cpplib == "c++" then
             -- libc++ module is found by parsing libc++.modules.json
             local modules_json_path = _get_std_module_manifest_path(target)
-            if modules_json_path then
-                local modules_json = json.decode(io.readfile(modules_json_path))
-                if modules_json and modules_json.modules and #modules_json.modules > 0 then
-                    local std_module_directory = path.directory(modules_json.modules[1]["source-path"])
-                    if not path.is_absolute(std_module_directory) then
-                        std_module_directory = path.join(path.directory(modules_json_path), std_module_directory)
-                    end
-                    if os.isdir(std_module_directory) then
-                        return {path.normalize(path.join(std_module_directory, "std.cppm")), path.normalize(path.join(std_module_directory, "std.compat.cppm"))}
-                    end
+            if not modules_json_path then
+                wprint("libc++.modules.json not found! maybe try to add --sdk=<PATH/TO/LLVM> or install libc++")
+                return
+            end
+            local modules_json = json.decode(io.readfile(modules_json_path))
+            if not (modules_json and modules_json.modules and #modules_json.modules > 0) then
+                wprint("libc++.modules.json is invalid! path: %s", path.normalize(modules_json_path))
+                return
+            end
+            local std_module_directory = path.directory(modules_json.modules[1]["source-path"])
+            -- check absolute path first
+            if path.is_absolute(std_module_directory) then
+                if os.isdir(std_module_directory) then
+                    return {path.normalize(path.join(std_module_directory, "std.cppm")), path.normalize(path.join(std_module_directory, "std.compat.cppm"))}
+                else
+                    wprint("std module directory not found: %s which defined in %s", path.normalize(std_module_directory), path.normalize(modules_json_path))
+                    return
                 end
+            end
+            -- otherwise try to resolve relative path
+            local try_std_module_directory
+            -- first try the directory relative to libc++.modules.json
+            try_std_module_directory = path.join(path.directory(modules_json_path), std_module_directory)
+            if os.isdir(try_std_module_directory) then
+                return {path.normalize(path.join(try_std_module_directory, "std.cppm")), path.normalize(path.join(try_std_module_directory, "std.compat.cppm"))}
+            end
+            -- then try the directory relative to clang bin directory
+            try_std_module_directory = path.join(path.directory(get_original_file(get_clang_path(target))), std_module_directory)
+            if os.isdir(try_std_module_directory) then
+                return {path.normalize(path.join(try_std_module_directory, "std.cppm")), path.normalize(path.join(try_std_module_directory, "std.compat.cppm"))}
             end
         elseif cpplib == "stdc++" then
             -- dont be greedy and don't enable stdc++ std module support for llvm < 19

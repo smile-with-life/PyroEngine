@@ -26,6 +26,9 @@ function checkers()
     local checkers = _g._CHECKERS
     if not checkers then
         checkers = {
+            -- package api checkers
+            ["api.package.kind"]         = {description = "Check kind configuration in package.", load = true},
+            ["api.package.versionfiles"] = {description = "Check versionfiles configuration in package.", download_failure = true},
             -- target api checkers
             ["api.target.version"]       = {description = "Check version configuration in target."},
             ["api.target.kind"]          = {description = "Check kind configuration in target.", build = true},
@@ -56,7 +59,9 @@ function checkers()
             -- cuda checkers
             ["cuda.devlink"]             = {description = "Check devlink for targets.", build_failure = true},
             -- clang tidy checker
-            ["clang.tidy"]               = {description = "Check project code using clang-tidy.", showstats = false}
+            ["clang.tidy"]               = {description = "Check project code using clang-tidy.", showstats = false},
+            -- syntax checker
+            ["syntax"]                   = {description = "Check the project sourcecode syntax without linking.", showstats = false}
         }
         _g._CHECKERS = checkers
     end

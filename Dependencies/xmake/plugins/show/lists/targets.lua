@@ -28,7 +28,7 @@ import(".showlist")
 -- show all targets (optionally filtered by group)
 function main()
     config.load()
-    
+
     local targets = {}
     local group_pattern = option.get("group")
     if group_pattern then

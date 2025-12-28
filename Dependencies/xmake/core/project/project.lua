@@ -25,6 +25,7 @@ local project = project or {}
 local os                    = require("base/os")
 local io                    = require("base/io")
 local path                  = require("base/path")
+local hash                  = require("base/hash")
 local task                  = require("base/task")
 local utils                 = require("base/utils")
 local table                 = require("base/table")
@@ -963,6 +964,24 @@ function project.policy(name)
     return policy.check(name, policies and policies[name])
 end
 
+-- set the project policy in memory
+function project.policy_set(name, value)
+    -- get current policies from cache or initialize
+    local policies = project._memcache():get("policies")
+    if not policies then
+        -- force initialization by calling policy() once
+        project.policy(name)
+        policies = project._memcache():get("policies")
+    end
+    policies = policies or {}
+    
+    -- set the policy value
+    policies[name] = value
+    
+    -- update cache
+    project._memcache():set("policies", policies)
+end
+
 -- project has been loaded?
 function project.is_loaded()
     return project._memcache():get("targets_loaded")
@@ -1137,14 +1156,17 @@ function project.requireconfs_str()
         local requires_extra = project._memcache():get("requires_extra")
         local sync_requires_to_deps = project._memcache():get("package.sync_requires_to_deps")
         if requires_str and not sync_requires_to_deps then
+            local package_utils = project._package_utils
+            if package_utils == nil then
+                package_utils = sandbox_module.import("private.utils.package", {anonymous = true})
+                project._package_utils = package_utils
+            end
             requires_extra = requires_extra and table.wrap(requires_extra) or {}
             requireconfs_str = requireconfs_str and table.wrap(requireconfs_str) or {}
             requireconfs_extra = requireconfs_extra and table.wrap(requireconfs_extra) or {}
             for _, require_str in ipairs(table.wrap(requires_str)) do
                 if not require_str:find("::", 1, true) then
-                    local splitinfo = require_str:split("%s")
-                    local packagename = splitinfo[1]
-                    local packageversion = splitinfo[2]
+                    local packagename, packageversion = package_utils.parse_requirestr(require_str)
                     local requireconf_str = "**." .. packagename
                     local requireconf_extra = table.clone(requires_extra[require_str])
                     if requireconf_extra then
@@ -1152,7 +1174,7 @@ function project.requireconfs_str()
                     end
                     if packageversion then
                         requireconf_extra = requireconf_extra or {configs = {}}
-                        requireconf_extra.configs.version = packageversion
+                        requireconf_extra.version = packageversion
                     end
                     if requireconf_extra then
                         requireconf_extra.override = true
@@ -1206,9 +1228,14 @@ end
 -- get the given toolchain
 function project.toolchain(name, opt)
     opt = opt or {}
-    local toolchain_name = toolchain.parsename(name) -- we need to ignore `@packagename`
+    local parseinfo = toolchain.parsename(name) -- we need to ignore `@packagename`
+    local toolchain_name = parseinfo.name
     local info = project._toolchains()[toolchain_name]
     if info == nil and opt.namespace then
+        local requirestr = parseinfo.requirestr
+        if requirestr then
+            toolchain_name = toolchain_name .. "[" .. requirestr .. "]"
+        end
         info = project._toolchains()[opt.namespace .. "::" .. toolchain_name]
     end
     if info then
@@ -1269,6 +1296,11 @@ end
 
 -- get the project menu
 function project.menu()
+
+    -- we cannot only get it in main thread
+    if not xmake.in_main_thread() then
+        return {}
+    end
 
     -- attempt to load options from the project file
     local options = nil
@@ -1380,7 +1412,8 @@ function project.tmpfile(opt_or_key)
         key = opt_or_key.key
         opt = opt_or_key
     end
-    return path.join(project.tmpdir(opt), "_" .. (hash.uuid4(key):gsub("-", "")))
+    local filename = "_" .. (key and hash.strhash128(key) or (hash.rand128()))
+    return path.join(project.tmpdir(opt), "_" .. filename)
 end
 
 -- get all modes

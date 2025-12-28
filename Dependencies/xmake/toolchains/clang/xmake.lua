@@ -20,70 +20,37 @@
 
 -- define toolchain
 function toolchain_clang(version)
-local suffix = ""
-if version then
-    suffix = suffix .. "-" .. version
-end
-toolchain("clang" .. suffix)
-    set_kind("standalone")
-    set_homepage("https://clang.llvm.org/")
-    set_description("A C language family frontend for LLVM" .. (version and (" (" .. version .. ")") or ""))
-    set_runtimes("c++_static", "c++_shared", "stdc++_static", "stdc++_shared")
+    local suffix = version and ("-" .. version) or ""
 
-    set_toolset("cc",      "clang" .. suffix)
-    set_toolset("cxx",     "clang++" .. suffix, "clang" .. suffix)
-    set_toolset("ld",      "clang++" .. suffix, "clang" .. suffix)
-    set_toolset("sh",      "clang++" .. suffix, "clang" .. suffix)
-    set_toolset("ar",      "ar",      "llvm-ar" .. suffix)
-    set_toolset("strip",   "strip",   "llvm-strip" .. suffix)
-    set_toolset("ranlib",  "ranlib",  "llvm-ranlib" .. suffix)
-    set_toolset("objcopy", "objcopy", "llvm-objcopy" .. suffix)
-    set_toolset("mm",      "clang" .. suffix)
-    set_toolset("mxx",     "clang++" .. suffix, "clang" .. suffix)
-    set_toolset("as",      "clang" .. suffix)
-    set_toolset("mrc",     "llvm-rc" .. suffix)
-    set_toolset("dlltool", "llvm-dlltool" .. suffix)
+    toolchain("clang" .. suffix)
+        set_kind("standalone")
+        set_homepage("https://clang.llvm.org/")
+        set_description("A C language family frontend for LLVM" .. (version and (" (" .. version .. ")") or ""))
 
-    on_check(function (toolchain)
-        if toolchain:is_plat("windows") then
-            local rootdir = path.join(path.directory(os.scriptdir()), "clang")
-            local result = import("check", {rootdir = rootdir})(toolchain, suffix)
-            if result then
-                return result
-            end
+        set_toolset("cc",      "clang" .. suffix)
+        set_toolset("cxx",     "clang++" .. suffix, "clang" .. suffix)
+        set_toolset("ld",      "clang++" .. suffix, "clang" .. suffix)
+        set_toolset("sh",      "clang++" .. suffix, "clang" .. suffix)
+        set_toolset("ar",      "llvm-ar" .. suffix, "ar")
+        set_toolset("strip",   "llvm-strip" .. suffix, "strip")
+        set_toolset("ranlib",  "llvm-ranlib" .. suffix, "ranlib")
+        set_toolset("objcopy", "llvm-objcopy" .. suffix, "objcopy")
+        set_toolset("nm",      "llvm-nm" .. suffix, "nm")
+        set_toolset("mm",      "clang" .. suffix)
+        set_toolset("mxx",     "clang++" .. suffix, "clang" .. suffix)
+        set_toolset("as",      "clang" .. suffix)
+        set_toolset("mrc",     "llvm-rc" .. suffix)
+        set_toolset("dlltool", "llvm-dlltool" .. suffix)
+        if is_host("macosx") then
+            set_toolset("dsymutil", "dsymutil")
         end
 
-        return import("lib.detect.find_tool")("clang" .. suffix)
-    end)
+        on_check(function (toolchain)
+            return import("toolchains.clang.check", {rootdir = os.programdir()})(toolchain, suffix)
+        end)
 
-    on_load(function (toolchain)
-        import("core.project.project")
-
-        if project.policy("build.optimization.lto") then
-            toolchain:set("toolset", "ar",  "llvm-ar" .. suffix)
-            toolchain:set("toolset", "ranlib",  "llvm-ranlib" .. suffix)
-        end
-
-        local march
-        if toolchain:is_arch("x86_64", "x64") then
-            march = "-m64"
-        elseif toolchain:is_arch("i386", "x86") then
-            march = "-m32"
-        end
-        if march then
-            toolchain:add("cxflags", march)
-            toolchain:add("mxflags", march)
-            toolchain:add("asflags", march)
-            toolchain:add("ldflags", march)
-            toolchain:add("shflags", march)
-        end
-        if toolchain:is_plat("windows") then
-            toolchain:add("runtimes", "MT", "MTd", "MD", "MDd")
-        end
-        if toolchain:is_plat("windows", "mingw") then
-            local rootdir = path.join(path.directory(os.scriptdir()), "clang")
-            import("load", {rootdir = rootdir})(toolchain, suffix)
-        end
-    end)
+        on_load(function (toolchain)
+            import("toolchains.clang.load", {rootdir = os.programdir()})(toolchain, suffix)
+        end)
 end
 toolchain_clang()

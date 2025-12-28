@@ -1074,7 +1074,7 @@ function _add_target_link_libraries(cmakelists, target, outputdir)
 
 
     local has_links = #target:objectfiles() > objectfiles_set:size()
-    local key = target:name() .. "_" .. hash.uuid():split("-", {plain = true})[1]
+    local key = target:name() .. "_" .. hash.rand64()
     if has_links then
         cmakelists:print("add_library(target_objectfiles_%s OBJECT IMPORTED GLOBAL)", key)
         cmakelists:print("set_property(TARGET target_objectfiles_%s PROPERTY IMPORTED_OBJECTS", key)
@@ -1222,8 +1222,9 @@ function _get_command_string(cmd, outputdir)
         return string.format("cd %s", _get_relative_unix_path_to_cmake(cmd.dir, outputdir))
     elseif kind == "mkdir" then
         return string.format("${CMAKE_COMMAND} -E make_directory %s", _get_relative_unix_path_to_cmake(cmd.dir, outputdir))
-    elseif kind == "show" then
-        local text = colors.ignore(cmd.showtext)
+    elseif kind == "show" or kind == "show_progress" then
+        local text = string.format(cmd.format, table.unpack(cmd.argv))
+        text = colors.ignore(text)
         -- we need to translate paths in text
         -- https://github.com/xmake-io/xmake/issues/6553
         if is_host("windows") then
@@ -1244,7 +1245,7 @@ function _add_target_custom_commands_for_batchcmds(cmakelists, target, outputdir
         --
         -- @see https://gitlab.kitware.com/cmake/cmake/-/issues/17802
         --
-        local key = target:name() .. "_" .. hash.uuid():split("-", {plain = true})[1]
+        local key = target:name() .. "_" .. hash.rand64()
         cmakelists:print("add_custom_command(OUTPUT output_%s", key)
         for _, cmd in ipairs(cmds) do
             local command = _get_command_string(cmd, outputdir)

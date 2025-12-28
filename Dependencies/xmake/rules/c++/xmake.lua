@@ -20,39 +20,24 @@
 
 rule("c.build")
     set_sourcekinds("cc")
-    add_deps("c.build.pcheader", "c.build.optimization", "c.build.sanitizer")
-    on_build_files("private.action.build.object", {jobgraph = true, batch = true, distcc = true})
+    add_deps("c.build.pcheader")
     on_config(function (target)
-        -- https://github.com/xmake-io/xmake/issues/4621
-        if target:is_plat("windows") and target:is_static() and target:has_tool("cc", "tcc") then
-            target:set("extension", ".a")
-            target:set("prefixname", "lib")
-        end
+        import("config")(target, "cc")
     end)
+    on_build_files("private.action.build.object", {jobgraph = true, batch = true, distcc = true})
 
 rule("c++.build")
     set_sourcekinds("cxx")
-    add_deps("c++.build.pcheader", "c++.build.modules", "c++.build.optimization", "c++.build.sanitizer")
-    on_build_files("private.action.build.object", {jobgraph = true, batch = true, distcc = true})
+    add_deps("c++.build.pcheader", "c++.build.modules")
     on_config(function (target)
-        -- enable c++ exceptions by default
-        if target:is_plat("windows") and not target:get("exceptions") then
-            target:set("exceptions", "cxx")
-        end
-        -- https://github.com/xmake-io/xmake/issues/4621
-        if target:is_plat("windows") and target:is_static() and target:has_tool("cxx", "tcc") then
-            target:set("extension", ".a")
-            target:set("prefixname", "lib")
-        end
+        import("config")(target, "cxx")
     end)
+    on_build_files("private.action.build.object", {jobgraph = true, batch = true, distcc = true})
 
 rule("c")
 
     -- add build rules
     add_deps("c.build")
-
-    -- set compiler runtime, e.g. vs runtime
-    add_deps("utils.compiler.runtime")
 
     -- inherit links and linkdirs of all dependent targets by default
     add_deps("utils.inherit.links")
@@ -75,9 +60,6 @@ rule("c++")
 
     -- add build rules
     add_deps("c++.build")
-
-    -- set compiler runtime, e.g. vs runtime
-    add_deps("utils.compiler.runtime")
 
     -- inherit links and linkdirs of all dependent targets by default
     add_deps("utils.inherit.links")

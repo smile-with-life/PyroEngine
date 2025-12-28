@@ -19,6 +19,7 @@
 --
 
 -- imports
+import("core.base.tty")
 import("core.base.option")
 import("core.base.task")
 import("core.base.hashset")
@@ -40,17 +41,7 @@ function menu_options()
     -- menu options
     local options =
     {
-        {'k', "kind",       "kv", nil, "Enable static/shared library.",
-                                       values = {"static", "shared"}         },
-        {'p', "plat",       "kv", nil, "Set the given platform."             },
-        {'a', "arch",       "kv", nil, "Set the given architecture."         },
-        {'m', "mode",       "kv", nil, "Set the given mode.",
-                                       values = {"release", "debug"}         },
         {nil, "show",       "k",  nil, "Only show environment information."  },
-        {'f', "configs",    "kv", nil, "Set the given extra package configs.",
-                                       "e.g.",
-                                       "    - xrepo env -f \"runtimes='MD'\" zlib cmake ..",
-                                       "    - xrepo env -f \"regex=true,thread=true\" \"zlib,boost\" cmake .."},
         {nil, "add",        "k",  nil, "Add global environment config.",
                                        "e.g.",
                                        "    - xrepo env --add base.lua",
@@ -98,7 +89,7 @@ end
 
 -- enter the working project
 function _enter_project()
-    local workdir = path.join(os.tmpdir(), "xrepo", "working")
+    local workdir = path.join(os.tmpdir(), "xrepo", "working-" .. tty.session_id())
     if not os.isdir(workdir) then
         os.mkdir(workdir)
         os.cd(workdir)
@@ -399,7 +390,7 @@ function _run_shell(envs)
     if shell == "pwsh" or shell == "powershell" then
         os.execv("pwsh", args, {envs = envs})
     elseif shell == "nu" then
-        if #args ~=0 then
+        if #args ~= 0 then
             table.insert(args, 1, "-c")
         end
         os.execv("nu", args, {envs = envs})

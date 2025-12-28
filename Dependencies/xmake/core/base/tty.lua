@@ -26,6 +26,7 @@ local io = require("base/io")
 
 -- save metatable and builtin functions
 tty._term_mode = tty._term_mode or tty.term_mode
+tty._session_id = tty._session_id or tty.session_id
 
 -- @see https://www2.ccs.neu.edu/research/gpc/VonaUtils/vona/terminal/vtansi.htm
 -- http://www.termsys.demon.co.uk/vtansi.htm
@@ -135,6 +136,90 @@ function tty.cursor_and_attrs_restore()
     return tty
 end
 
+-- move cursor to absolute position (row, col)
+-- row and col are 1-based (1, 1) is the top-left corner
+function tty.cursor_move(row, col)
+    if tty.has_vtansi() then
+        row = row or 1
+        col = col or 1
+        if row > 0 and col > 0 then
+            tty._iowrite(string.format("\x1b[%d;%dH", row, col))
+        end
+    end
+    return tty
+end
+
+-- move cursor up by n lines
+function tty.cursor_move_up(n)
+    if tty.has_vtansi() then
+        n = n or 1
+        if n > 0 then
+            tty._iowrite(string.format("\x1b[%dA", n))
+        end
+    end
+    return tty
+end
+
+-- move cursor down by n lines
+function tty.cursor_move_down(n)
+    if tty.has_vtansi() then
+        n = n or 1
+        if n > 0 then
+            tty._iowrite(string.format("\x1b[%dB", n))
+        end
+    end
+    return tty
+end
+
+-- move cursor forward (right) by n columns
+function tty.cursor_move_right(n)
+    if tty.has_vtansi() then
+        n = n or 1
+        if n > 0 then
+            tty._iowrite(string.format("\x1b[%dC", n))
+        end
+    end
+    return tty
+end
+
+-- move cursor backward (left) by n columns
+function tty.cursor_move_left(n)
+    if tty.has_vtansi() then
+        n = n or 1
+        if n > 0 then
+            tty._iowrite(string.format("\x1b[%dD", n))
+        end
+    end
+    return tty
+end
+
+-- move cursor to specified column
+function tty.cursor_move_to_col(col)
+    if tty.has_vtansi() then
+        col = col or 1
+        if col > 0 then
+            tty._iowrite(string.format("\x1b[%dG", col))
+        end
+    end
+    return tty
+end
+
+-- hide cursor
+function tty.cursor_hide()
+    if tty.has_vtansi() then
+        tty._iowrite("\x1b[?25l")
+    end
+    return tty
+end
+
+-- show cursor
+function tty.cursor_show()
+    if tty.has_vtansi() then
+        tty._iowrite("\x1b[?25h")
+    end
+    return tty
+end
+
 -- carriage return
 function tty.cr()
     tty._iowrite("\r")
@@ -207,6 +292,7 @@ end
 --  - terminator
 --  - rxvt
 --  - lxterminal
+--  - ghostty
 --  - unknown
 --
 function tty.term()
@@ -221,6 +307,8 @@ function tty.term()
                     term = "vscode"
                 elseif TERM_PROGRAM == "mintty" then
                     term = "mintty" -- git bash
+                elseif TERM_PROGRAM == "ghostty" then
+                    term = "ghostty"
                 end
             end
         end
@@ -229,7 +317,9 @@ function tty.term()
         if term == nil then
             local TERM = os.getenv("TERM")
             if TERM ~= nil then
-                if TERM:find("xterm", 1, true) then
+                if TERM:find("ghostty", 1, true) then
+                    term = "ghostty"
+                elseif TERM:find("xterm", 1, true) then
                     term = "xterm"
                 elseif TERM == "cygwin" then
                     term = "cygwin"
@@ -447,6 +537,25 @@ function tty.term_mode(stdtype, newmode)
         end
     end
     return oldmode
+end
+
+-- get session id
+function tty.session_id()
+    local session_id = tty._SESSION_ID
+    if session_id == nil then
+        if tty._session_id then
+            local sid = tty._session_id()
+            if sid then
+                local hash = require("base/hash")
+                session_id = hash.strhash32(sid)
+            end
+        end
+        if not session_id then
+            session_id = "00000000"
+        end
+        tty._SESSION_ID = session_id
+    end
+    return session_id
 end
 
 -- return module

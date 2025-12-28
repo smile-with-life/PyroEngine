@@ -92,7 +92,7 @@ end
 
 -- has the given vertex?
 function graph:has_vertex(v)
-    return table.contains(self:vertices(), v)
+    return self._adjacent_edges[v] ~= nil
 end
 
 -- add an isolated without edges
@@ -116,20 +116,18 @@ function graph:remove_vertex(v)
         end
     end)
     if contains then
-        self._edges_map[v] = nil
-        self._adjacent_edges[v] = nil
-        -- remove the adjacent edge with this vertex in the other vertices
-        for _, w in ipairs(self:vertices()) do
-            local edges = self:adjacent_edges(w)
-            if edges then
-                table.remove_if(edges, function (_, e)
-                    if e:other(w) == v then
-                        self._edges_map[w] = nil
-                        return true
-                    end
-                end)
+        -- remove all touching edges
+        local touching = {}
+        for _, e in ipairs(self._edges) do
+            if e:from() == v or e:to() == v then
+                table.insert(touching, {e:from(), e:to()})
             end
         end
+        for _, pair in ipairs(touching) do
+            self:remove_edge(pair[1], pair[2])
+        end
+        self._edges_map[v] = nil
+        self._adjacent_edges[v] = nil
 
         -- reset partial topological sort state since graph structure changed
         self._partial_topo_dirty = true
@@ -375,25 +373,22 @@ end
 
 -- add edge
 function graph:add_edge(from, to)
+    if self:has_edge(from, to) then
+        return
+    end
+    self:add_vertex(from)
+    self:add_vertex(to)
     local e = edge.new(from, to)
-    if not self:has_vertex(from) then
-        table.insert(self._vertices, from)
-        self._adjacent_edges[from] = {}
-    end
-    if not self:has_vertex(to) then
-        table.insert(self._vertices, to)
-        self._adjacent_edges[to] = {}
-    end
     local edges_map = self._edges_map
     edges_map[from] = edges_map[from] or {}
     edges_map[from][to] = true
     if self:is_directed() then
         table.insert(self._adjacent_edges[from], e)
     else
-        table.insert(self._adjacent_edges[from], e)
-        table.insert(self._adjacent_edges[to], e)
         edges_map[to] = edges_map[to] or {}
         edges_map[to][from] = true
+        table.insert(self._adjacent_edges[from], e)
+        table.insert(self._adjacent_edges[to], e)
     end
     table.insert(self._edges, e)
 
@@ -401,35 +396,76 @@ function graph:add_edge(from, to)
     self._partial_topo_dirty = true
 end
 
--- has the given edge?
-function graph:has_edge(from, to)
-    local edges = self:adjacent_edges(from)
-    if edges then
-        local edges_map = self._edges_map
-        local from_map = edges_map[from]
-        if from_map and from_map[to] then
-            return true
-        else
-            for _, e in ipairs(edges) do
-                if e:to() == to then
-                    return true
-                end
+-- remove edge
+function graph:remove_edge(from, to)
+    if not self:has_edge(from, to) then
+        return
+    end
+    local directed = self:is_directed()
+    local edges = self._edges
+    local target_index
+    local target_edge
+    for idx, e in ipairs(edges) do
+        local match = (e:from() == from and e:to() == to)
+        if not directed then
+            match = match or (e:from() == to and e:to() == from)
+        end
+        if match then
+            target_index = idx
+            target_edge = e
+            break
+        end
+    end
+    assert(target_edge, string.format("graph.remove_edge(%s, %s): edge not found", tostring(from), tostring(to)))
+
+    table.remove(edges, target_index)
+
+    local function remove_from_adj(vertex)
+        local adj = self._adjacent_edges[vertex]
+        if adj then
+            table.remove_if(adj, function (_, e) return e == target_edge end)
+        end
+    end
+
+    remove_from_adj(target_edge:from())
+    remove_from_adj(target_edge:to())
+
+    local edges_map = self._edges_map
+    local function clear_map(u, v)
+        local map = edges_map[u]
+        if map then
+            map[v] = nil
+            if not next(map) then
+                edges_map[u] = nil
             end
         end
     end
-    return false
+
+    clear_map(target_edge:from(), target_edge:to())
+    if not directed then
+        clear_map(target_edge:to(), target_edge:from())
+    end
+
+    self._partial_topo_dirty = true
+end
+
+-- has the given edge?
+function graph:has_edge(from, to)
+    local edges_map = self._edges_map
+    local from_map = edges_map[from]
+    if self:is_directed() then
+        return from_map and from_map[to]
+    else
+        local to_map = edges_map[to]
+        return from_map and to_map and from_map[to] and to_map[from]
+    end
 end
 
 -- clone graph
 function graph:clone()
     local gh = graph.new(self:is_directed())
-    for _, v in ipairs(self:vertices()) do
-        local edges = self:adjacent_edges(v)
-        if edges then
-            for _, e in ipairs(edges) do
-                gh:add_edge(e:from(), e:to())
-            end
-        end
+    for _, e in ipairs(self._edges) do
+        gh:add_edge(e:from(), e:to())
     end
     return gh
 end
@@ -440,13 +476,8 @@ function graph:reverse()
         return self:clone()
     end
     local gh = graph.new(self:is_directed())
-    for _, v in ipairs(self:vertices()) do
-        local edges = self:adjacent_edges(v)
-        if edges then
-            for _, e in ipairs(edges) do
-                gh:add_edge(e:to(), e:from())
-            end
-        end
+    for _, e in ipairs(self._edges) do
+        gh:add_edge(e:to(), e:from())
     end
     return gh
 end

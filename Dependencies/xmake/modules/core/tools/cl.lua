@@ -22,6 +22,7 @@
 import("core.base.option")
 import("core.base.global")
 import("core.base.hashset")
+import("core.cache.memcache")
 import("core.project.project")
 import("core.project.policy")
 import("core.language.language")
@@ -91,6 +92,11 @@ function init(self)
         -- others
     ,   ["-ftrapv"]                 = ""
     })
+end
+
+-- is syntax check enabled?
+function _is_syntax_check()
+    return memcache.get("syntax_check", "enabled") or false
 end
 
 -- make the symbol flags
@@ -261,6 +267,13 @@ function nf_language(self, stdname)
 
     -- the stdc++ maps
     if _g.cxxmaps == nil then
+        -- clang-cl with c++23preview does not work for c++ modules
+        -- https://github.com/xmake-io/xmake/issues/7169
+        local cxx23 = {"-std:c++23", "-std:c++23preview", "-std:c++latest"}
+        if self:name() == "clang_cl" then
+            cxx23 = {"-std:c++23", "-std:c++latest"}
+        end
+        local cxx2b = cxx23
         _g.cxxmaps =
         {
             cxx11       = "-std:c++11"
@@ -275,10 +288,10 @@ function nf_language(self, stdname)
         ,   gnuxx20     = {"-std:c++20", "-std:c++latest"}
         ,   cxx2a       = {"-std:c++20", "-std:c++latest"}
         ,   gnuxx2a     = {"-std:c++20", "-std:c++latest"}
-        ,   cxx23       = {"-std:c++23", "-std:c++latest"}
-        ,   gnuxx23     = {"-std:c++23", "-std:c++latest"}
-        ,   cxx2b       = {"-std:c++23", "-std:c++latest"}
-        ,   gnuxx2b     = {"-std:c++23", "-std:c++latest"}
+        ,   cxx23       = cxx23
+        ,   gnuxx23     = cxx23
+        ,   cxx2b       = cxx2b
+        ,   gnuxx2b     = cxx2b
         ,   cxx26       = {"-std:c++26", "-std:c++latest"}
         ,   gnuxx26     = {"-std:c++26", "-std:c++latest"}
         ,   cxxlatest   = "-std:c++latest"
@@ -447,7 +460,7 @@ function add_sourceflags(self, sourcefile, fileconfig, target, targetkind)
     --   add_files("*.c", {sourcekind = "cxx"})
     --
     local sourcekind = fileconfig.sourcekind
-    if sourcekind and sourcekind ~= language.sourcekind_of(sourcefile) then
+    if sourcekind then
         local maps = {cc = "-TC", cxx = "-TP"}
         return maps[sourcekind]
     end
@@ -654,6 +667,7 @@ end
 
 -- make the compile arguments list
 function compargv(self, sourcefile, objectfile, flags, opt)
+    opt = opt or {}
 
     -- precompiled header?
     local extension = path.extension(sourcefile)
@@ -661,8 +675,24 @@ function compargv(self, sourcefile, objectfile, flags, opt)
         return _compargv_pch(self, sourcefile, objectfile, flags)
     end
 
+    -- if syntax-only, add /Zs and skip -c and -Fo
+    if _is_syntax_check() then
+        table.insert(flags, "/Zs")
+        local argv = table.join(flags, sourcefile)
+        return self:program(), (opt and opt.rawargs) and argv or winos.cmdargv(argv)
+    end
+
+    -- suppress clang-cl warnings
+    -- clang-cl: warning: argument unused during compilation: '-c' [-Wunused-command-line-argument]
+    --
+    -- @see https://github.com/xmake-io/xmake/issues/7049
+    local argv = {}
+    if not (self:name() == "clang_cl" and objectfile:endswith(".pcm")) then
+        table.insert(argv, "-c")
+    end
+
     -- make the compile arguments list
-    local argv = table.join("-c", flags, "-Fo" .. objectfile, sourcefile)
+    table.join2(argv, flags, "-Fo" .. objectfile, sourcefile)
     return self:program(), (opt and opt.rawargs) and argv or winos.cmdargv(argv)
 end
 
@@ -764,10 +794,7 @@ function compile(self, sourcefile, objectfile, dependinfo, flags, opt)
                                 lines = table.slice(lines, 1, (#lines > 16 and 16 or #lines))
                             end
                             local warnings = table.concat(lines, "\r\n")
-                            if progress.showing_without_scroll() then
-                                print("")
-                            end
-                            cprint("${color.warning}%s", warnings)
+                            progress.show_output("${color.warning}%s", warnings)
                         end
                     end
                 end

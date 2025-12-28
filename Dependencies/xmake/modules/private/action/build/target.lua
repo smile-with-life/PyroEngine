@@ -28,6 +28,7 @@ import("async.runjobs", {alias = "async_runjobs"})
 import("async.jobgraph", {alias = "async_jobgraph"})
 import("private.utils.batchcmds")
 import("private.utils.rule", {alias = "rule_utils"})
+import("utils.progress", {alias = "progress_utils"})
 
 -- clean target for rebuilding
 function _clean_target(target)
@@ -96,7 +97,10 @@ end
 function _add_targetjobs_plain_orders(jobgraph, target, dep, opt)
     local jobname, jobname_dep
     local job_kind = opt.job_kind
-    if job_kind == "build" then
+    -- Configure the build order only if dependency linking inheritance is not disabled.
+    -- e.g. add_deps("foo", {links = false})
+    -- @see https://github.com/xmake-io/xmake/issues/6925
+    if job_kind == "build" and target:extraconf("deps", dep:name(), "links") ~= false then
         jobname = target:fullname() .. "/link"
         jobname_dep = dep:fullname() .. "/link"
         if not jobgraph:has(jobname) then
@@ -115,7 +119,10 @@ end
 function _add_targetjobs_deep_orders(jobgraph, target, dep, opt)
     local jobname, jobname_dep
     local job_kind = opt.job_kind
-    local target_fence = opt.target_fence or dep:policy("build.fence") or dep:policy("build.across_targets_in_parallel") == false
+    local target_fence = opt.target_fence
+    if target_fence == nil and (job_kind == "prepare" or job_kind == "build") then
+        target_fence = dep:policy("build.fence") or dep:policy("build.across_targets_in_parallel") == false
+    end
     if target_fence then
         jobname = string.format("%s/begin_%s", target:fullname(), job_kind)
         jobname_dep = string.format("%s/end_%s", dep:fullname(), job_kind)
@@ -235,7 +242,7 @@ function add_targetjobs_with_stage(jobgraph, target, stage, opt)
     local instances = {target}
     for _, ruleinst in ipairs(target:orderules()) do
         -- we only ignore some builtin rules, so we need not to use fullname.
-        if not ignored_rules or not ignored_rules:has(ruleinst:name()) then
+        if target:rule_is_enabled(ruleinst:fullname()) and (not ignored_rules or not ignored_rules:has(ruleinst:name())) then
             table.insert(instances, ruleinst)
         end
     end
@@ -262,6 +269,7 @@ function add_targetjobs_with_stage(jobgraph, target, stage, opt)
                     has_script = true
                 end
             end)
+
             -- if custom target.on_build/prepare exists, we need to ignore all scripts in rules
             if has_script and instance == target and stage == "" then
                 break
@@ -451,8 +459,8 @@ function add_filejobs_for_script(jobgraph, target, instance, sourcebatch, opt)
             --     on_build_file(function (target, jobgraph, sourcefile, opt)
             --     end, {jobgraph = true})
             local distcc = instance:extraconf(script_file_name, "distcc")
+            local sourcekind = sourcebatch.sourcekind
             if instance:extraconf(script_file_name, "jobgraph") then
-                local sourcekind = sourcebatch.sourcekind
                 for _, sourcefile in ipairs(sourcebatch.sourcefiles) do
                     script_file(target, jobgraph, sourcefile, {sourcekind = sourcekind, distcc = distcc})
                 end
@@ -460,19 +468,18 @@ function add_filejobs_for_script(jobgraph, target, instance, sourcebatch, opt)
                 wprint("%s.%s: the batch mode is deprecated, please use jobgraph mode instead of it, or disable `build.jobgraph` policy to use it.",
                     instance:fullname(), script_file_name)
             else
-                -- call custom script directly
+                -- call custom script to process sourcefiles in parallel directly
                 -- e.g.
                 --
                 -- target("test")
                 --     on_build_file(function (target, sourcefile, opt)
                 --     end)
-                local jobname = string.format("%s/%s", job_prefix, script_file_name)
-                jobgraph:add(jobname, function (index, total, opt)
-                    local sourcekind = sourcebatch.sourcekind
-                    for _, sourcefile in ipairs(sourcebatch.sourcefiles) do
+                for _, sourcefile in ipairs(sourcebatch.sourcefiles) do
+                    local jobname = string.format("%s/%s/%s", job_prefix, script_file_name, sourcefile)
+                    jobgraph:add(jobname, function (index, total, opt)
                         script_file(target, sourcefile, {progress = opt.progress, sourcekind = sourcekind, distcc = distcc})
-                    end
-                end)
+                    end)
+                end
             end
             has_script = true
         end
@@ -514,24 +521,27 @@ function add_filejobs_for_script(jobgraph, target, instance, sourcebatch, opt)
         local scriptcmd_file_name = opt.scriptcmd_file_name
         local scriptcmd_file = instance:script(scriptcmd_file_name)
         if scriptcmd_file then
+            local sourcekind = sourcebatch.sourcekind
             local distcc = instance:extraconf(scriptcmd_file_name, "distcc")
-            local jobname = string.format("%s/%s", job_prefix, scriptcmd_file_name)
-            jobgraph:add(jobname, function (index, total, opt)
+            if buildcmds then
                 -- only generate cmds and do not run them, use cases: e.g. project generator
-                if buildcmds then
-                    local sourcekind = sourcebatch.sourcekind
+                local jobname = string.format("%s/%s", job_prefix, scriptcmd_file_name)
+                jobgraph:add(jobname, function (index, total, opt)
                     for _, sourcefile in ipairs(sourcebatch.sourcefiles) do
                         scriptcmd_file(target, buildcmds, sourcefile, {progress = opt.progress, sourcekind = sourcekind})
                     end
-                else
-                    local sourcekind = sourcebatch.sourcekind
-                    for _, sourcefile in ipairs(sourcebatch.sourcefiles) do
+                end)
+            else
+                -- fall back to using batchcmd to process sourcefiles in parallel
+                for _, sourcefile in ipairs(sourcebatch.sourcefiles) do
+                    local jobname = string.format("%s/%s/%s", job_prefix, scriptcmd_file_name, sourcefile)
+                    jobgraph:add(jobname, function (index, total, opt)
                         local batchcmds_ = batchcmds.new({target = target})
                         scriptcmd_file(target, batchcmds_, sourcefile, {progress = opt.progress, sourcekind = sourcekind, distcc = distcc})
                         batchcmds_:runcmds({changed = target:is_rebuilt(), dryrun = option.get("dry-run")})
-                    end
+                    end)
                 end
-            end)
+            end
             has_script = true
         end
     end
@@ -571,7 +581,7 @@ function add_filejobs_with_stage(jobgraph, target, sourcebatches, stage, opt)
         if rulename then
             -- we only ignore some builtin rules, so we need not to use fullname.
             local ruleinst = rule_utils.get_rule(target, rulename)
-            if not ignored_rules or not ignored_rules:has(ruleinst:name()) then
+            if target:rule_is_enabled(ruleinst:fullname()) and (not ignored_rules or not ignored_rules:has(ruleinst:name())) then
                 sourcebatches_map[ruleinst] = sourcebatch
                 -- avoid duplicate scripts being called twice in the target,
                 -- we just build sourcebatch with on_build_files scripts
@@ -691,6 +701,10 @@ end
 -- add link jobs for the given target
 function add_linkjobs(jobgraph, target, opt)
     opt = table.clone(opt or {})
+    -- skip link jobs if linkjobs is disabled
+    if opt.linkjobs == false then
+        return
+    end
     opt.job_kind = "link"
     local with_stages = opt.with_stages
     local group, group_before, group_after
@@ -782,12 +796,15 @@ function run_targetjobs(targets_root, opt)
     local jobgraph = get_targetjobs(targets_root, opt)
     if jobgraph and not jobgraph:empty() then
         local curdir = os.curdir()
-        async_runjobs(job_kind, jobgraph, {on_exit = function (errors)
-            import("utils.progress")
-            if errors and progress.showing_without_scroll() then
-                print("")
-            end
-        end, comax = opt.jobs or option.get("jobs") or 1, curdir = curdir, distcc = opt.distcc, progress_factor = opt.progress_factor})
+        local runjobs_opt = {
+            comax = opt.jobs or option.get("jobs") or 1,
+            curdir = curdir,
+            distcc = opt.distcc,
+            remote_only = opt.remote_only,
+            progress_factor = opt.progress_factor,
+            progress_refresh = true
+        }
+        async_runjobs(job_kind, jobgraph, runjobs_opt)
         os.cd(curdir)
         return true
     end
@@ -800,12 +817,15 @@ function run_filejobs(targets_root, opt)
     local jobgraph = get_filejobs(targets_root, opt)
     if jobgraph and not jobgraph:empty() then
         local curdir = os.curdir()
-        async_runjobs(job_kind, jobgraph, {on_exit = function (errors)
-            import("utils.progress")
-            if errors and progress.showing_without_scroll() then
-                print("")
-            end
-        end, comax = opt.jobs or option.get("jobs") or 1, curdir = curdir, distcc = opt.distcc, progress_factor = opt.progress_factor})
+        local runjobs_opt = {
+            comax = opt.jobs or option.get("jobs") or 1,
+            curdir = curdir,
+            distcc = opt.distcc,
+            remote_only = opt.remote_only,
+            progress_factor = opt.progress_factor,
+            progress_refresh = true
+        }
+        async_runjobs(job_kind, jobgraph, runjobs_opt)
         os.cd(curdir)
         return true
     end

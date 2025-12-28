@@ -12,6 +12,7 @@ public:
 
 	WindowsWindow(WindowProps props);
 public:
+	virtual void PumpMessage() override;
 	// 设置窗口标题
 	virtual void SetTitle(const String& title) override;
 
@@ -92,6 +93,9 @@ public:
 
 	// 获取与窗口关联的原生操作系统句柄
 	virtual void* GetNativeHandle() const override;
+public:
+	// 窗口过程函数
+	static LRESULT CALLBACK WndProc(HWND hwnd, uint32 msg, WPARAM wParam, LPARAM lParam);
 private:
 	void _CreatePlatformWindow();
 private:

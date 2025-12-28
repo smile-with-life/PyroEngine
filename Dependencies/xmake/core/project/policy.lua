@@ -108,6 +108,8 @@ function policy.policies()
             ["build.c++.gcc.modules.cxx11abi"]    = {description = "Force to enable new cxx11 abi in C++ modules for gcc. (deprecated)", type = "boolean"},
             -- Set the default vs runtime, e.g. MT, MD
             ["build.c++.msvc.runtime"]            = {description = "Set the default vs runtime.", type = "string", values = {"MT", "MD"}},
+            -- Enable C++ Dynamic Debugging for MSVC (requires MSVC toolset 14.44+, x64 only, incompatible with LTCG/PGO/OPT-ICF).
+            ["build.c++.dynamic_debugging"]       = {description = "Enable C++ Dynamic Debugging for MSVC (requires MSVC toolset 14.44+, x64 only, incompatible with LTCG/PGO/OPT-ICF).", type = "boolean"},
             -- Enable cuda device link
             ["build.cuda.devlink"]                = {description = "Enable Cuda devlink.", type = "boolean"},
             -- Enable linker output, e.g. show -Wl,--print-memory-usage output for gcc/g++
@@ -115,6 +117,10 @@ function policy.policies()
             ["build.linker.output"]               = {description = "Enable linker output.", type = "boolean"},
             -- Enable build jobgraph
             ["build.jobgraph"]                    = {description = "Enable build jobgraph.", default = true, type = "boolean"},
+            -- Enable build on only remote machines
+            ["build.distcc.remote_only"]          = {description = "Enable build on only remote machines.", default = false, type = "boolean"},
+            -- Set the build progress output style, e.g. scroll (default), singlerow, multirow
+            ["build.progress_style"]              = {description = "Set the build progress output style.", type = "string", values = {"scroll", "singlerow", "multirow"}},
             -- Enable windows UAC and set level, e.g. invoker, admin, highest
             ["windows.manifest.uac"]              = {description = "Enable windows manifest UAC.", type = "string"},
             -- Enable ui access for windows UAC
@@ -144,7 +150,7 @@ function policy.policies()
             -- Install packages in the local project folder
             ["package.install_locally"]           = {description = "Install packages in the local project folder.", default = false, type = "boolean"},
             -- Set custom headers when downloading package
-            ["package.download.http_headers"]     = {description = "Set the custom http headers when downloading package."},
+            ["package.download.http_headers"]     = {description = "Set the custom http headers when downloading package.", type = "table"},
             -- Use includes as external header files? e.g. -isystem ..
             ["package.include_external_headers"]  = {description = "Use includes as external headers.", type = "boolean"},
             -- Inherit the configs from the external command arguments, e.g. toolchains, `xmake f --toolchain=`

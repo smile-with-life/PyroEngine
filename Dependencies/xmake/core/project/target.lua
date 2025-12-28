@@ -64,7 +64,7 @@ function _instance.new(name, info)
 end
 
 -- get memcache
-function _instance:_memcache()
+function _instance:memcache()
     local cache = self._MEMCACHE
     if not cache then
         cache = memcache.cache("core.project.target." .. tostring(self))
@@ -232,7 +232,7 @@ end
 function _instance:_invalidate(name)
     self._CACHEID = self._CACHEID + 1
     self._POLICIES = nil
-    self:_memcache():clear()
+    self:memcache():clear()
     -- we need to flush the source files cache if target/files are modified, e.g. `target:add("files", "xxx.c")`
     if name == "files" then
         self._SOURCEFILES = nil
@@ -279,19 +279,25 @@ function _instance:_get_from_deps(name, result_values, result_sources, opt)
     local total = #orderdeps
     for idx, _ in ipairs(orderdeps) do
         local dep = orderdeps[total + 1 - idx]
-        local values = dep:get(name, opt)
-        if values ~= nil then
-            table.insert(result_values, values)
-            table.insert(result_sources, "dep::" .. dep:name())
-        end
-        local dep_values = {}
-        local dep_sources = {}
-        dep:_get_from_options(name, dep_values, dep_sources, opt)
-        dep:_get_from_packages(name, dep_values, dep_sources, opt)
-        for idx, values in ipairs(dep_values) do
-            local dep_source = dep_sources[idx]
-            table.insert(result_values, values)
-            table.insert(result_sources, "dep::" .. dep:name() .. "/" .. dep_source)
+        -- We can inherit some configuration from dependencies.
+        -- e.g. disable to inherit links, add_deps("foo", {links = false})
+        -- @see https://github.com/xmake-io/xmake/issues/6925
+        local inherit = self:extraconf("deps", dep:name(), name)
+        if inherit ~= false then
+            local values = dep:get(name, opt)
+            if values ~= nil then
+                table.insert(result_values, values)
+                table.insert(result_sources, "dep::" .. dep:name())
+            end
+            local dep_values = {}
+            local dep_sources = {}
+            dep:_get_from_options(name, dep_values, dep_sources, opt)
+            dep:_get_from_packages(name, dep_values, dep_sources, opt)
+            for idx, values in ipairs(dep_values) do
+                local dep_source = dep_sources[idx]
+                table.insert(result_values, values)
+                table.insert(result_sources, "dep::" .. dep:name() .. "/" .. dep_source)
+            end
         end
     end
 end
@@ -1065,31 +1071,31 @@ end
 
 -- get the target compiler
 function _instance:compiler(sourcekind)
-    local compilerinst = self:_memcache():get("compiler")
+    if not sourcekind then
+        os.raise("please pass sourcekind to the first argument of target:compiler(), e.g. cc, cxx, as")
+    end
+    local compilerinst = self:memcache():get("compiler_" .. sourcekind)
     if not compilerinst then
-        if not sourcekind then
-            os.raise("please pass sourcekind to the first argument of target:compiler(), e.g. cc, cxx, as")
-        end
         local instance, errors = compiler.load(sourcekind, self)
         if not instance then
             os.raise(errors)
         end
         compilerinst = instance
-        self:_memcache():set("compiler", compilerinst)
+        self:memcache():set("compiler_" .. sourcekind, compilerinst)
     end
     return compilerinst
 end
 
 -- get the target linker
 function _instance:linker()
-    local linkerinst = self:_memcache():get("linker")
+    local linkerinst = self:memcache():get("linker")
     if not linkerinst then
         local instance, errors = linker.load(self:kind(), self:sourcekinds(), self)
         if not instance then
             os.raise(errors)
         end
         linkerinst = instance
-        self:_memcache():set("linker", linkerinst)
+        self:memcache():set("linker", linkerinst)
     end
     return linkerinst
 end
@@ -1184,6 +1190,22 @@ function _instance:rule_add(r)
     self._ORDERULES = nil
 end
 
+-- enable or disable rule
+function _instance:rule_enable(name, enabled)
+    local ruleinst = self:rule(name)
+    if ruleinst then
+        self:data_set("__rule_enabled." .. name, enabled)
+    else
+        utils.warning("target(%s): rule(%s) not found", self:name(), name)
+    end
+end
+
+-- the given rule is enabled or disabled?
+function _instance:rule_is_enabled(name)
+    local enabled = self:data("__rule_enabled." .. name)
+    return enabled ~= false
+end
+
 -- is phony target?
 function _instance:is_phony()
     local targetkind = self:kind()
@@ -1260,13 +1282,13 @@ function _instance:opts(opt)
     elseif opt.interface then
         cachekey = cachekey .. "_interface"
     end
-    local opts = self:_memcache():get(cachekey)
+    local opts = self:memcache():get(cachekey)
     if not opts then
         opts = {}
         for _, opt_ in ipairs(self:orderopts(opt)) do
             opts[opt_:name()] = opt_
         end
-        self:_memcache():set(cachekey, opts)
+        self:memcache():set(cachekey, opts)
     end
     return opts
 end
@@ -1280,7 +1302,7 @@ function _instance:orderopts(opt)
     elseif opt.interface then
         cachekey = cachekey .. "_interface"
     end
-    local orderopts = self:_memcache():get(cachekey)
+    local orderopts = self:memcache():get(cachekey)
     if not orderopts then
         orderopts = {}
         for _, name in ipairs(table.wrap(self:get("options", opt))) do
@@ -1296,7 +1318,7 @@ function _instance:orderopts(opt)
                 table.insert(orderopts, opt_)
             end
         end
-        self:_memcache():set(cachekey, orderopts)
+        self:memcache():set(cachekey, orderopts)
     end
     return orderopts
 end
@@ -1315,13 +1337,13 @@ function _instance:pkgs(opt)
     elseif opt.interface then
         cachekey = cachekey .. "_interface"
     end
-    local packages = self:_memcache():get(cachekey)
+    local packages = self:memcache():get(cachekey)
     if not packages then
         packages = {}
         for _, pkg in ipairs(self:orderpkgs(opt)) do
             packages[pkg:name()] = pkg
         end
-        self:_memcache():set(cachekey, packages)
+        self:memcache():set(cachekey, packages)
     end
     return packages
 end
@@ -1335,7 +1357,7 @@ function _instance:orderpkgs(opt)
     elseif opt.interface then
         cachekey = cachekey .. "_interface"
     end
-    local packages = self:_memcache():get(cachekey)
+    local packages = self:memcache():get(cachekey)
     if not packages then
         packages = {}
         local requires = target._project().required_packages()
@@ -1358,7 +1380,7 @@ function _instance:orderpkgs(opt)
                 end
             end
         end
-        self:_memcache():set(cachekey, packages)
+        self:memcache():set(cachekey, packages)
     end
     return packages
 end
@@ -1640,13 +1662,13 @@ end
 -- get the extra build artifact file
 --
 -- supported artifact kinds:
---    1. implib: windows DLL implib(.lib, .dll.a)
+--    1. implib: windows DLL/EXE implib(.lib, .dll.a)
 --
 -- otherwise returns nil
 --
 function _instance:artifactfile(kind)
     if kind == "implib" then
-        if self:is_shared() and self:is_plat("windows", "mingw") then
+        if (self:is_shared() or self:is_binary()) and self:is_plat("windows", "mingw") then
             return path.join(self:_artifactdir("libdir"), path.basename(self:filename()) .. (self:is_plat("mingw") and ".dll.a" or ".lib"))
         end
     end
@@ -1828,7 +1850,7 @@ function _instance:filerules(sourcefile)
     end
 
     -- load all rules for this target with sourcekinds and extensions
-    local key2rules = self:_memcache():get("key2rules")
+    local key2rules = self:memcache():get("key2rules")
     if not key2rules then
         key2rules = {}
         for _, r in pairs(table.wrap(self:rules())) do
@@ -1846,7 +1868,7 @@ function _instance:filerules(sourcefile)
                 table.insert(key2rules[extension], r)
             end
         end
-        self:_memcache():set("key2rules", key2rules)
+        self:memcache():set("key2rules", key2rules)
     end
 
     -- get target rules from the given sourcekind or extension
@@ -2491,7 +2513,7 @@ end
 
 -- get runtimes
 function _instance:runtimes()
-    local runtimes = self:_memcache():get("runtimes")
+    local runtimes = self:memcache():get("runtimes")
     if runtimes == nil then
         runtimes = self:get("runtimes")
         if runtimes then
@@ -2515,17 +2537,17 @@ function _instance:runtimes()
             runtimes = table.unwrap(runtimes_current)
         end
         runtimes = runtimes or false
-        self:_memcache():set("runtimes", runtimes)
+        self:memcache():set("runtimes", runtimes)
     end
     return runtimes or nil
 end
 
 -- has the given runtime for the current toolchains?
 function _instance:has_runtime(...)
-    local runtimes_set = self:_memcache():get("runtimes_set")
+    local runtimes_set = self:memcache():get("runtimes_set")
     if runtimes_set == nil then
         runtimes_set = hashset.from(table.wrap(self:runtimes()))
-        self:_memcache():set("runtimes_set", runtimes_set)
+        self:memcache():set("runtimes_set", runtimes_set)
     end
     for _, v in ipairs(table.pack(...)) do
         if runtimes_set:has(v) then
@@ -2536,20 +2558,20 @@ end
 
 -- get the given toolchain
 function _instance:toolchain(name)
-    local toolchains_map = self:_memcache():get("toolchains_map")
+    local toolchains_map = self:memcache():get("toolchains_map")
     if toolchains_map == nil then
         toolchains_map = {}
         for _, toolchain_inst in ipairs(self:toolchains()) do
             toolchains_map[toolchain_inst:name()] = toolchain_inst
         end
-        self:_memcache():set("toolchains_map", toolchains_map)
+        self:memcache():set("toolchains_map", toolchains_map)
     end
     return toolchains_map[name]
 end
 
 -- get the toolchains
 function _instance:toolchains()
-    local toolchains = self:_memcache():get("toolchains")
+    local toolchains = self:memcache():get("toolchains")
     if toolchains == nil then
 
         -- load target toolchains first
@@ -2593,7 +2615,7 @@ function _instance:toolchains()
             toolchains = self:platform():toolchains()
         end
 
-        self:_memcache():set("toolchains", toolchains)
+        self:memcache():set("toolchains", toolchains)
     end
     return toolchains
 end
@@ -2678,14 +2700,13 @@ end
 --    ...
 -- end
 function _instance:has_tool(toolkind, ...)
-    local _, toolname = self:tool(toolkind)
-    if toolname then
-        for _, v in ipairs(table.pack(...)) do
-            if v and toolname:find("^" .. v:gsub("%-", "%%-") .. "$") then
-                return true
-            end
-        end
+    local target_utils = target._target_utils
+    if target_utils == nil then
+        target_utils = sandbox_module.import("private.utils.target", {anonymous = true})
+        target._target_utils = target_utils
     end
+    local _, toolname = self:tool(toolkind)
+    return target_utils.has_tool(toolname, table.pack(...))
 end
 
 -- has the given c funcs?

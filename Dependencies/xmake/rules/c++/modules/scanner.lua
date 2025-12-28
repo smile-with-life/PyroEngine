@@ -234,7 +234,6 @@ function _get_packages_for(target)
     for name, dep in pairs(target:orderdeps()) do
         local dep_packages = _get_packages_for(dep)
         for pkgname, package in pairs(dep_packages) do
-        	-- print(package)
             packages[pkgname] = {pkg = package.pkg, from_dep = package.from_dep or dep, from_package = true}
         end
     end
@@ -275,7 +274,7 @@ function _get_targetdeps_modules(target)
             if sourcebatch.sourcefiles then
                 for _, sourcefile in ipairs(sourcebatch.sourcefiles) do
                     modules = modules or {}
-                    if support.is_public(dep, sourcefile) or stdmodules_set:has(sourcefile) then
+                    if support.is_public(dep, sourcefile) or (stdmodules_set and stdmodules_set:has(sourcefile)) then
                         local _fileconfig = dep:fileconfig(sourcefile)
                         local fileconfig = {}
                         if _fileconfig then
@@ -377,13 +376,13 @@ function _patch_sourcebatch(target, sourcebatch)
         local localcache = support.localcache()
 
         local reuse = target:policy("build.c++.modules.reuse") or
-                     target:policy("build.c++.modules.tryreuse")
+                      target:policy("build.c++.modules.tryreuse")
         local reused = {}
         for sourcefile, fileconfig in pairs(from_depmodules) do
             if reuse and fileconfig.from_dep then
                 local nocheck = target:policy("build.c++.modules.reuse.nocheck")
                 local strict = target:policy("build.c++.modules.reuse.strict") or
-                             target:policy("build.c++.modules.tryreuse.discriminate_on_defines")
+                               target:policy("build.c++.modules.tryreuse.discriminate_on_defines")
                 local dep = target:dep(fileconfig.from_dep)
                 assert(dep, "dep target <%s> for <%s> not found", fileconfig.from_dep, target:fullname())
                 local can_reuse = nocheck or _are_flags_compatible(target, dep, sourcefile, {strict = strict})
@@ -415,10 +414,10 @@ function _patch_sourcebatch(target, sourcebatch)
         end
 
         table.sort(sourcebatch.sourcefiles)
-        memcache:set2(target:fullname(), "cached_sourcebatch", sourcebatch)
+        memcache:set2(target:fullname(), "cached_sourcebatch", table.clone(sourcebatch))
 
         local keys = #sourcebatch.sourcefiles > 0 and table.concat(sourcebatch.sourcefiles) or "_"
-        local sum = hash.strhash32(keys)
+        local sum = hash.strhash64(keys)
         local cached_sum = localcache:get2(target:fullname(), "sourcebatch_sum")
         if not cached_sum or cached_sum ~= sum then
             localcache:set2(target:fullname(), "sourcebatch_sum", sum)
@@ -511,7 +510,11 @@ end
 
 function _do_scan(target, sourcefile, opt)
     profiler.enter(target:fullname(), "c++ modules", "scanner", "scan dependencies for", sourcefile)
-    local changed = _scanner(target).scan_dependency_for(target, sourcefile, opt)
+    local fileconfig = target:fileconfig(sourcefile)
+    local from_package = fileconfig and fileconfig.from_package
+    local is_std = path.basename(sourcefile) == "std" or path.basename(sourcefile) == "std.compat"
+    local rescan = target:is_rebuilt() and not from_package and not is_std
+    local changed = _scanner(target).scan_dependency_for(target, sourcefile, rescan, opt)
     if changed or not support.localcache():get2(target:fullname(), "module_mapper") then
         support.memcache():set2(target:fullname(), "modules.changed", true)
     end
@@ -566,7 +569,7 @@ function _schedule_module_dependencies_scan(target, jobgraph, sourcebatch)
                                 modules[name].alias = true
                             end
                         end
-                    end)
+                                        end)
                     local reused, from = support.is_reused(target, sourcefile)
                     if reused then
                         local scanfilejob = get_scanfilejob_for(from, sourcefile)
@@ -696,9 +699,9 @@ function fallback_generate_dependencies(target, jsonfile, sourcefile, preprocess
             end
         end
         local module_depname = line:match("import%s+(.+)%s*;")
-        -- we need to parse module interface dep in cxx/impl_unit.cpp, e.g. hello.mpp and hello_impl.cpp
-        -- @see https://github.com/xmake-io/xmake/pull/2664#issuecomment-1213167314
-        if not module_depname and not support.has_module_extension(sourcefile) then
+        -- Normal module implementation units need to reference the module interface unit, module and partition interface units,
+        -- as well as partition implementation units don't have this requirement.
+        if not module_depname and not module_name_export and not internal then
             module_depname = module_name_private
         end
         if module_depname and not module_deps_set:has(module_depname) then
@@ -886,9 +889,7 @@ function after_scan(target)
     local sourcebatches = target:sourcebatches()
     local sourcebatch_builder = sourcebatches and sourcebatches["c++.build.modules.builder"]
     local sourcebatch_scanner = sourcebatches and sourcebatches["c++.build.modules.scanner"]
-    if sourcebatch_scanner then
-        sourcebatch_scanner.sourcefiles = {}
-    end
+    support.memcache():set2(target:fullname(), "jobdeps", nil)
     if sourcebatch_builder then
         sourcebatch_builder.sourcefiles = {}
         sourcebatch_builder.dependfiles = {}

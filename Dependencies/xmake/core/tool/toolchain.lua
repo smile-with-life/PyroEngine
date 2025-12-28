@@ -40,8 +40,11 @@ local sandbox        = require("sandbox/sandbox")
 local sandbox_module = require("sandbox/modules/import/core/sandbox/module")
 
 -- new an instance
-function _instance.new(name, info, cachekey, is_builtin, configs)
-    local instance       = table.inherit(_instance)
+function _instance.new(name, info, opt)
+    opt = opt or {}
+    local cachekey = opt.cachekey
+    local configs = opt.configs
+    local instance = table.inherit(_instance)
     local parts = name:split("::", {plain = true})
     instance._NAME = parts[#parts]
     table.remove(parts)
@@ -49,7 +52,8 @@ function _instance.new(name, info, cachekey, is_builtin, configs)
         instance._NAMESPACE = table.concat(parts, "::")
     end
     instance._INFO          = info
-    instance._IS_BUILTIN    = is_builtin
+    instance._REQUIRESTR    = opt.requirestr
+    instance._IS_BUILTIN    = opt.is_builtin
     instance._CACHE         = toolchain._localcache()
     instance._CACHEKEY      = cachekey
     local toolchain_configs = instance._CACHE:get(cachekey)
@@ -86,7 +90,22 @@ end
 -- get the full name
 function _instance:fullname()
     local namespace = self:namespace()
-    return namespace and namespace .. "::" .. self:name() or self:name()
+    local name = self:name()
+    local requirestr = self._REQUIRESTR
+    if requirestr then
+        name = name .. "[" .. requirestr .. "]"
+    end
+    return namespace and namespace .. "::" .. name or name
+end
+
+-- get memcache
+function _instance:memcache()
+    local cache = self._MEMCACHE
+    if not cache then
+        cache = memcache.cache("core.tool.toolchain." .. self:cachekey())
+        self._MEMCACHE = cache
+    end
+    return cache
 end
 
 -- get toolchain platform
@@ -433,6 +452,7 @@ function _instance:_description(toolkind)
             sc         = "the swift compiler",
             scld       = "the swift linker",
             scsh       = "the swift shared library linker",
+            scar       = "the swift static library archiver",
             gc         = "the golang compiler",
             gcld       = "the golang linker",
             gcar       = "the golang static library archiver",
@@ -472,8 +492,7 @@ end
 function _instance:_checktool(toolkind, toolpath)
 
     -- get result from cache first
-    local cachekey = self:cachekey() .. "_checktool" .. toolkind
-    local result = toolchain._memcache():get3(cachekey, toolkind, toolpath)
+    local result = self:memcache():get2("checktool_" .. toolkind, toolpath)
     if result then
         return result[1], result[2]
     end
@@ -516,6 +535,7 @@ function _instance:_checktool(toolkind, toolpath)
     end
 
     -- find tool program
+    local cachekey = self:cachekey() .. "_checktool" .. toolkind
     local tool = find_tool(toolpath, {toolchain = self,
         cachekey = cachekey,
         program = program or toolpath,
@@ -542,7 +562,7 @@ function _instance:_checktool(toolkind, toolpath)
             utils.cprint("${dim}checking for %s (%s: ${bright}%s${clear}) ... ${color.nothing}${text.nothing}", description, toolkind, toolpath)
         end
     end
-    toolchain._memcache():set3(cachekey, toolkind, toolpath, {program, toolname})
+    self:memcache():set2("checktool_" .. toolkind, toolpath, {program, toolname})
     return program, toolname
 end
 
@@ -592,10 +612,18 @@ function toolchain._cachekey(name, opt)
     return cachekey
 end
 
--- parse toolchain and package name
+-- parse toolchain, configs and package name
 --
--- format: toolchain@package
+-- formats:
+--
+-- 1. only toolchain name
+-- e.g. clang, gcc
+--
+-- 2. toolchain@package
 -- e.g. "clang@llvm-10", "@muslcc", zig
+--
+-- 3. toolchain[configs]@package
+-- e.g. "mingw[clang]@llvm-mingw", "msvc[vs=2025,..]"
 --
 function toolchain.parsename(name)
     local splitinfo = name:split('@', {plain = true, strict = true})
@@ -607,7 +635,34 @@ function toolchain.parsename(name)
     if packages == "" then
         packages = nil
     end
-    return toolchain_name or packages, packages
+    local requireconfs, requirestr
+    if toolchain_name then
+        local toolchain_name_raw, configs_str = toolchain_name:match("(.-)%[(.*)%]")
+        if toolchain_name_raw and configs_str then
+            configs_str = configs_str:gsub("%[(.*)%]", function (w)
+                return w:replace(",", ":")
+            end)
+            requirestr = configs_str
+            toolchain_name = toolchain_name_raw
+            local splitinfo = configs_str:split(",", {plain = true})
+            for _, v in ipairs(splitinfo) do
+                local parts = v:split("=", {plain = true})
+                local k = parts[1]
+                v = parts[2]
+                requireconfs = requireconfs or {}
+                if v then
+                    if v:find(":", 1 ,true) then
+                        requireconfs[k] = v:split(":", {plain = true})
+                    else
+                        requireconfs[k] = option.boolean(v)
+                    end
+                else
+                    requireconfs[k] = true
+                end
+            end
+        end
+    end
+    return {name = toolchain_name or packages, packages = packages, requireconfs = requireconfs, requirestr = requirestr}
 end
 
 -- get toolchain apis
@@ -663,18 +718,22 @@ end
 
 -- load toolchain
 function toolchain.load(name, opt)
-
-    -- get toolchain name and packages
     opt = opt or {}
-    local packages
-    name, packages = toolchain.parsename(name)
-    opt.packages = opt.packages or packages
+
+    -- parse toolchain name
+    local parseinfo = toolchain.parsename(name)
+    name = parseinfo.name
+
+    -- init configs
+    local configs = parseinfo.requireconfs or {}
+    table.join2(configs, opt)
+    configs.packages = opt.packages or parseinfo.packages
+    configs.plat = opt.plat or config.get("plat") or os.host()
+    configs.arch = opt.arch or config.get("arch") or os.arch()
 
     -- get cache
-    opt.plat = opt.plat or config.get("plat") or os.host()
-    opt.arch = opt.arch or config.get("arch") or os.arch()
     local cache = toolchain._memcache()
-    local cachekey = toolchain._cachekey(name, opt)
+    local cachekey = toolchain._cachekey(name, configs)
 
     -- get it directly from cache dirst
     local instance = cache:get(cachekey)
@@ -709,32 +768,37 @@ function toolchain.load(name, opt)
         return nil, errors
     end
 
-    -- check the toolchain name
-    local result = results[name]
-    if not result then
+    -- get toolchain info
+    local info = results[name]
+    if not info then
         return nil, string.format("the toolchain %s not found!", name)
     end
 
     -- save instance to the cache
-    instance = _instance.new(name, result, cachekey, true, opt)
+    instance = _instance.new(name, info, {cachekey = cachekey,
+        is_builtin = true, configs = configs, requirestr = parseinfo.requirestr})
     cache:set(cachekey, instance)
     return instance
 end
 
 -- load toolchain from the give toolchain info
 function toolchain.load_withinfo(name, info, opt)
-
-    -- get toolchain name and packages
     opt = opt or {}
-    local packages
-    name, packages = toolchain.parsename(name)
-    opt.packages = opt.packages or packages
+
+    -- parse toolchain name
+    local parseinfo = toolchain.parsename(name)
+    name = parseinfo.name
+
+    -- init configs
+    local configs = parseinfo.requireconfs or {}
+    table.join2(configs, opt)
+    configs.packages = opt.packages or parseinfo.packages
+    configs.plat = opt.plat or config.get("plat") or os.host()
+    configs.arch = opt.arch or config.get("arch") or os.arch()
 
     -- get cache key
-    opt.plat = opt.plat or config.get("plat") or os.host()
-    opt.arch = opt.arch or config.get("arch") or os.arch()
     local cache = toolchain._memcache()
-    local cachekey = toolchain._cachekey(name, opt)
+    local cachekey = toolchain._cachekey(name, configs)
 
     -- get it directly from cache dirst
     local instance = cache:get(cachekey)
@@ -743,7 +807,8 @@ function toolchain.load_withinfo(name, info, opt)
     end
 
     -- save instance to the cache
-    instance = _instance.new(name, info, cachekey, false, opt)
+    instance = _instance.new(name, info, {cachekey = cachekey,
+        is_builtin = false, configs = configs, requirestr = parseinfo.requirestr})
     cache:set(cachekey, instance)
     return instance
 end

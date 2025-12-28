@@ -73,6 +73,11 @@ function _is_cosmocc(self)
     return is_cosmocc
 end
 
+-- is syntax check enabled?
+function _is_syntax_check()
+    return memcache.get("syntax_check", "enabled") or false
+end
+
 -- get `-MMD -MF depfile.d` flags, some old gcc does not support it at same time
 function _get_depfile_flags(self)
     local depfile_flags = _g._DEPFILE_FLAGS
@@ -901,7 +906,7 @@ function add_sourceflags(self, sourcefile, fileconfig, target, targetkind)
     --   add_files("*.c", {sourcekind = "cxx"})
     --
     local sourcekind = fileconfig.sourcekind
-    if sourcekind and sourcekind ~= language.sourcekind_of(sourcefile) then
+    if sourcekind then
         local maps = {cc = "-x c", cxx = "-x c++"}
         return maps[sourcekind]
     end
@@ -965,6 +970,7 @@ end
 
 -- make the compile arguments list
 function compargv(self, sourcefile, objectfile, flags, opt)
+    opt = opt or {}
 
     -- is precompiled header or module files? remove the force includes.
     local extension = path.extension(sourcefile)
@@ -972,6 +978,12 @@ function compargv(self, sourcefile, objectfile, flags, opt)
         flags = _translate_flags_for_pch(self, flags)
     elseif support.has_module_extension(sourcefile, {extension = extension}) then
         flags = _translate_flags_for_mpp(self, flags)
+    end
+
+    -- if syntax-only, add -fsyntax-only and skip -c and -o
+    if _is_syntax_check() then
+        table.insert(flags, "-fsyntax-only")
+        return self:program(), table.join(flags, sourcefile)
     end
 
     local argv = table.join("-c", flags, "-o", objectfile, sourcefile)
@@ -1058,10 +1070,7 @@ function compile(self, sourcefile, objectfile, dependinfo, flags, opt)
                             lines = table.slice(lines, 1, (#lines > 16 and 16 or #lines))
                         end
                         local warnings = table.concat(lines, "\n")
-                        if progress.showing_without_scroll() then
-                            print("")
-                        end
-                        cprint("${color.warning}%s", warnings)
+                        progress.show_output("${color.warning}%s", warnings)
                     end
                 end
 

@@ -91,6 +91,7 @@ function strippeable_flags()
         "analyze",
         "?",
         "external",
+        "fsanitize"
     }
     local splitted_strippeable_flags = {
         "Fo",
@@ -122,9 +123,6 @@ end
 -- build c++23 standard modules if needed
 function get_stdmodules(target, opt)
     opt = opt or {}
-    if not target:policy("build.c++.modules.std") then
-        return
-    end
     local msvc
     if opt.toolchain then
         msvc = toolchain.load("msvc", {plat = opt.toolchain:plat(), arch = opt.toolchain:arch()})

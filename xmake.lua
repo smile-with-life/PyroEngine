@@ -38,7 +38,7 @@ rule("mode.Development")
 rule("mode.Release")
     on_load(function(target)
         -- 设置符号信息：不添加调试符号
-        target:set("symbols", "none")
+        target:set("symbols", "debug")
         -- 设置优化级别：最快运行速度的优化
         target:set("optimize", "fastest")
         -- 设置警告级别：禁用所有警告
@@ -48,7 +48,7 @@ rule("mode.Release")
 rule("mode.Test")
     on_load(function(target)
         -- 设置符号信息：不添加调试符号
-        target:set("symbols", "none")
+        target:set("symbols", "debug")
         -- 设置优化级别：最快运行速度的优化
         target:set("optimize", "fastest")
         -- 设置警告级别：禁用所有警告

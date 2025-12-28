@@ -284,7 +284,7 @@ function _get_configs(package, configs, opt)
         table.insert(configs, "--ccachedir=" .. path.join(path.directory(package:cachedir()), "build_cache"))
         table.insert(policies_list, "build.ccache")
     end
-    if policies then
+    if #policies_list > 0 then
         table.insert(configs, "--policies=" .. table.concat(policies_list, ","))
     end
 
@@ -445,11 +445,40 @@ function _get_package_depconfs_envs(envs, package, opt)
     local requireconfs = {}
     for _, dep in ipairs(package:librarydeps()) do
         local requireinfo = dep:requireinfo()
-        if requireinfo and (requireinfo.override or (requireinfo.configs and not table.empty(requireinfo.configs))) then
+        -- {
+        --  requirekey = "imgui#8b6c4fbd",
+        --  originstr = "imgui",
+        --  configs = { },
+        --  resolvedinfo = {
+        --    version = "v1.91.1",
+        --    configs = { }
+        --  },
+        --  version = "v1.91.1"
+        --}
+        local passed_requireinfo
+        if requireinfo then
+            local resolvedinfo = requireinfo.resolvedinfo
+            if resolvedinfo then
+                requireinfo = resolvedinfo
+            end
+        end
+        if requireinfo then
+            if requireinfo.version and requireinfo.version ~= "latest" then
+                passed_requireinfo = passed_requireinfo or {}
+                passed_requireinfo.version = requireinfo.version
+                passed_requireinfo.override = true
+            end
+            if requireinfo.configs and not table.empty(requireinfo.configs) then
+                passed_requireinfo = passed_requireinfo or {}
+                passed_requireinfo.configs = requireinfo.configs
+                passed_requireinfo.override = true
+            end
+        end
+        if passed_requireinfo then
             local requirepaths = {}
             _get_package_requirepaths(requirepaths, package, dep, {})
             if #requirepaths > 0 then
-                table.insert(requireconfs, {requirepaths = requirepaths, requireinfo = requireinfo})
+                table.insert(requireconfs, {requirepaths = requirepaths, requireinfo = passed_requireinfo})
             end
         end
     end
@@ -485,7 +514,7 @@ function install(package, configs, opt)
 
     -- copy the ported xmake.lua in the default position if it's missing
     local xmakefile = path.join(opt.curdir or os.curdir(), "xmake.lua")
-    if not os.isfile(xmakefile) then
+    if not os.isfile(xmakefile) and package:repo() ~= nil then
         local xmakefile_port = path.join(package:scriptdir(), "port", "xmake.lua")
         if os.isfile(xmakefile_port) then
             os.cp(xmakefile_port, xmakefile)

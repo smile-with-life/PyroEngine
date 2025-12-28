@@ -30,8 +30,6 @@ local io     = require("base/io")
 local dump   = require("base/dump")
 local text   = require("base/text")
 
--- save original interfaces
-utils._bin2c = utils._bin2c or utils.bin2c
 
 -- dump values
 function utils.dump(...)
@@ -193,6 +191,20 @@ function utils.vprintf(format, ...)
     end
 end
 
+-- print the diagnosis information
+function utils.dprint(format, ...)
+    if option.get("diagnosis") and format ~= nil then
+        utils.print(format, ...)
+    end
+end
+
+-- print the diagnosis information without newline
+function utils.dprintf(format, ...)
+    if option.get("diagnosis") and format ~= nil then
+        utils.printf(format, ...)
+    end
+end
+
 -- print the error information
 function utils.error(format, ...)
     if format ~= nil then
@@ -321,12 +333,6 @@ end
 
 function utils.vtable(data, opt)
     utils.vprintf(text.table(data, opt))
-end
-
--- generate c/c++ code from the binary file
-function utils.bin2c(binaryfile, outputfile, opt)
-    opt = opt or {}
-    return utils._bin2c(binaryfile, outputfile, opt.linewidth or 32, opt.nozeroend or false)
 end
 
 -- return module

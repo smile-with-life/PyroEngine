@@ -29,13 +29,21 @@ platform("linux")
     set_formats("symbol", "$(name).sym")
 
     set_installdir("/usr/local")
-    set_toolchains("envs", "cross", "gcc", "clang", "yasm", "nasm", "fasm", "cuda", "go", "rust", "swift", "gfortran", "zig", "fpc", "nim")
+
+    -- The cross toolchain should be placed after the host toolchain.
+    -- otherwise, if the host toolchain is explicitly loaded in the target,
+    -- the cross toolchain will be selected incorrectly in toolchain.lua.
+    --
+    -- TODO Perhaps we should handle it better, or remove the cross toolchain.
+    set_toolchains("envs", "gcc", "clang",
+        "cross", "yasm", "nasm", "fasm", "cuda", "go", "rust", "swift", "gfortran", "zig", "fpc", "nim")
 
     set_menu {
                 config =
                 {
                     {category = "Cuda SDK Configuration"                                            }
                 ,   {nil, "cuda",           "kv", "auto",       "The Cuda SDK Directory"            }
+                ,   {nil, "cuda_sdkver",    "kv", "auto",       "The Cuda SDK Version"              }
                 ,   {category = "Qt SDK Configuration"                                              }
                 ,   {nil, "qt",             "kv", "auto",       "The Qt SDK Directory"              }
                 ,   {nil, "qt_host",        "kv", "auto",       "The Qt Host SDK Directory"         }

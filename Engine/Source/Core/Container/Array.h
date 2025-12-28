@@ -465,6 +465,17 @@ public:
         }
         return *this;
     }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="data"></param>
+    /// <param name="size"></param>
+    constexpr Array(const Type* data, int64 size)
+    {
+        Reserve(size);
+        std::memcpy(m_data, data, size * sizeof(Type));
+        m_size = size;
+    }
 public:
     /// <summary>
     /// 访问指定位置的元素

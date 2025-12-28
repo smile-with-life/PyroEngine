@@ -20,6 +20,7 @@
 
 -- imports
 import("core.base.option")
+import("core.base.binutils")
 import("lib.detect.find_tool")
 
 function _replace_rpath_vars(rpath, opt)
@@ -32,6 +33,10 @@ function _replace_rpath_vars(rpath, opt)
         rpath = rpath:gsub("@executable_path", "$ORIGIN")
     end
     return rpath
+end
+
+function _get_rpath_list_by_binutils(binaryfile, opt)
+    return binutils.rpath_list(binaryfile)
 end
 
 function _get_rpath_list_by_objdump(binaryfile, opt)
@@ -290,13 +295,19 @@ function _clean_rpath_by_patchelf(binaryfile, opt)
     return ok
 end
 
+
+function _clean_rpath_by_binutils(binaryfile, opt)
+    return binutils.rpath_clean(binaryfile)
+end
+
 -- get rpath list
 function list(binaryfile, opt)
     opt = opt or {}
     local ops = {
         _get_rpath_list_by_objdump,
         _get_rpath_list_by_readelf,
-        _get_rpath_list_by_patchelf
+        _get_rpath_list_by_patchelf,
+        _get_rpath_list_by_binutils
     }
     if is_host("macosx") then
         table.insert(ops, 1, _get_rpath_list_by_otool)
@@ -313,7 +324,7 @@ end
 function insert(binaryfile, rpath, opt)
     opt = opt or {}
     local ops = {
-        _insert_rpath_by_patchelf
+        _insert_rpath_by_patchelf,
     }
     if is_host("macosx") then
         table.insert(ops, 1, _insert_rpath_by_install_name_tool)
@@ -335,7 +346,7 @@ end
 function remove(binaryfile, rpath, opt)
     opt = opt or {}
     local ops = {
-        _remove_rpath_by_patchelf
+        _remove_rpath_by_patchelf,
     }
     if is_host("macosx") then
         table.insert(ops, 1, _remove_rpath_by_install_name_tool)
@@ -389,6 +400,7 @@ function clean(binaryfile, opt)
     opt = opt or {}
     local ops = {
         _clean_rpath_by_patchelf,
+        _clean_rpath_by_binutils,
         _clean_rpath_by_generic
     }
     local done = false

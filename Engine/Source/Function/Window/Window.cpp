@@ -16,6 +16,11 @@ Window::Window(WindowProps props)
     m_props = props;
 }
 
+void Window::PumpMessage()
+{
+
+}
+
 void Window::SetTitle(const String& title)
 {
 

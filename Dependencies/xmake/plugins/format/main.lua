@@ -24,8 +24,11 @@ import("core.base.hashset")
 import("core.project.config")
 import("core.project.project")
 import("lib.detect.find_tool")
+import("async.runjobs")
+import("utils.progress")
 import("private.action.require.impl.packagenv")
 import("private.action.require.impl.install_packages")
+import("private.action.utils", {alias = "action_utils"})
 
 -- match source files
 function _match_sourcefiles(sourcefile, filepatterns)
@@ -106,6 +109,13 @@ function _get_targets(targetname, group_pattern)
     return targets
 end
 
+-- tell if the source batch is a c/c++/objc/objc++/cuda source batch
+function _source_batch_should_format(sourcebatch)
+    local rulename = sourcebatch.rulename
+    local matched_rules = {"c.build", "c++.build", "cuda.build", "objc.build", "objc++.build"}
+    return table.contains(matched_rules, rulename)
+end
+
 -- main
 function main()
 
@@ -166,44 +176,60 @@ function main()
         table.insert(argv, "--verbose")
     end
 
-    local targetname
-    local group_pattern = option.get("group")
-    if group_pattern then
-        group_pattern = "^" .. path.pattern(group_pattern) .. "$"
-    else
-        targetname = option.get("target")
-    end
-
+    -- collect sourcefiles
+    local sourcefiles = {}
+    local targetname, group_pattern = action_utils.get_target_and_group()
     local targets = _get_targets(targetname, group_pattern)
     if option.get("files") then
         local filepatterns = _get_file_patterns(option.get("files"))
         for _, target in ipairs(targets) do
             for _, source in ipairs(target:sourcefiles()) do
                 if _match_sourcefiles(source, filepatterns) then
-                    table.insert(argv, path.join(projectdir, source))
+                    table.insert(sourcefiles, path.join(projectdir, source))
                 end
             end
             for _, header in ipairs(target:headerfiles()) do
                 if _match_sourcefiles(header, filepatterns) then
-                    table.insert(argv, path.join(projectdir, header))
+                    table.insert(sourcefiles, path.join(projectdir, header))
                 end
             end
         end
     else
         for _, target in ipairs(targets) do
-            for _, source in ipairs(target:sourcefiles()) do
-                table.insert(argv, path.join(projectdir, source))
+            for _, sourcebatch in pairs(target:sourcebatches()) do
+                if _source_batch_should_format(sourcebatch) then
+                    for _, source in ipairs(sourcebatch.sourcefiles) do
+                        table.insert(sourcefiles, path.join(projectdir, source))
+                    end
+                end
             end
             for _, header in ipairs(target:headerfiles()) do
-                table.insert(argv, path.join(projectdir, header))
+                table.insert(sourcefiles, path.join(projectdir, header))
             end
         end
     end
 
-    -- format files
-    os.vrunv(clang_format.program, argv, {curdir = projectdir})
-    cprint("${color.success}format ok!")
-
-    -- done
+    -- format files in parallel
+    if #sourcefiles > 0 then
+        local jobs = tonumber(option.get("jobs"))
+        if not jobs or jobs <= 0 then
+            jobs = os.default_njob()
+        end
+        local format_time = os.mclock()
+        local runjobs_opt = {
+            total = #sourcefiles,
+            comax = jobs,
+            showtips = false,
+            progress_refresh = true
+        }
+        runjobs("clang-format", function (index, total, opt)
+            local sourcefile = sourcefiles[index]
+            local format_argv = table.join(argv, {sourcefile})
+            progress.show(opt.progress, "clang-format.formatting %s", sourcefile)
+            os.execv(clang_format.program, format_argv, {curdir = projectdir})
+        end, runjobs_opt)
+        format_time = os.mclock() - format_time
+        progress.show(100, "${color.success}clang-format formatted %d files, spent %.3fs", #sourcefiles, format_time / 1000)
+    end
     os.setenvs(oldenvs)
 end

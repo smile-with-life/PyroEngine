@@ -21,6 +21,7 @@ import("core.base.bytes")
 import("core.base.option")
 import("core.base.json")
 import("core.base.hashset")
+import("core.tool.toolchain")
 import("core.cache.memcache", {alias = "_memcache"})
 import("core.cache.localcache", {alias = "_localcache"})
 import("async.runjobs")
@@ -67,6 +68,35 @@ function load(target)
     end
     -- load module support for the specific compiler
     _support(target).load(target)
+end
+
+function get_cpplibrary_name(target)
+    -- libc++ come first because on windows, if we use libc++ clang will still use msvc crt so MD / MT / MDd / MTd can be set
+    if target:has_runtime("c++_shared", "c++_static") then
+        return "c++"
+    elseif target:has_runtime("stdc++_shared", "stdc++_static", "gnustl_static", "gnustl_shared") then
+        return "stdc++"
+    elseif target:has_runtime("stlport_static", "stlport_shared") then
+        return "stlport"
+    elseif target:has_runtime("MD", "MT", "MDd", "MTd") then
+        return "msstl"
+    end
+    -- if no specified runtime, fallback on native platform C++ library
+    if target:is_plat("android") then
+        local ndk = toolchain.load("ndk", { plat = target:plat(), arch = target:arch() })
+        local ver = ndk:config("ndkver")
+        if not ver or ver > 14 then
+            return "c++"
+        else
+            return "stdc++"
+        end
+    elseif target:is_plat("macosx", "iphoneos", "watchos", "appletvos", "applexros", "bsd", "harmony") then
+        return "c++"
+    elseif target:is_plat("linux", "mingw", "cygwin", "msys", "haiku") then
+        return "stdc++"
+    elseif target:is_plat("windows") then
+        return "msstl"
+    end
 end
 
 function has_two_phase_compilation_support(target)
@@ -123,12 +153,12 @@ end
 
 -- extract defines from flags
 function get_headerunit_key(target, sourcefile)
-    local defines = target:get("defines") or {}
-    local undefines = target:get("undefines") or {}
+    local defines = table.wrap(target:get("defines"))
+    local undefines = table.wrap(target:get("undefines"))
     local fileconfig = target:fileconfig(sourcefile)
     if fileconfig then
-        table.join(defines, fileconfig.defines or {})
-        table.join(undefines, fileconfig.undefines or {})
+        table.join2(defines, fileconfig.defines or {})
+        table.join2(undefines, fileconfig.undefines or {})
     end
 
     if #defines > 0 then
@@ -240,6 +270,9 @@ function can_be_culled(target, sourcefile)
             can_cull = can_cull and fileconfig.cull
         end
     end
+    if can_cull then
+        can_cull = is_stdmodule or (fileconfig and fileconfig.external)
+    end
     return can_cull and not public
 end
 
@@ -282,13 +315,20 @@ end
 
 -- get stdmodules
 function get_stdmodules(target)
-    local stdmodules = memcache():get("c++.modules.stdmodules")
-    local stdmodules_set = memcache():get("c++.modules.stdmodules_set")
+    if not target:policy("build.c++.modules.std") then
+        return
+    end
+    local cpplib = get_cpplibrary_name(target)
+    if not cpplib then
+        return
+    end
+    local stdmodules = memcache():get2(cpplib, "c++.modules.stdmodules")
+    local stdmodules_set = memcache():get2(cpplib, "c++.modules.stdmodules_set")
     if not stdmodules or not stdmodules_set then
         stdmodules = _support(target).get_stdmodules(target)
         stdmodules_set = hashset.from(stdmodules or {})
-        memcache():set("c++.modules.stdmodules", stdmodules)
-        memcache():set("c++.modules.stdmodules_set", stdmodules_set)
+        memcache():set2(cpplib, "c++.modules.stdmodules", stdmodules)
+        memcache():set2(cpplib, "c++.modules.stdmodules_set", stdmodules_set)
     end
     return stdmodules, stdmodules_set
 end
@@ -313,7 +353,7 @@ function modules_cachedir(target, opt)
         moduletype = "interfaces"
     elseif opt.scan then
         moduletype = "scans"
-    else 
+    else
         moduletype = "implementation"
     end
     local cachedir = path.join(target:autogendir(), "rules", "bmi", "cache", moduletype)
@@ -324,7 +364,7 @@ function modules_cachedir(target, opt)
 end
 
 function get_modulehash(sourcefile)
-    return hash.uuid(sourcefile):split("-", {plain = true})[1]:lower()
+    return hash.strhash64(sourcefile)
 end
 
 function get_metafile(target, module)

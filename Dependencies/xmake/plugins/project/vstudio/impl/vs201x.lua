@@ -118,8 +118,9 @@ function _get_command_string(cmd, vcxprojdir)
     elseif kind == "mkdir" then
         local dir = _translate_path(cmd.dir, vcxprojdir)
         return string.format("if not exist \"%s\" mkdir \"%s\"", dir, dir)
-    elseif kind == "show" then
-        return string.format("echo %s", colors.ignore(cmd.showtext))
+    elseif kind == "show" or kind == "show_progress" then
+        local text = string.format(cmd.format, table.unpack(cmd.argv))
+        return string.format("echo %s", colors.ignore(text))
     end
 end
 
@@ -399,25 +400,8 @@ function make(outputdir, vsinfo)
             -- reload config, project and platform
             if mode ~= config.mode() or arch ~= config.arch() then
 
-                -- modify config
-                config.set("as", nil, {force = true}) -- force to re-check as for ml/ml64
-                config.set("mode", mode, {readonly = true, force = true})
-                config.set("arch", arch, {readonly = true, force = true})
-
-                -- clear all options
-                for _, opt in pairs(project.options()) do
-                    if not config.readonly(opt:fullname()) then
-                        opt:clear()
-                    end
-                end
-
-                -- clear cache
-                memcache.clear()
-                localcache.clear("detect")
-                localcache.clear("option")
-                localcache.clear("package")
-                localcache.clear("toolchain")
-                localcache.clear("cxxmodules")
+                -- reset project configs and caches
+                vsutils.reset_config_and_caches(mode, arch)
 
                 -- check platform
                 platform.load(config.plat(), arch):check()
@@ -427,6 +411,9 @@ function make(outputdir, vsinfo)
 
                 -- install and update requires
                 install_requires()
+
+                -- check target toolchains
+                target_utils.check_target_toolchains()
 
                 -- load targets
                 project.load_targets()
