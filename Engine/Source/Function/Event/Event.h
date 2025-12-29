@@ -56,7 +56,7 @@ public:
     template<class Type, class Func>
     bool Dispatch(const Func& func)
     {
-        if (!m_event.Handle)
+        if (!m_event.Handled)
         {
             if (m_event.GetName() == Type::GetStaticName())
             {

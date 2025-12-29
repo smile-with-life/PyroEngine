@@ -22,10 +22,12 @@ public:
 
     virtual void Tick() override
     {
-        for (const auto& iter : m_windows)
+        for (const auto& value : m_windows)
         {
-            iter.second->PumpMessage();
+            value.second->PumpMessage();
         }
+
+        _ProcessDelayDeletion();
     }
 
     virtual void Exit() override
@@ -59,22 +61,24 @@ public:
         return false; 
     }
 
-    bool DestroyOSWindow(String name)
+    bool DestroyOSWindow(const String& name)
     {
-        auto iter = m_windows.Find(name);
-        if (iter != m_windows.end())
+        if (m_windows.Contains(name))
         {
-            m_windows.Erase(iter);
+            _DelayDeletion(name);
             return true;
         }
         return false;
     }
 
-    ViewPtr<Window> GetWindowView(String name)
+    ViewPtr<Window> GetWindowView(const String& name)
     {
-        if (m_windows.Contains(name))
+        if (!m_delayDeletion.Contains(name))
         {
-            return ViewPtr<Window>(m_windows[name].RawPtr());
+            if (m_windows.Contains(name))
+            {
+                return ViewPtr<Window>(m_windows[name].RawPtr());
+            }
         }
         return ViewPtr<Window>(nullptr);
     }
@@ -100,5 +104,23 @@ public:
         DestroyOSWindow(event.Name);
     }
 private:
+    void _DelayDeletion(const String& name)
+    {
+        m_delayDeletion.Push(name);
+    }
+
+    void _ProcessDelayDeletion()
+    {
+        for (const auto& name : m_delayDeletion)
+        {
+            auto iter = m_windows.Find(name);
+            if (iter != m_windows.end())
+            {
+                m_windows.Erase(iter);
+            }
+        }
+    }
+private:
     Map<String, ScopePtr<Window>> m_windows;
+    Array<String> m_delayDeletion;
 };

@@ -1,7 +1,6 @@
 #pragma once
 #include "Core.h"
 #include "String/String.h"
-#include "FileEntry.h"
 #include "File.h"
 #include "Directory.h"
 

@@ -42,7 +42,7 @@ public:
     virtual void Rename(const String& name);
 
     // 获取文件类型
-    virtual FileType Type();
+    //virtual FileType Type();
 
     // 文件名
     virtual String Name();

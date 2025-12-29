@@ -8,6 +8,7 @@ int32 Engine::Init()
     GWindowService->Init();
 
     GWindowService->CreateOSWindow("GameWindow");
+    GWindowService->CreateOSWindow("EditorWindow");
 
     return 0;
 }

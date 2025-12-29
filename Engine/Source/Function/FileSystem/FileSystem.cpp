@@ -16,7 +16,7 @@ String FileSystem::FileName(const String& path)
     return String(std::filesystem::path(path).filename().string());
 }
 
-void FileSystem::Copy(const String& filePath, const String& newPath, bool overwrite = true)
+void FileSystem::Copy(const String& filePath, const String& newPath, bool overwrite)
 {
 
     std::error_code err;
@@ -49,7 +49,7 @@ void FileSystem::Copy(const String& filePath, const String& newPath, bool overwr
     }
 }
 
-void FileSystem::Move(const String& filePath, const String& newPath, bool overwrite = true)
+void FileSystem::Move(const String& filePath, const String& newPath, bool overwrite)
 {
 
 }
@@ -105,7 +105,6 @@ String FileSystem::Rename(const String& path, const String& name)
 {
     if (Exists(path))
     {
-        
         std::error_code err;
         String newPath = FileDir(path) + name;
 
@@ -167,4 +166,14 @@ FileSystem::SpaceInfo FileSystem::Space(const String& path)
     }
     
     return SpaceInfo{ space.capacity, space.free, space.available };
+}
+
+FilePermission FileSystem::Permission()
+{
+    return FilePermission();
+}
+
+bool FileSystem::SetPermission(const String& path, FilePermission permission)
+{
+    return false;
 }

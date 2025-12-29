@@ -203,9 +203,29 @@ LRESULT WinWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     return _WindowPtr->HandleMessage(hwnd, msg, wParam, lParam);
 }
+
 LRESULT CALLBACK WindowsWindow::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    return WinWndProc(hwnd, msg, wParam, lParam);
+    WindowsWindow* pWindow = nullptr;
+
+    // WM_NCCREATE 是窗口创建时第一个收到的消息，此时绑定实例
+    if (uMsg == WM_NCCREATE) {
+        CREATESTRUCT* pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
+        pWindow = reinterpret_cast<PyroWindow*>(pCreate->lpCreateParams);
+        SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWindow));
+        pWindow->m_hwnd = hwnd; // 保存窗口句柄
+    }
+    else {
+        // 后续消息直接获取已绑定的实例
+        pWindow = reinterpret_cast<PyroWindow*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+    }
+
+    // 实例存在则转发到成员窗口过程
+    if (pWindow) {
+        return pWindow->MemberWndProc(uMsg, wParam, lParam);
+    }
+    // 无实例时使用默认处理
+    return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
 LRESULT WindowsWindow::HandleMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)

@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Application.h"
 #include "Engine/Engine.h"
+#include "Console/Console.h"
 
 /* static */
 Application& Application::GetInstance()
@@ -21,7 +22,7 @@ Application::~Application()
 
 int32 Application::Run()
 {
-    
+    Console::GetInstance();
 #ifdef BUILD_ENGINE
     Engine engine;
 

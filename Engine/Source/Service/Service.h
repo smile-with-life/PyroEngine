@@ -1,7 +1,6 @@
 #pragma once
 #include "Core.h"
 #include "FrameService/FrameService.h"
-#include "ConsoleService/ConsoleService.h"
 #include "WindowService/WindowService.h"
 
 // ================== 全局变量 ==================​​

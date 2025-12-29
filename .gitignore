@@ -361,3 +361,7 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /Engine/Source/Core/String/String设计文档.txt
+
+.xmake/
+
+build

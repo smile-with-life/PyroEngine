@@ -1,4 +1,0 @@
-{
-    ["D:\\Develop\\PyroEngine"] = "251214",
-    ["D:\\Study\\PyroEngine"] = "251218"
-}
