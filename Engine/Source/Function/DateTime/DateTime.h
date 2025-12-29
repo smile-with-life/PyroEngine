@@ -9,7 +9,7 @@ enum class TimeZone
 };
 
 // 日期时间种类
-enum class DateTimeKind
+enum class TimeKind
 {
     None,   // 未指定
     Local,  // UTC 时间

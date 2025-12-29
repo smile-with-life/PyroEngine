@@ -1,14 +1,14 @@
 #pragma once
 #include "Core.h"
 #include "Platform.h"
-#include "String/String.h"
-#include "Module/Module.h"
-#include "Window/Window.h"
-#include "Memory/RAII.h"
+#include "Service.h"
 #include "Container/Map.h"
+#include "String/String.h"
+#include "Memory/RAII.h"
+#include "Window/Window.h"
 #include "Event/Event.h"
 
-class WindowService : public CoreModule
+class WindowService : public CoreService
 {
 public:
     virtual void Init() override

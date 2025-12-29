@@ -2,12 +2,11 @@
 #include "WindowsWindow.h"
 #include "String/Convert.h"
 /* static */
-WindowsWindow* _WindowPtr = nullptr;
+
 
 Window* Window::Create(const String& name)
 {
-    _WindowPtr = new WindowsWindow(name);
-    return _WindowPtr;
+    return new WindowsWindow(name);
 }
 
 Window* Window::Create(const String& name, WindowProps props)
@@ -199,33 +198,31 @@ void* WindowsWindow::GetNativeHandle() const
 }
 
 /* protected */
-LRESULT WinWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-    return _WindowPtr->HandleMessage(hwnd, msg, wParam, lParam);
-}
-
 LRESULT CALLBACK WindowsWindow::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    WindowsWindow* pWindow = nullptr;
+    WindowsWindow* windowPtr = nullptr;
 
     // WM_NCCREATE 是窗口创建时第一个收到的消息，此时绑定实例
-    if (uMsg == WM_NCCREATE) {
-        CREATESTRUCT* pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
-        pWindow = reinterpret_cast<PyroWindow*>(pCreate->lpCreateParams);
-        SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWindow));
-        pWindow->m_hwnd = hwnd; // 保存窗口句柄
+    if (msg == WM_NCCREATE)
+    {
+        CREATESTRUCT* createStruct = reinterpret_cast<CREATESTRUCT*>(lParam);
+        windowPtr = reinterpret_cast<WindowsWindow*>(createStruct->lpCreateParams);
+        SetWindowLongPtrW(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(windowPtr));
+        windowPtr->m_hWnd = hwnd; // 保存窗口句柄
     }
-    else {
+    else 
+    {
         // 后续消息直接获取已绑定的实例
-        pWindow = reinterpret_cast<PyroWindow*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+        windowPtr = reinterpret_cast<WindowsWindow*>(GetWindowLongPtrW(hwnd, GWLP_USERDATA));
     }
 
     // 实例存在则转发到成员窗口过程
-    if (pWindow) {
-        return pWindow->MemberWndProc(uMsg, wParam, lParam);
+    if (windowPtr) 
+    {
+        return windowPtr->HandleMessage(hwnd, msg, wParam, lParam);
     }
     // 无实例时使用默认处理
-    return DefWindowProc(hwnd, uMsg, wParam, lParam);
+    return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
 LRESULT WindowsWindow::HandleMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -587,28 +584,7 @@ LRESULT WindowsWindow::HandleMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM 
 /* private */
 void WindowsWindow::_CreatePlatformWindow()
 {
-    WNDCLASSEXW wc;
-    ZeroMemory(&wc, sizeof(WNDCLASSEXW));
-
-    // 窗口类设置
-    wc.cbSize = sizeof(WNDCLASSEXW);                               // 窗口类结构的大小
-    wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;                 // 窗口样式
-    wc.lpfnWndProc = WindowsWindow::WndProc;                       // 窗口消息处理函数
-    wc.cbClsExtra = 0;                                             // 窗口类结构的额外字节数
-    wc.cbWndExtra = 0;                                             // 窗口实例后分配的额外字节数
-    wc.hInstance = GWindowsInstance;                               // 应用程序实例句柄
-    wc.hIcon = NULL;                                               // 窗口图标
-    wc.hCursor = LoadCursor(NULL, IDC_ARROW);                      // 鼠标指针样式
-    wc.hbrBackground = NULL;                                       // 窗口背景颜色
-    wc.lpszMenuName = NULL;                                        // 窗口使用的菜单栏
-    wc.lpszClassName = TEXT("PyroEngineWindow");                   // 窗口类名
-    wc.hIconSm = 0;                                                // 窗口小图标
-    ::UnregisterClassW(TEXT("PyroEngineWindow"), GWindowsInstance);
-    // 注册窗口类
-    if (!::RegisterClassExW(&wc))
-    {
-        MessageBoxW(NULL, TEXT("Window Registration Failed!"), TEXT("Error!"), MB_ICONEXCLAMATION | MB_OK);
-    }
+    _RegisterWindowClassInfo();
 
     uint32 WindowExStyle = 0;
     uint32 WindowStyle = 0;
@@ -681,7 +657,7 @@ void WindowsWindow::_CreatePlatformWindow()
         NULL,                                   // 父窗口句柄
         NULL,                                   // 菜单的句柄
         GWindowsInstance,                       // 应用程序句柄
-        NULL);                                  // 传给窗口过程函数的参数
+        this);                                  // 传给窗口过程函数的参数
     if (!m_props.IsHasCloseButton) // 窗口是否具有关闭按钮
     {
         EnableMenuItem(GetSystemMenu(m_hWnd, false), SC_CLOSE, MF_GRAYED);
@@ -694,9 +670,6 @@ void WindowsWindow::_CreatePlatformWindow()
         ShowWindow();
     }
 
-    wchar_t actualTitle[256];
-    int titleLength = ::GetWindowTextW(m_hWnd, actualTitle, 256);
-
     //if ()
     //{
     //    // Tell OLE that we are opting into drag and drop.
@@ -707,3 +680,34 @@ void WindowsWindow::_CreatePlatformWindow()
     //    ::AddClipboardFormatListener(m_hWnd);
     //} 文件拖放 @ 实现
 }
+
+void WindowsWindow::_RegisterWindowClassInfo()
+{
+    WNDCLASSEXW wc;
+    ZeroMemory(&wc, sizeof(WNDCLASSEXW));
+
+    if (!GetClassInfoExW(GWindowsInstance, TEXT("PyroEngineWindow"), &wc))
+    {
+        // 窗口类设置
+        wc.cbSize = sizeof(WNDCLASSEXW);                               // 窗口类结构的大小
+        wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;                 // 窗口样式
+        wc.lpfnWndProc = WindowsWindow::WndProc;                       // 窗口消息处理函数
+        wc.cbClsExtra = 0;                                             // 窗口类结构的额外字节数
+        wc.cbWndExtra = 0;                                             // 窗口实例后分配的额外字节数
+        wc.hInstance = GWindowsInstance;                               // 应用程序实例句柄
+        wc.hIcon = NULL;                                               // 窗口图标
+        wc.hCursor = LoadCursor(NULL, IDC_ARROW);                      // 鼠标指针样式
+        wc.hbrBackground = NULL;                                       // 窗口背景颜色
+        wc.lpszMenuName = NULL;                                        // 窗口使用的菜单栏
+        wc.lpszClassName = TEXT("PyroEngineWindow");                   // 窗口类名
+        wc.hIconSm = 0;                                                // 窗口小图标
+        ::UnregisterClassW(TEXT("PyroEngineWindow"), GWindowsInstance);
+        // 注册窗口类
+        if (!::RegisterClassExW(&wc))
+        {
+            MessageBoxW(NULL, TEXT("Window Registration Failed!"), TEXT("Error!"), MB_ICONEXCLAMATION | MB_OK);
+        }
+    }
+}
+
+

@@ -4,6 +4,8 @@
 #include "Time/Time.h"
 #include "Thread/Thread.h"
 #include "Diagnosis/SourceInfo.h"
+#include "Console/Console.h"
+#include "DateTime/DateTime.h"
 
 enum class LogLevel : uint16
 {
@@ -39,6 +41,50 @@ struct LogEntry
     String Message;                     // 日志消息的内容
 };
 
+/* 包装代码位置信息 */
+template<class Type>
+class FormatWithSource
+{
+public:
+    template<class U> requires std::convertible_to <const U&, std::basic_string_view<char>>
+    consteval FormatWithSource(U&& inner, std::source_location location = std::source_location::current())
+        : m_inner(std::forward<U>(inner))
+        , m_source(location)
+    {
+
+    }
+
+    constexpr FormatWithSource(const FormatWithSource& other)
+        : m_inner(other.m_inner)
+        , m_source(other.m_location)
+    {
+
+    }
+
+    template<class U>
+        requires std::convertible_to <const U&, std::basic_string_view<char>>
+    constexpr FormatWithSource& operator=(const FormatWithSource<U>& other)
+    {
+        m_inner = other.m_inner;
+        m_source = other.m_source;
+        return *this;
+    }
+public:
+    constexpr Type const& Format() const 
+    {
+        return m_inner;
+    }
+
+    constexpr SourceInfo const& Source() const
+    {
+        return m_source;
+    }
+
+private:
+    Type m_inner;
+    SourceInfo m_source;
+};
+
 class Logger
 {
 public:
@@ -46,12 +92,58 @@ public:
 
     ~Logger() = default;
 public:
-    void Log(LogLevel level, const String& message, SourceInfo source = SourceInfo::Current());
+    void Log(LogLevel level, const String& message, SourceInfo source = SourceInfo::Current())
+    {
+        if (level >= m_level)
+        {
+            LogEntry log;
+            log.Time = SystemClock::Now();
+            log.Source = source;
+            log.Id = Thread::CurrentThreadId();
+            log.Level = level;
+            log.Message = message;
+
+            // @ 临时
+            Console::GetInstance().Write(log.Message);
+            // @ 临时
+        }
+    }
 
     template<class... Args>
-    void Log(LogLevel level, WithSourceInfo<std::format_string<Args...>> withFormat, Args &&...args);
+    void Log(LogLevel level, FormatWithSource<std::format_string<Args...>> withFormat, Args &&...args)
+    {
+        if (level <= m_level)
+        {
+            LogEntry log;
+            log.Time = SystemClock::Now();
+            log.Source = withFormat.Source();
+            log.Id = Thread::CurrentThreadId();
+            log.Level = level;
+            log.Message = std::format(withFormat.Format(), std::forward<Args>(args)...);
 
-    void SetLevel(LogLevel level);
+            // @ 临时
+            Console::GetInstance().Write(log.Message);
+            // @ 临时
+            
+        }
+    }
 
-    LogLevel GetLevel();
+    void SetLevel(LogLevel level)
+    {
+        m_level = level;
+    }
+
+    LogLevel GetLevel()
+    {
+        return m_level;
+    }
+public:
+    static Logger& GetInstance()
+    {
+        static Logger instance;
+        return instance;
+    }
+private:
+    LogLevel m_level = LogLevel::All;
+    TimeKind m_timeKind = TimeKind::Local;
 };

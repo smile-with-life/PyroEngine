@@ -1,25 +1,29 @@
 #include "pch.h"
 #include "FrameService.h"
 #include "Thread/Thread.h"
+#include "GlobalModule.h"
 
 void FrameService::Init()
 {
     LoadSettings();
     m_frameTime = Microseconds(1000000) / m_fixedFPS;
+    m_lastFrameTime = SteadyClock::Now();
     m_lastUpdateTime = SteadyClock::Now();
 }
 
 void FrameService::Tick()
 {
     // 获取当前时间
-    auto currentTime = SteadyClock::Now();
+    auto currentFrameTime = SteadyClock::Now();
     // 计算本帧的耗时
-    auto currentFrameTime = ConvertType<Microseconds>(currentTime - m_lastUpdateTime);
+    auto deltaTime = ConvertType<Microseconds>(currentFrameTime - m_lastFrameTime);
+    // 更新上一帧时间
+    m_lastFrameTime = currentFrameTime;
     // 判断是否为固定帧率模式
     if (m_mode == FramePacingMode::Fixed)
     {
         // 计算需要等待的时间
-        auto waitTime = m_frameTime - currentFrameTime;
+        auto waitTime = m_frameTime - deltaTime;
         if (waitTime > Microseconds(0))
         {
             Thread::Sleep(waitTime);
@@ -34,6 +38,7 @@ void FrameService::Tick()
         m_FPS = m_frameCount;
         m_lastUpdateTime = now;
         m_frameCount = 0;
+        GLog->Log(LogLevel::Info, "当前帧数:{}", m_FPS);
     }
 }
 

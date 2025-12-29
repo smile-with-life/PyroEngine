@@ -1,7 +1,8 @@
 #include "pch.h"
 #include "Application.h"
 #include "Engine/Engine.h"
-#include "Console/Console.h"
+#include "GlobalModule.h"
+#include "GlobalService.h"
 
 /* static */
 Application& Application::GetInstance()
@@ -9,6 +10,7 @@ Application& Application::GetInstance()
     static Application instance;
     return instance;
 }
+
 /* member */
 Application::Application()
 {
@@ -22,7 +24,7 @@ Application::~Application()
 
 int32 Application::Run()
 {
-    Console::GetInstance();
+    PreInitCoreModule();
 #ifdef BUILD_ENGINE
     Engine engine;
 

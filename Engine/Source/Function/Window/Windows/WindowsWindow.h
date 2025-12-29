@@ -96,9 +96,6 @@ public:
 	// 获取与窗口关联的原生操作系统句柄
 	virtual void* GetNativeHandle() const override;
 protected:
-	// 友元函数
-	friend LRESULT WinWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
 	// 窗口过程函数
 	static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -106,6 +103,8 @@ protected:
 	LRESULT HandleMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 private:
 	void _CreatePlatformWindow();
+
+	void _RegisterWindowClassInfo();
 private:
 	// Windows窗口句柄
 	HWND m_hWnd;

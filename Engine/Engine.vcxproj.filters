@@ -144,19 +144,12 @@ xmake version 3.0.5+dev.7ee27a5e5
     <Filter Include="Source\Service\FrameService">
       <UniqueIdentifier>{10216931-F564-4956-B588-F87A824B9F5E}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Service\LogService">
-      <UniqueIdentifier>{E8F47FD4-6C41-4AD4-B0BA-7EBAED1C5DCD}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Service\LogService\Appender">
-      <UniqueIdentifier>{471F0FEB-12A9-4B86-B7ED-3CF2A3FEC28A}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Service\Module">
       <UniqueIdentifier>{9685543F-75B1-4C47-B5E4-7D4C2683CCE5}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Service\WindowService">
       <UniqueIdentifier>{F5813989-8CA6-40CD-934F-8E5428750F46}</UniqueIdentifier>
     </Filter>
-
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildProjectDirectory)\Xmake.Custom.props">
@@ -169,9 +162,6 @@ xmake version 3.0.5+dev.7ee27a5e5
       <Filter>Properties</Filter>
     </None>
     <None Include="$(MSBuildProjectDirectory)\Xmake.Custom.items.filters">
-      <Filter>Properties</Filter>
-    </None>
-    <None Include="$(XmakeScriptDir)\xmake.lua">
       <Filter>Properties</Filter>
     </None>
   </ItemGroup>
@@ -332,6 +322,9 @@ xmake version 3.0.5+dev.7ee27a5e5
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\GUID\GUID.h">
       <Filter>Source\Function\GUID</Filter>
     </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\GlobalModule.h">
+      <Filter>Source\Function</Filter>
+    </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Input\Input.h">
       <Filter>Source\Function\Input</Filter>
     </ClInclude>
@@ -371,15 +364,6 @@ xmake version 3.0.5+dev.7ee27a5e5
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Service\FrameService\FrameService.h">
       <Filter>Source\Service\FrameService</Filter>
     </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Service\LogService\Appender\Appender.h">
-      <Filter>Source\Service\LogService\Appender</Filter>
-    </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Service\LogService\LogService.h">
-      <Filter>Source\Service\LogService</Filter>
-    </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Service\Module\Module.h">
-      <Filter>Source\Service\Module</Filter>
-    </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Service\Service.h">
       <Filter>Source\Service</Filter>
     </ClInclude>
@@ -389,11 +373,9 @@ xmake version 3.0.5+dev.7ee27a5e5
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\pch.h">
       <Filter>Source</Filter>
     </ClInclude>
-
-
+    <ClInclude Include="Source\Service\GlobalService.h" />
   </ItemGroup>
   <ItemGroup>
-
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Application\Application.cpp">
       <Filter>Source\Application</Filter>
     </ClCompile>
@@ -448,28 +430,16 @@ xmake version 3.0.5+dev.7ee27a5e5
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Service\FrameService\FrameService.cpp">
       <Filter>Source\Service\FrameService</Filter>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Service\LogService\LogService.cpp">
-      <Filter>Source\Service\LogService</Filter>
-    </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Service\WindowService\WindowService.cpp">
       <Filter>Source\Service\WindowService</Filter>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\pch.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-
-
-
   </ItemGroup>
   <ItemGroup>
-
   </ItemGroup>
   <ItemGroup>
-
-
-
-
   </ItemGroup>
-  <Import Condition="Exists('$(MSBuildThisFileDirectory)\Xmake.Custom.files.filters')"
-    Project="$(MSBuildThisFileDirectory)\Xmake.Custom.files.filters" />
+  <Import Condition="Exists('$(MSBuildThisFileDirectory)\Xmake.Custom.files.filters')" Project="$(MSBuildThisFileDirectory)\Xmake.Custom.files.filters" />
 </Project>

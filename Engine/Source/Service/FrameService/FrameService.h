@@ -1,6 +1,6 @@
 #pragma once
 #include "Core.h"
-#include "Module/Module.h"
+#include "Service.h"
 #include "Time/Time.h"
 
 /// <summary>
@@ -16,7 +16,7 @@ enum class FramePacingMode
 /// 帧率控制服务
 /// <para>在每帧结束时调用</para>
 /// </summary>
-class FrameService : public CoreModule
+class FrameService : public CoreService
 {
 public:
     virtual void Init() override;
@@ -65,7 +65,12 @@ private:
     Microseconds m_frameTime = 16666; 
 
     /// <summary>
-    /// 上次帧更新时间
+    /// 上一帧时间
+    /// </summary>
+    TimePoint<SteadyClock> m_lastFrameTime;
+
+    /// <summary>
+    /// 上次帧率更新时间
     /// </summary>
     TimePoint<SteadyClock> m_lastUpdateTime;
 };

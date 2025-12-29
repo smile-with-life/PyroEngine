@@ -1,20 +1,38 @@
 #pragma once
-#include "Core.h"
-#include "FrameService/FrameService.h"
-#include "WindowService/WindowService.h"
 
-// ================== 全局变量 ==================​​
-inline FrameService* GFrameService = nullptr;
-inline WindowService* GWindowService = nullptr;
+class Service
+{
+public:
+    virtual void Init() = 0;
 
-inline void AllowServer()
-{  
-    GFrameService = new FrameService();
-    GWindowService = new WindowService();
-}
+    virtual void Tick() = 0;
 
-inline void FreeServer()
-{   
-    if (!GFrameService) delete GFrameService;
-    if (!GWindowService) delete GWindowService;
-}
+    virtual void Exit() = 0;
+
+    virtual bool IsSupportDynamicReload() = 0;
+};
+
+class CoreService : public Service
+{
+public:
+    virtual void Init() = 0;
+
+    virtual void Tick() = 0;
+
+    virtual void Exit() = 0;
+
+    virtual void LoadSettings()
+    {
+
+    }
+
+    virtual void SaveSettings()
+    {
+
+    }
+
+    virtual bool IsSupportDynamicReload() override
+    {
+        return false;
+    }
+};
