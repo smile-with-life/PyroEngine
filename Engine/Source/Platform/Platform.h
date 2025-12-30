@@ -133,6 +133,134 @@
     #define BUILD_CONFIG BUILD_CONFIG_DIST
 #endif
 
+// ==================== 平台支持特性 ====================​​
+namespace PlatformProperties
+{
+    /// <summary>
+    /// 获取平台唯一标识名
+    /// </summary>
+    /// <returns>平台名称</returns>
+    static const char* PlatformName();
+
+    /// <summary>
+    /// 获取平台使用的物理引擎格式
+    /// </summary>
+    /// <returns>物理引擎名称</returns>
+    static const char* GetPhysicsFormat();
+
+    /// <summary>
+    /// 判断平台是否为小端序（字节序）
+    /// </summary>
+    /// <returns>bool</returns>
+    static bool IsLittleEndian();
+
+    /// <summary>
+    /// 判断平台是否支持窗口化运行模式
+    /// </summary>
+    /// <returns>bool</returns>
+    static bool IsSupportsWindowed();
+
+    /// <summary>
+    /// 判断平台是否支持音频流送
+    /// <para>大音频文件的分段加载（避免一次性加载占用内存）</para>
+    /// </summary>
+    /// <returns></returns>
+    static bool IsSupportsAudioStreaming();
+
+    /// <summary>
+    /// 判断平台是否支持高质量光照贴图
+    /// </summary>
+    /// <returns></returns>
+    static bool IsSupportsHighQualityLightmaps();
+
+    /// <summary>
+    /// 判断平台是否支持低质量光照贴图
+    /// </summary>
+    /// <returns></returns>
+    static bool IsSupportsLowQualityLightmaps();
+
+    /// <summary>
+    /// 判断平台是否支持距离场阴影
+    /// <para>用于开放世界场景的大面积阴影渲染优化</para>
+    /// </summary>
+    /// <returns></returns>
+    static bool IsSupportsDistanceFieldShadows();
+
+    /// <summary>
+    /// 判断平台是否支持距离场环境光遮蔽
+    /// </summary>
+    /// <returns></returns>
+    static bool IsSupportsDistanceFieldAO();
+
+    /// <summary>
+    /// 判断平台是否支持纹理流送
+    /// </summary>
+    /// <returns></returns>
+    static bool IsSupportsTextureStreaming();
+
+    /// <summary>
+    /// 判断平台是否支持虚拟纹理流送
+    /// </summary>
+    /// <returns></returns>
+    static bool IsSupportsVirtualTextureStreaming();
+
+    /// <summary>
+    /// 判断平台是否支持网格LOD流送
+    /// </summary>
+    /// <returns></returns>
+    static bool IsSupportsMeshLODStreaming();
+
+    /// <summary>
+    /// 判断平台是否支持内存映射文件（MMF）
+    /// <para>大文件的快速加载（避免全量读入内存）</para>
+    /// </summary>
+    /// <returns></returns>
+    static bool IsSupportsMemoryMappedFiles();
+
+    /// <summary>
+    /// 判断平台是否支持音频文件的内存映射加载
+    /// </summary>
+    /// <returns></returns>
+    static bool IsSupportsMemoryMappedAudio();
+
+    /// <summary>
+    /// 判断平台是否支持动画文件的内存映射加载
+    /// </summary>
+    /// <returns></returns>
+    static bool IsSupportsMemoryMappedAnimation();
+
+    /// <summary>
+    /// 获取内存映射文件的对齐要求（单位：字节）
+    /// <para>内存映射时的地址对齐（硬件强制要求，否则会崩溃）</para>
+    /// </summary>
+    /// <returns>对齐值</returns>
+    static int64 GetMemoryMappingAlignment();
+
+    /// <summary>
+    /// 判断平台是否支持硬件光线追踪
+    /// </summary>
+    /// <returns></returns>
+    static bool IsSupportsRayTracing();
+
+    /// <summary>
+    /// 判断平台是否支持Lumen全局光照
+    /// </summary>
+    /// <returns></returns>
+    static bool IsSupportsLumenGI();
+
+    /// <summary>
+    /// 判断平台是否支持硬件加速LZ解压
+    /// </summary>
+    /// <returns></returns>
+    static bool IsSupportsHardwareLZDecompression();
+
+    /// <summary>
+    /// 判断平台是否为固定分辨率
+    /// </summary>
+    /// <returns></returns>
+    static bool IsFixedResolution();
+}
+
 // ==================== 跨平台字符字面量 ====================​​
 #ifdef PLATFORM_WINDOWS
     #define PLATFORM_NATIVE_UTF16 1
@@ -181,132 +309,4 @@ inline int64 TStrLength(const tchar* str)
     return len;
 #endif
 }
-}
- 
-// ==================== 平台支持特性 ====================​​
-namespace PlatformProperties
-{
-/// <summary>
-/// 获取平台唯一标识名
-/// </summary>
-/// <returns>平台名称</returns>
-static const char* PlatformName();
-
-/// <summary>
-/// 获取平台使用的物理引擎格式
-/// </summary>
-/// <returns>物理引擎名称</returns>
-static const char* GetPhysicsFormat();
-
-/// <summary>
-/// 判断平台是否为小端序（字节序）
-/// </summary>
-/// <returns>bool</returns>
-static bool IsLittleEndian();
-
-/// <summary>
-/// 判断平台是否支持窗口化运行模式
-/// </summary>
-/// <returns>bool</returns>
-static bool IsSupportsWindowed();
-
-/// <summary>
-/// 判断平台是否支持音频流送
-/// <para>大音频文件的分段加载（避免一次性加载占用内存）</para>
-/// </summary>
-/// <returns></returns>
-static bool IsSupportsAudioStreaming();
-
-/// <summary>
-/// 判断平台是否支持高质量光照贴图
-/// </summary>
-/// <returns></returns>
-static bool IsSupportsHighQualityLightmaps();
-
-/// <summary>
-/// 判断平台是否支持低质量光照贴图
-/// </summary>
-/// <returns></returns>
-static bool IsSupportsLowQualityLightmaps();
-
-/// <summary>
-/// 判断平台是否支持距离场阴影
-/// <para>用于开放世界场景的大面积阴影渲染优化</para>
-/// </summary>
-/// <returns></returns>
-static bool IsSupportsDistanceFieldShadows();
-
-/// <summary>
-/// 判断平台是否支持距离场环境光遮蔽
-/// </summary>
-/// <returns></returns>
-static bool IsSupportsDistanceFieldAO();
-
-/// <summary>
-/// 判断平台是否支持纹理流送
-/// </summary>
-/// <returns></returns>
-static bool IsSupportsTextureStreaming();
-
-/// <summary>
-/// 判断平台是否支持虚拟纹理流送
-/// </summary>
-/// <returns></returns>
-static bool IsSupportsVirtualTextureStreaming();
-
-/// <summary>
-/// 判断平台是否支持网格LOD流送
-/// </summary>
-/// <returns></returns>
-static bool IsSupportsMeshLODStreaming();
-
-/// <summary>
-/// 判断平台是否支持内存映射文件（MMF）
-/// <para>大文件的快速加载（避免全量读入内存）</para>
-/// </summary>
-/// <returns></returns>
-static bool IsSupportsMemoryMappedFiles();
-
-/// <summary>
-/// 判断平台是否支持音频文件的内存映射加载
-/// </summary>
-/// <returns></returns>
-static bool IsSupportsMemoryMappedAudio();
-
-/// <summary>
-/// 判断平台是否支持动画文件的内存映射加载
-/// </summary>
-/// <returns></returns>
-static bool IsSupportsMemoryMappedAnimation();
-
-/// <summary>
-/// 获取内存映射文件的对齐要求（单位：字节）
-/// <para>内存映射时的地址对齐（硬件强制要求，否则会崩溃）</para>
-/// </summary>
-/// <returns>对齐值</returns>
-static int64 GetMemoryMappingAlignment();
-
-/// <summary>
-/// 判断平台是否支持硬件光线追踪
-/// </summary>
-/// <returns></returns>
-static bool IsSupportsRayTracing();
-
-/// <summary>
-/// 判断平台是否支持Lumen全局光照
-/// </summary>
-/// <returns></returns>
-static bool IsSupportsLumenGI();
-
-/// <summary>
-/// 判断平台是否支持硬件加速LZ解压
-/// </summary>
-/// <returns></returns>
-static bool IsSupportsHardwareLZDecompression();
-
-/// <summary>
-/// 判断平台是否为固定分辨率
-/// </summary>
-/// <returns></returns>
-static bool IsFixedResolution();
 }

@@ -18,8 +18,8 @@ int32 Engine::Init()
 
 void Engine::Tick()
 {
-    GFrameService->Tick();
     GWindowService->Tick();
+    GFrameService->Tick();
 }
 
 void Engine::Exit()

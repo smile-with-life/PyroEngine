@@ -12,13 +12,11 @@ void FrameService::Init()
 }
 
 void FrameService::Tick()
-{
+{   
     // 获取当前时间
-    auto currentFrameTime = SteadyClock::Now();
-    // 计算本帧的耗时
-    auto deltaTime = ConvertType<Microseconds>(currentFrameTime - m_lastFrameTime);
-    // 更新上一帧时间
-    m_lastFrameTime = currentFrameTime;
+    auto currentTime = SteadyClock::Now();
+    // 计算本帧实际耗时
+    auto deltaTime = ConvertType<Microseconds>(currentTime - m_lastFrameTime);
     // 判断是否为固定帧率模式
     if (m_mode == FramePacingMode::Fixed)
     {
@@ -26,20 +24,23 @@ void FrameService::Tick()
         auto waitTime = m_frameTime - deltaTime;
         if (waitTime > Microseconds(0))
         {
+            // 等待剩余时间，保证一帧总耗时稳定
             Thread::Sleep(waitTime);
         }
     }  
     m_frameCount++;
     // 判断是否需要更新帧率
-    auto now = SteadyClock::Now();
-    auto updateTime = now - m_lastUpdateTime;
+    auto currentTime = SteadyClock::Now();
+    auto updateTime = currentTime - m_lastUpdateTime;
     if (updateTime >= Seconds(1))
     {
         m_FPS = m_frameCount;
-        m_lastUpdateTime = now;
+        m_lastUpdateTime = currentTime;
         m_frameCount = 0;
         GLog->Log(LogLevel::Info, "当前帧数:{}", m_FPS);
     }
+    // 最后更新上一帧结束时间
+    m_lastFrameTime = currentTime;
 }
 
 void FrameService::Exit()
