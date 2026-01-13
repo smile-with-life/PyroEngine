@@ -374,6 +374,9 @@ xmake version 3.0.5+dev.7ee27a5e5
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Source\Service\GlobalService.h" />
+    <ClInclude Include="Source\Service\RenderService\RenderService.h" />
+    <ClInclude Include="Source\Function\RHI\RHI.h" />
+    <ClInclude Include="Source\Function\RHI\Vulkan\VulkanRHI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Application\Application.cpp">
@@ -436,6 +439,10 @@ xmake version 3.0.5+dev.7ee27a5e5
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\pch.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Function\DateTime\DateTime.cpp" />
+    <ClCompile Include="Source\Service\RenderService\RenderService.cpp" />
+    <ClCompile Include="Source\Function\RHI\RHI.cpp" />
+    <ClCompile Include="Source\Function\RHI\Vulkan\VulkanRHI.cpp" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

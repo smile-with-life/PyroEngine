@@ -1,6 +1,7 @@
 #pragma once
 #include "Core.h"
 #include "Duration.h"
+#include "Clock.h"
 
 template<class Clock>
 class TimePoint
@@ -9,7 +10,7 @@ public:
     friend class SystemClock;
     friend class SteadyClock;
 public:
-    using clock = Clock::clock;
+    using clock = typename Clock::clock;
 public:
     TimePoint() = default;
 
@@ -22,6 +23,13 @@ public:
     TimePoint(TimePoint&& other) = default;
 
     TimePoint& operator=(TimePoint&& other) = default;
+public:
+    Nanoseconds TimeEpoch() const
+    {
+        using std::chrono::duration_cast;
+        auto count = duration_cast<std::chrono::nanoseconds>(m_time.time_since_epoch()).count();
+        return Nanoseconds(count);
+    }
 public:
     template<class Clock, class Period>
     friend TimePoint<Clock> operator+(const TimePoint<Clock>& left, const Duration<Period>& right);

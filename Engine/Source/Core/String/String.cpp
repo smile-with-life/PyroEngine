@@ -101,11 +101,6 @@ String::operator const std::string() const
     return m_data;
 }
 
-String::operator const char* () const
-{
-    return m_data.c_str();
-}
-
 String::operator bool() const
 {
     return !m_data.empty();
@@ -821,6 +816,16 @@ String operator+(const String& left, const String& right)
     str.Reserve(left.Size() + right.Size() + 1);
     str += right;
     return str;
+}
+
+String operator+(const String& left, const char* right)
+{
+    return String(left.m_data + right);
+}
+
+String operator+(const char* left, const String& right)
+{
+    return String(left + right.m_data);
 }
 
 bool operator==(const String& left, const String& right)

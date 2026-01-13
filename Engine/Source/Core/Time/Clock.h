@@ -11,6 +11,11 @@ public:
     SystemClock() = default;
     ~SystemClock() = default;
 public:
+    static std::time_t ToTime(TimePoint<SystemClock> time)
+    {
+        return std::chrono::system_clock::to_time_t(time.m_time);
+    }
+public:
     static TimePoint<SystemClock> Now()
     {
         auto time = std::chrono::system_clock::now();

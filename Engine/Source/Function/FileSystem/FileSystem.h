@@ -146,13 +146,15 @@ public:
 
     static bool IsSocket(const String& path);
 
-    static bool IsSymlink(const String& path);
+    static bool IsSymlink(const String& path);     
 
     static SpaceInfo Space(const String& path);
 
-    static FilePermission Permission();
+    static FilePermission Permission(const String& path);
 
     static bool SetPermission(const String& path, FilePermission permission);
+
+    static uint64 FileSize(const String& path);  
 };
 
 /// <summary>

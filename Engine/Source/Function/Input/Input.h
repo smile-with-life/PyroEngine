@@ -61,8 +61,6 @@ public:
 	bool IsKeyRepeat(KeyCode code);
 
 	bool IsKeyToggled(KeyCode code);
-
-	std::array<KeyCode, KeyCount> m_keyStates;
 };
 
 enum class MouseCode

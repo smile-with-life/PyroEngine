@@ -134,82 +134,113 @@ FileError FileSystem::Move(const String& filePath, const String& newPath, FileOp
 
 FileError FileSystem::CreateFile(const String& path)
 {
-    if (!IsExists(path))
+    // 检查文件是否已存在
+    if (IsExists(path)) 
     {
-        String dir = FileDir(path);
-        if (!dir.IsEmpty() && !Exists(dir))
-        {
-            CreateDirectory(dir);
-        }
-
-        std::ofstream file(path.ToStdString());
-        if (!file.is_open())
-        {
-            // 错误处理
-        }
-        file.close();
+        return FileError(FileError::AlreadyExists, "File already exists");
     }
-    return FileError(FileError::AlreadyExists, "create file failed, file already exixts");
+
+    // 确保目录存在
+    String dir = FileDir(path);
+    if (!dir.IsEmpty()) 
+    {
+        auto dirError = CreateDirectory(dir);
+        if (dirError) 
+        {
+            return dirError;
+        }
+    }
+
+    // 创建文件
+    std::ofstream file(path.ToStdString());
+    if (!file.is_open())
+    {
+        return FileError(FileError::IOError, "Failed to create file");
+    }
+    file.close();
+
+    return FileError(FileError::None, "");
 }
 
 FileError FileSystem::CreateDirectory(const String& path)
 {
-    if (IsDirectory(path))
+    // 如果目录已存在，直接返回成功
+    if (!IsDirectory(path)) 
     {
-        std::error_code err;
+        std::error_code error;
+        std::filesystem::create_directories(path.ToStdString(), error);
 
-        std::filesystem::create_directories(path, err);
-
-        if (err.value()) [[unlikely]]
+        if (error)
         {
-            // @log err.message();
+            return FileError(FileError::PlatformErrorToType(err.value()), err.message().c_str());
         }
     }
+
+    return FileError(FileError::None, "");
 }
 
 String FileSystem::CurrentPath()
 {
-    return String();
+    return String(std::filesystem::current_path().string());
 }
 
 bool FileSystem::SetCurrentPath(const String& path)
 {
-    return false;
+    if (!IsExists(path) || !IsDirectory(path)) 
+    {
+        return false;
+    }
+
+    std::error_code error;
+    std::filesystem::current_path(path.ToStdString(), error);
+
+    return !error;
 }
 
-bool FileSystem::Exists(const String& filePath)
+bool FileSystem::IsExists(const String& filePath)
 {
     return std::filesystem::exists(filePath);
 }
 
 FileError FileSystem::Delete(const String& path)
 {
-    std::error_code err;
-
-    std::filesystem::remove_all(path, err);
-
-    if (err.value()) [[unlikely]]
+    if (!IsExists(path)) 
     {
-        // @log err.message();
+        return FileError(FileError::NotFound, "File or directory does not exist");
     }
+
+    std::error_code error;
+    uint64 count = std::filesystem::remove_all(path.ToStdString(), error);
+
+    if (error) 
+    {
+        return FileError(FileError::PlatformErrorToType(error.value()), error.message());
+    }
+
+    if (count == 0)
+    {
+        return FileError(FileError::IOError, "Failed to delete file or directory");
+    }
+
+    return FileError(FileError::None, "");
 }
 
 String FileSystem::Rename(const String& path, const String& name)
 {
-    if (Exists(path))
+    if (!IsExists(path)) 
     {
-        std::error_code err;
-        String newPath = FileDir(path) + name;
+        return String();
+    }
 
-        std::filesystem::rename(path, newPath, err);
+    String newPath = FileDir(path) + "/" + name;
 
-        if (err.value()) [[unlikely]]
-        {
-            // @log err.message();
-        }
-        return newPath;
-    }   
-    return String();
+    auto moveError = Move(path, newPath, FileOption::None);
+    if (moveError) 
+    {
+        return String();
+    }
+
+    return newPath;
 }
 
 bool FileSystem::IsDirectory(const String& path)
@@ -249,26 +280,136 @@ bool FileSystem::IsSymlink(const String& path)
 
 FileSystem::SpaceInfo FileSystem::Space(const String& path)
 {
-    std::error_code err;
+    std::error_code error;
 
-    std::filesystem::space_info space = std::filesystem::space(path, err);
+    std::filesystem::space_info space = std::filesystem::space(path, error);
 
-    if (err.value()) [[unlikely]]
+    if (error) [[unlikely]]
     {
-        // @log err.message();
+        return SpaceInfo{ 0, 0, 0 };
     }
     
     return SpaceInfo{ space.capacity, space.free, space.available };
 }
 
-FilePermission FileSystem::Permission()
+FilePermission FileSystem::Permission(const String& path)
 {
-    return FilePermission();
+    std::error_code error;
+    auto status = std::filesystem::status(path, error);
+
+    if (error) 
+    {
+        return FilePermission::None;
+    }
+
+    auto perms = status.permissions();
+    uint32 result = 0;
+
+    if ((perms & std::filesystem::perms::owner_read) != std::filesystem::perms::none)
+        result |= static_cast<uint32>(FilePermission::OwnerRead);
+    if ((perms & std::filesystem::perms::owner_write) != std::filesystem::perms::none)
+        result |= static_cast<uint32>(FilePermission::OwnerWrite);
+    if ((perms & std::filesystem::perms::owner_exec) != std::filesystem::perms::none)
+        result |= static_cast<uint32>(FilePermission::OwnerExec);
+
+    // Group 权限
+    if ((perms & std::filesystem::perms::group_read) != std::filesystem::perms::none)
+        result |= static_cast<uint32>(FilePermission::GroupRead);
+    if ((perms & std::filesystem::perms::group_write) != std::filesystem::perms::none)
+        result |= static_cast<uint32>(FilePermission::GroupWrite);
+    if ((perms & std::filesystem::perms::group_exec) != std::filesystem::perms::none)
+        result |= static_cast<uint32>(FilePermission::GroupExec);
+
+    // Others 权限
+    if ((perms & std::filesystem::perms::others_read) != std::filesystem::perms::none)
+        result |= static_cast<uint32>(FilePermission::OthersRead);
+    if ((perms & std::filesystem::perms::others_write) != std::filesystem::perms::none)
+        result |= static_cast<uint32>(FilePermission::OthersWrite);
+    if ((perms & std::filesystem::perms::others_exec) != std::filesystem::perms::none)
+        result |= static_cast<uint32>(FilePermission::OthersExec);
+
+    return static_cast<FilePermission>(result);
 }
 
 bool FileSystem::SetPermission(const String& path, FilePermission permission)
 {
-    return false;
+    std::error_code error;
+
+    std::filesystem::perms perms = std::filesystem::perms::none;
+
+    if ((permission & FilePermission::OwnerRead) == FilePermission::OwnerRead)
+        perms |= std::filesystem::perms::owner_read;
+    if ((permission & FilePermission::OwnerWrite) == FilePermission::OwnerWrite)
+        perms |= std::filesystem::perms::owner_write;
+    if ((permission & FilePermission::OwnerExec) == FilePermission::OwnerExec)
+        perms |= std::filesystem::perms::owner_exec;
+
+    if ((permission & FilePermission::GroupRead) == FilePermission::GroupRead)
+        perms |= std::filesystem::perms::group_read;
+    if ((permission & FilePermission::GroupWrite) == FilePermission::GroupWrite)
+        perms |= std::filesystem::perms::group_write;
+    if ((permission & FilePermission::GroupExec) == FilePermission::GroupExec)
+        perms |= std::filesystem::perms::group_exec;
+
+    if ((permission & FilePermission::OthersRead) == FilePermission::OthersRead)
+        perms |= std::filesystem::perms::others_read;
+    if ((permission & FilePermission::OthersWrite) == FilePermission::OthersWrite)
+        perms |= std::filesystem::perms::others_write;
+    if ((permission & FilePermission::OthersExec) == FilePermission::OthersExec)
+        perms |= std::filesystem::perms::others_exec;
+
+    std::filesystem::permissions(path.ToStdString(), perms, error);
+
+    return !error;
+}
+
+uint64 FileSystem::FileSize(const String& path)
+{
+    if (!IsExists(path)) 
+    {
+        return 0;
+    }
+
+    try 
+    {
+        if (IsDirectory(path)) 
+        {
+            // 对于目录，可能需要递归计算所有文件大小
+            uint64 size = 0;
+            for (const auto& entry : std::filesystem::recursive_directory_iterator(path)) 
+            {
+                if (entry.is_regular_file())
+                {
+                    try 
+                    {
+                        size += entry.file_size();
+                    }
+                    catch (...) 
+                    {
+                        // 跳过无法访问的文件
+                    }
+                }
+            }
+            return size;
+        }
+        else if (IsFile(path)) 
+        {
+            // 对于普通文件，直接获取大小
+            std::error_code error;
+            auto size = std::filesystem::file_size(path, error);
+            if (error) 
+            {
+                return 0;
+            }
+            return static_cast<uint64>(size);
+        }
+    }
+    catch (...) 
+    {
+        return 0;
+    }
+
+    return 0;
 }
 
 FileError::ErrorType FileError::PlatformErrorToType(int32 error)

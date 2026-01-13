@@ -1,6 +1,7 @@
 #pragma once
 #include "Core.h"
 #include "String/String.h"
+#include "Time/TimePoint.h"
 
 // 时区
 enum class TimeZone
@@ -8,12 +9,10 @@ enum class TimeZone
     None
 };
 
-// 日期时间种类
-enum class TimeKind
+enum class DateTimeKind
 {
-    None,   // 未指定
-    Local,  // UTC 时间
-    UTC     // 当地时间
+    UTC,    // UTC 时间
+    Local,  // 当地时间
 };
 
 // 时间和日期
@@ -38,9 +37,9 @@ public:
     // 移动赋值函数
     DateTime& operator=(DateTime&& other) = default;
 
-    // 构造函数
-    DateTime(const String& iso8601);
+    DateTime(const TimePoint<SystemClock> time, DateTimeKind kind = DateTimeKind::Local);
 
+    DateTime(int32 year, int32 month, int32 day, int32 hour, int32 minute, int32 second, int32 milliseconds);
 public:
     // 返回一个新的 DateTime，它将指定的年份数加到此实例的值上
     DateTime AddYears(int32 years);
@@ -84,15 +83,6 @@ public:
     // 返回一个新的 DateTime，它在此实例上减去指定的毫秒
     DateTime ReduceMilliSeconds(int32 milliseconds);
 
-    // 返回当前时区
-    TimeZone CurrentTimeZone() const;
-
-    // 设置当前时区
-    void SetCurrentTimeZone(TimeZone timeZone);
-
-    // 返回本地时区
-    TimeZone LocalTimeZone() const;
-
     // 年份
     int32 Year() const;
 
@@ -120,18 +110,22 @@ public:
     // 交换
     void Swap(DateTime& other) noexcept;
 public:
-    bool operator==(const DateTime& other);
+    friend bool operator==(const DateTime& left, const DateTime& right);
 
-    bool operator!=(const DateTime& other);
+    friend bool operator!=(const DateTime& left, const DateTime& right);
 
-    bool operator>(const DateTime& other);
+    friend bool operator>(const DateTime& left, const DateTime& right);
 
-    bool operator>=(const DateTime& other);
+    friend bool operator>=(const DateTime& left, const DateTime& right);
 
-    bool operator<(const DateTime& other);
+    friend bool operator<(const DateTime& left, const DateTime& right);
 
-    bool operator<=(const DateTime& other);
+    friend bool operator<=(const DateTime& left, const DateTime& right);
 public:
+    static DateTime Current();
+
+    static DateTime CurrentUTC();
+
     static int32 Compare(const DateTime& left, const DateTime& right);
 
     // 返回指定的年份是否为闰年的指示
@@ -139,8 +133,8 @@ public:
 
     // 返回指定年和月中的天数
     static int32 DaysInMonth(int32 year, int32 month);
-
-    static DateTime Now();
+private:
+    void _Normalize(DateTime& time);
 private:
     int32 m_year = -1;
     int32 m_month = -1;
@@ -149,5 +143,4 @@ private:
     int32 m_minute = -1;
     int32 m_second = -1;
     int32 m_millisecond = -1;
-    TimeZone m_timeZone = TimeZone::None;
 };

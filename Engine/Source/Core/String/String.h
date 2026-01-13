@@ -52,9 +52,6 @@ public:
     // 隐式转化为 const std::string
     operator const std::string() const;
 
-    // 隐式转换为 C 风格字符串
-    operator const char* () const;
-
     // 隐式转换问 bool 值
     operator bool() const;
 public:
@@ -230,6 +227,10 @@ public:
     String& operator+=(char ch);
 
     friend String operator+(const String& left, const String& right);
+
+    friend String operator+(const String& left, const char* right);
+
+    friend String operator+(const char* left, const String& right);
 
     friend bool operator==(const String& left, const String& right);
 
