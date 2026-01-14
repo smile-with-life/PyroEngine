@@ -10,8 +10,6 @@ int32 Engine::Init()
 
     GFrameService->SetMode(FramePacingMode::Fixed);
     GFrameService->SetFixedFPS(120);
-    GWindowService->CreateOSWindow("GameWindow");
-    GWindowService->CreateOSWindow("EditorWindow");
 
     return 0;
 }

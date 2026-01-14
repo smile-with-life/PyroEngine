@@ -13,6 +13,7 @@ class WindowService : public CoreService
 public:
     virtual void Init() override
     {
+        m_mainWindow = ScopePtr<Window>(Window::Create("EngineWindow"));
         EventSystem::GetInstance().Subscribe("WindowCloseEvent", 
             [this](Event& event)
             {
@@ -22,7 +23,8 @@ public:
 
     virtual void Tick() override
     {
-        for (const auto& value : m_windows)
+        m_mainWindow->PumpMessage();
+        for (const auto& value : m_subWindows)
         {
             value.second->PumpMessage();
         }
@@ -35,35 +37,35 @@ public:
         EventSystem::GetInstance().Unsubscribe("WindowCloseEvent");
     }
 public:
-    bool CreateOSWindow(const String& name)
+    bool CreateSubWindow(const String& name)
     {
-        if (!m_windows.Contains(name))
+        if (!m_subWindows.Contains(name))
         {
             // 创建操作系统原生窗口
             ScopePtr<Window> window = ScopePtr<Window>(Window::Create(name));
 
-            m_windows[name] = std::move(window);
+            m_subWindows[name] = std::move(window);
             return true;
         }
         return false;
     }
 
-    bool CreateOSWindow(const String& name, WindowProps props)
+    bool CreateSubWindow(const String& name, WindowProps props)
     {
-        if (!m_windows.Contains(name))
+        if (!m_subWindows.Contains(name))
         {
             // 创建操作系统原生窗口
             ScopePtr<Window> window = ScopePtr<Window>(Window::Create(name, props));
 
-            m_windows[name] = std::move(window);
+            m_subWindows[name] = std::move(window);
             return true;
         }
         return false; 
     }
 
-    bool DestroyOSWindow(const String& name)
+    bool DestroySubWindow(const String& name)
     {
-        if (m_windows.Contains(name))
+        if (m_subWindows.Contains(name))
         {
             _DelayDeletion(name);
             return true;
@@ -75,9 +77,9 @@ public:
     {
         if (!m_delayDeletion.Contains(name))
         {
-            if (m_windows.Contains(name))
+            if (m_subWindows.Contains(name))
             {
-                return ViewPtr<Window>(m_windows[name].RawPtr());
+                return ViewPtr<Window>(m_subWindows[name].RawPtr());
             }
         }
         return ViewPtr<Window>(nullptr);
@@ -85,23 +87,17 @@ public:
 
     int64 GetWindowCount() const
     {
-        return m_windows.Size();
+        return m_subWindows.Size();
     }
 
     bool IsHasWindow(const String& name)
     {
-        return m_windows.Contains(name);
+        return m_subWindows.Contains(name);
     }
-
-    /*void OnEvent(Event& event)
-    {
-        EventDispatcher dispatcher(event);
-        dispatcher.Dispatch<WindowCloseEvent>(EventCallback(WindowService::OnWindowClose));
-    }*/
 
     void OnWindowClose(WindowCloseEvent& event)
     {
-        DestroyOSWindow(event.Name);
+        DestroySubWindow(event.Name);
     }
 private:
     void _DelayDeletion(const String& name)
@@ -113,14 +109,15 @@ private:
     {
         for (const auto& name : m_delayDeletion)
         {
-            auto iter = m_windows.Find(name);
-            if (iter != m_windows.end())
+            auto iter = m_subWindows.Find(name);
+            if (iter != m_subWindows.end())
             {
-                m_windows.Erase(iter);
+                m_subWindows.Erase(iter);
             }
         }
     }
 private:
-    Map<String, ScopePtr<Window>> m_windows;
+    ScopePtr<Window> m_mainWindow;
+    Map<String, ScopePtr<Window>> m_subWindows;
     Array<String> m_delayDeletion;
 };
