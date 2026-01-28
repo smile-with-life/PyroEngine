@@ -1,6 +1,7 @@
 #pragma once
 #include "Core.h"
 #include "String/String.h"
+
 /// <summary>
 /// 剪切板
 /// </summary>
@@ -15,13 +16,18 @@ public:
 
     Clipboard& operator=(Clipboard&& other) noexcept = delete;
 public:
-    void CopyToClipboard(const String& text);
+    void SetText(const String& text);
 
-    String PasteFromClipboard();
+    String GetText();
+
+    void Clear();
+
+    bool IsEmpty() const;
 public:
     // 获取单例实例
     static Clipboard& GetInstance();
 protected:
     Clipboard() = default;
+
     virtual ~Clipboard() = default;
 };

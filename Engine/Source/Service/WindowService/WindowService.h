@@ -73,24 +73,24 @@ public:
         return false;
     }
 
-    ViewPtr<Window> GetWindowView(const String& name)
+    Window* GetWindowView(const String& name)
     {
         if (!m_delayDeletion.Contains(name))
         {
             if (m_subWindows.Contains(name))
             {
-                return ViewPtr<Window>(m_subWindows[name].RawPtr());
+                return m_subWindows[name].RawPtr();
             }
         }
-        return ViewPtr<Window>(nullptr);
+        return nullptr;
     }
 
-    int64 GetWindowCount() const
+    int64 GetSubWindowCount() const
     {
         return m_subWindows.Size();
     }
 
-    bool IsHasWindow(const String& name)
+    bool IsHasSubWindow(const String& name)
     {
         return m_subWindows.Contains(name);
     }

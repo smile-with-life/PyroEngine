@@ -93,7 +93,7 @@ public:
     /// <summary>
     /// 错误详情
     /// </summary>
-    String Detail = nullptr;
+    String Detail;
 };
 
 /// <summary>

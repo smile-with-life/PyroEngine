@@ -7,7 +7,7 @@
 inline FrameService* GFrameService = nullptr;
 inline WindowService* GWindowService = nullptr;
 
-inline void AllowServer()
+inline void AllocServer()
 {
     GFrameService = new FrameService();
     GWindowService = new WindowService();

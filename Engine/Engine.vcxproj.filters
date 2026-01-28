@@ -283,7 +283,7 @@ xmake version 3.0.5+dev.7ee27a5e5
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Console\Windows\WindowsConsole.h">
       <Filter>Source\Function\Console\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\DateTime\DateTime.h">
+    <ClInclude Include="Source\Core\Time\DateTime.h">
       <Filter>Source\Function\DateTime</Filter>
     </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Device\Device.h">
@@ -295,28 +295,28 @@ xmake version 3.0.5+dev.7ee27a5e5
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Event\Event.h">
       <Filter>Source\Function\Event</Filter>
     </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\FileSystem\DeviceFile.h">
+    <ClInclude Include="Source\Core\FileSystem\DeviceFile.h">
       <Filter>Source\Function\FileSystem</Filter>
     </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\FileSystem\Directory.h">
+    <ClInclude Include="Source\Core\FileSystem\Directory.h">
       <Filter>Source\Function\FileSystem</Filter>
     </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\FileSystem\FIFOFile.h">
+    <ClInclude Include="Source\Core\FileSystem\FIFOFile.h">
       <Filter>Source\Function\FileSystem</Filter>
     </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\FileSystem\File.h">
+    <ClInclude Include="Source\Core\FileSystem\File.h">
       <Filter>Source\Function\FileSystem</Filter>
     </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\FileSystem\FileEntry.h">
+    <ClInclude Include="Source\Core\FileSystem\FileEntry.h">
       <Filter>Source\Function\FileSystem</Filter>
     </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\FileSystem\FileSystem.h">
+    <ClInclude Include="Source\Core\FileSystem\FileSystem.h">
       <Filter>Source\Function\FileSystem</Filter>
     </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\FileSystem\SocketFile.h">
+    <ClInclude Include="Source\Core\FileSystem\SocketFile.h">
       <Filter>Source\Function\FileSystem</Filter>
     </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\FileSystem\Symlink.h">
+    <ClInclude Include="Source\Core\FileSystem\Symlink.h">
       <Filter>Source\Function\FileSystem</Filter>
     </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\GUID\GUID.h">
@@ -328,7 +328,7 @@ xmake version 3.0.5+dev.7ee27a5e5
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Input\Input.h">
       <Filter>Source\Function\Input</Filter>
     </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\JSON\JSON.h">
+    <ClInclude Include="Source\Function\Json\Json.h">
       <Filter>Source\Function\JSON</Filter>
     </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Log\Log.h">
@@ -412,7 +412,7 @@ xmake version 3.0.5+dev.7ee27a5e5
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Function\Console\Windows\WindowsConsole.cpp">
       <Filter>Source\Function\Console\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Function\FileSystem\FileSystem.cpp">
+    <ClCompile Include="Source\Core\FileSystem\FileSystem.cpp">
       <Filter>Source\Function\FileSystem</Filter>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Function\Input\Input.cpp">
@@ -439,7 +439,7 @@ xmake version 3.0.5+dev.7ee27a5e5
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\pch.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Function\DateTime\DateTime.cpp" />
+    <ClCompile Include="Source\Core\Time\DateTime.cpp" />
     <ClCompile Include="Source\Service\RenderService\RenderService.cpp" />
     <ClCompile Include="Source\Function\RHI\RHI.cpp" />
     <ClCompile Include="Source\Function\RHI\Vulkan\VulkanRHI.cpp" />

@@ -24,7 +24,7 @@ public:
     virtual void Tick() override;
 
     virtual void Exit() override;
-
+public:
     virtual void LoadSettings() override;
 
     virtual void SaveSettings() override;

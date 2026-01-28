@@ -467,6 +467,7 @@ FileError::ErrorType FileError::PlatformErrorToType(int32 error)
     }
 #endif
 }
+
 FileError::FileError(ErrorType type, const String& detail)
     : Type(type), Detail(detail)
 {

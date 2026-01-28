@@ -41,6 +41,27 @@ public:
 
     DateTime(int32 year, int32 month, int32 day, int32 hour, int32 minute, int32 second, int32 milliseconds);
 public:
+    // 年份
+    int32 Year() const;
+
+    // 月份
+    int32 Month() const;
+
+    // 天
+    int32 Day() const;
+
+    // 小时
+    int32 Hour() const;
+
+    // 分钟
+    int32 Minute() const;
+
+    // 秒
+    int32 Second() const;
+
+    // 毫秒
+    int32 MilliSecond() const;
+
     // 返回一个新的 DateTime，它将指定的年份数加到此实例的值上
     DateTime AddYears(int32 years);
 
@@ -82,27 +103,6 @@ public:
 
     // 返回一个新的 DateTime，它在此实例上减去指定的毫秒
     DateTime ReduceMilliSeconds(int32 milliseconds);
-
-    // 年份
-    int32 Year() const;
-
-    // 月份
-    int32 Month() const;
-
-    // 天
-    int32 Day() const;
-
-    // 小时
-    int32 Hour() const;
-
-    // 分钟
-    int32 Minute() const;
-
-    // 秒
-    int32 Second() const;
-
-    // 毫秒
-    int32 MilliSecond() const;
 
     // 转为字符串
     String ToString();

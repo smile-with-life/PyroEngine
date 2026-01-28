@@ -192,5 +192,10 @@ private:
     std::variant<std::monostate, bool, int32, double, string, array, object> m_value;
 };
 
+using JsonNull = std::monostate;
+using JsonBool = bool;
+using JsonInt = int64;
+using JsonFloat = double;
+using JsonString = String;
 using JsonArray = Array<Json>;
 using JsonObject = Map<String, Json>;

@@ -128,14 +128,90 @@ public:
         }
     }
 
+    void Verbose(const String& message, SourceInfo source = SourceInfo::Current())
+    {
+        Log(LogLevel::Verbose, message, source);
+    }   
+
+    template<class... Args>
+    void Verbose(FormatWithSource<std::format_string<Args...>> withFormat, Args &&...args)
+    {
+        Log(LogLevel::Verbose, withFormat, std::forward<Args>(args)...);
+    }
+
+    void Debug(const String& message, SourceInfo source = SourceInfo::Current())
+    {
+        Log(LogLevel::Debug, message, source);
+    }  
+
+    template<class... Args>
+    void Debug(FormatWithSource<std::format_string<Args...>> withFormat, Args &&...args)
+    {
+        Log(LogLevel::Debug, withFormat, std::forward<Args>(args)...);
+    }
+
+    void Info(const String& message, SourceInfo source = SourceInfo::Current())
+    {
+        Log(LogLevel::Info, message, source);
+    }
+
+    template<class... Args>
+    void Info(FormatWithSource<std::format_string<Args...>> withFormat, Args &&...args)
+    {
+        Log(LogLevel::Info, withFormat, std::forward<Args>(args)...);
+    }
+
+    void Warning(const String& message, SourceInfo source = SourceInfo::Current())
+    {
+        Log(LogLevel::Warning, message, source);
+    }   
+
+    template<class... Args>
+    void Warning(FormatWithSource<std::format_string<Args...>> withFormat, Args &&...args)
+    {
+        Log(LogLevel::Warning, withFormat, std::forward<Args>(args)...);
+    }
+
+    void Error(const String& message, SourceInfo source = SourceInfo::Current())
+    {
+        Log(LogLevel::Error, message, source);
+    }
+
+    template<class... Args>
+    void Error(FormatWithSource<std::format_string<Args...>> withFormat, Args &&...args)
+    {
+        Log(LogLevel::Error, withFormat, std::forward<Args>(args)...);
+    }
+
+    void Fatal(const String& message, SourceInfo source = SourceInfo::Current())
+    {
+        Log(LogLevel::Fatal, message, source);
+    }
+
+    template<class... Args>
+    void Fatal(FormatWithSource<std::format_string<Args...>> withFormat, Args &&...args)
+    {
+        Log(LogLevel::Fatal, withFormat, std::forward<Args>(args)...);
+    }
+
     void SetLevel(LogLevel level)
     {
         m_level = level;
     }
 
-    LogLevel GetLevel()
+    LogLevel GetLevel() const
     {
         return m_level;
+    }
+
+    void SetDateTimeKind(DateTimeKind kind)
+    {
+        m_timeKind = kind;
+    }
+
+    DateTimeKind GetDateTimeKind() const
+    {
+        return m_timeKind;
     }
 public:
     static Logger& GetInstance()
@@ -145,5 +221,5 @@ public:
     }
 private:
     LogLevel m_level = LogLevel::All;
-    TimeKind m_timeKind = TimeKind::Local;
+    DateTimeKind m_timeKind = DateTimeKind::Local;
 };
