@@ -19,7 +19,7 @@ target "Engine"
         "Source",
         "Source/Core",
         "Source/Platform",
-        "Source/Function",
+        "Source/Module",
         "Source/Service",
         "Source/Application"
     }
@@ -98,7 +98,7 @@ target "Engine"
         -- 平台层
         "Source/Platform/*.h",
         -- 功能层
-        "Source/Function/**.h",
+        "Source/Module/**.h",
         -- 服务层
         "Source/Service/**.h",
         -- 应用层
@@ -112,7 +112,7 @@ target "Engine"
         -- 平台层
         "Source/Platform/**.cpp",
         -- 功能层
-        "Source/Function/**.cpp",
+        "Source/Module/**.cpp",
         -- 服务层
         "Source/Service/**.cpp",
         -- 应用层

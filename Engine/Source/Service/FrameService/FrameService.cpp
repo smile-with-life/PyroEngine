@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "FrameService.h"
 #include "Thread/Thread.h"
-#include "GlobalModule.h"
+#include "Module.h"
 
 void FrameService::Init()
 {
@@ -80,6 +80,6 @@ void FrameService::SetMode(FramePacingMode mode)
 
 void FrameService::SetFixedFPS(int32 fps)
 {
-    m_fixedFPS = fps > MaxFPS ? MaxFPS : fps;
+    m_fixedFPS = fps > MAX_FPS ? MAX_FPS : fps;
     m_frameTime = Microseconds(1000000) / m_fixedFPS;
 }

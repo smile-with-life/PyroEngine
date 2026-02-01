@@ -48,6 +48,9 @@ xmake version 3.0.5+dev.7ee27a5e5
     <Filter Include="Source\Core\Diagnosis">
       <UniqueIdentifier>{D5F0D99E-EE3C-4FE9-8199-DC08B976313B}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Core\FileSystem">
+      <UniqueIdentifier>{1D93E4CD-7530-40C3-BE44-D4F282A61F71}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\Core\Math">
       <UniqueIdentifier>{B444B4EC-240C-4959-9063-FF53A03E3EFF}</UniqueIdentifier>
     </Filter>
@@ -63,74 +66,74 @@ xmake version 3.0.5+dev.7ee27a5e5
     <Filter Include="Source\Core\Time">
       <UniqueIdentifier>{B6F08AE4-46D6-4E62-BBC4-FFD17199BC94}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Function">
-      <UniqueIdentifier>{2AC6D8D0-456D-4B9E-9B9D-967EF3CEEC91}</UniqueIdentifier>
+    <Filter Include="Source\Module">
+      <UniqueIdentifier>{547C8B36-886F-468F-A5D2-2259379D34D0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Function\Clipboard">
-      <UniqueIdentifier>{EBE3BEFD-FEE5-4F39-81FC-06463D4C825A}</UniqueIdentifier>
+    <Filter Include="Source\Module\Clipboard">
+      <UniqueIdentifier>{F83E84BF-EB77-411B-8EEF-20AE0E64AA17}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Function\Color">
-      <UniqueIdentifier>{A7866F61-DB14-438C-A3EA-09D3C72E11F6}</UniqueIdentifier>
+    <Filter Include="Source\Module\Color">
+      <UniqueIdentifier>{C36BF99E-863E-4CBD-8D2B-58AE11789185}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Function\Config">
-      <UniqueIdentifier>{20F06BC0-2F1F-44BC-AF46-C46E37453555}</UniqueIdentifier>
+    <Filter Include="Source\Module\Config">
+      <UniqueIdentifier>{B0EFF8D8-A86D-462F-819C-E0B71C9C9B54}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Function\Console">
-      <UniqueIdentifier>{16482FDF-F1B0-4844-BD7D-744C1B8B29AA}</UniqueIdentifier>
+    <Filter Include="Source\Module\Console">
+      <UniqueIdentifier>{78BB9524-0293-443E-8481-9A8995C27E7F}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Function\ConsoleOld">
-      <UniqueIdentifier>{660D5C83-7222-4A8B-9501-09BE70AB32DA}</UniqueIdentifier>
+    <Filter Include="Source\Module\ConsoleOld">
+      <UniqueIdentifier>{17AD9352-7215-4AA2-A787-2F13B17E534D}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Function\ConsoleOld\Windows1">
-      <UniqueIdentifier>{3C20374B-FBD9-44F4-8460-D2E09F61B127}</UniqueIdentifier>
+    <Filter Include="Source\Module\ConsoleOld\Windows1">
+      <UniqueIdentifier>{F476DDA7-EFD4-4BCF-B644-CA256CC10CB8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Function\Console\Windows">
-      <UniqueIdentifier>{B4F28A25-BEEB-46B3-B8EB-EA347985A9CC}</UniqueIdentifier>
+    <Filter Include="Source\Module\Console\Windows">
+      <UniqueIdentifier>{A5BA1553-CCF6-47F7-A080-EDF90BE045A6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Function\DateTime">
-      <UniqueIdentifier>{251E39A9-1255-4AE1-8AE0-EF3A0F87364E}</UniqueIdentifier>
+    <Filter Include="Source\Module\Device">
+      <UniqueIdentifier>{0D9C4764-B409-4DFA-9B15-A824E7080620}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Function\Device">
-      <UniqueIdentifier>{9F5480A9-848C-4869-9E61-8ACEE9D9E569}</UniqueIdentifier>
+    <Filter Include="Source\Module\Device\InputDevice">
+      <UniqueIdentifier>{6401F638-3636-46B5-8AF1-4E488D90C7ED}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Function\Device\InputDevice">
-      <UniqueIdentifier>{F195EC9E-945E-48F1-830B-C62D431AA63C}</UniqueIdentifier>
+    <Filter Include="Source\Module\Event">
+      <UniqueIdentifier>{C542CC72-7B8F-4F90-976D-C69074E98452}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Function\Event">
-      <UniqueIdentifier>{D1568CC8-73EA-4B50-BF31-A97B30982D17}</UniqueIdentifier>
+    <Filter Include="Source\Module\GUID">
+      <UniqueIdentifier>{5E058919-3916-49F2-AC2B-DCE71B28CCD0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Function\FileSystem">
-      <UniqueIdentifier>{27BBE2AF-66D8-4801-BC0A-D352D445CCBA}</UniqueIdentifier>
+    <Filter Include="Source\Module\Input">
+      <UniqueIdentifier>{E42E51DC-385B-4A67-BEEB-B1FA339A6DF0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Function\GUID">
-      <UniqueIdentifier>{146D6B53-5D3A-41FA-B325-26E5A424D2AA}</UniqueIdentifier>
+    <Filter Include="Source\Module\JSON">
+      <UniqueIdentifier>{99BE3771-4ECF-4C7F-9AB7-9DE1D51B2335}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Function\Input">
-      <UniqueIdentifier>{DEE186FC-BB0D-4743-9F47-FB5C0F051370}</UniqueIdentifier>
+    <Filter Include="Source\Module\Log">
+      <UniqueIdentifier>{1B4CCA6D-E61A-4734-93F2-B418918EDC8C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Function\JSON">
-      <UniqueIdentifier>{4409A35C-50D6-4D5D-B3EC-E0192436EE62}</UniqueIdentifier>
+    <Filter Include="Source\Module\RHI">
+      <UniqueIdentifier>{22A6C1E0-1DAF-410A-95FD-6EF2AC0F6E92}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Function\Log">
-      <UniqueIdentifier>{E0DEBF2B-A75C-4BF9-AAFD-30C0CB5ED0BE}</UniqueIdentifier>
+    <Filter Include="Source\Module\RHI\Vulkan">
+      <UniqueIdentifier>{B336CBEC-C591-4B2B-8B8A-2F264CEC71B8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Function\Resource">
-      <UniqueIdentifier>{A0ADC10F-0162-40D6-B821-E3157C319713}</UniqueIdentifier>
+    <Filter Include="Source\Module\Resource">
+      <UniqueIdentifier>{DECB9602-1F04-4E70-A9F6-5980717FA60F}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Function\Settings">
-      <UniqueIdentifier>{9973FF26-A2A6-4C7B-9D6C-4E3355264DC6}</UniqueIdentifier>
+    <Filter Include="Source\Module\Settings">
+      <UniqueIdentifier>{B73C9EA9-CABA-46BA-9938-9DA310190858}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Function\SystemTray">
-      <UniqueIdentifier>{25CB31CC-096D-414F-9697-C6FB0C8D01F9}</UniqueIdentifier>
+    <Filter Include="Source\Module\SystemTray">
+      <UniqueIdentifier>{C0D22778-D0E4-494C-A129-FACE3C2D3828}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Function\Taskbar">
-      <UniqueIdentifier>{BDE1BEA6-B3BA-47DC-AFDA-D0D7CA26A091}</UniqueIdentifier>
+    <Filter Include="Source\Module\Taskbar">
+      <UniqueIdentifier>{250874EE-B6BD-44EC-A6FD-64C9A5471A64}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Function\Window">
-      <UniqueIdentifier>{8D941B0F-6D19-4553-A16D-E40E714AB86C}</UniqueIdentifier>
+    <Filter Include="Source\Module\Window">
+      <UniqueIdentifier>{B343C7ED-0927-45E6-9342-C909C63EC533}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Function\Window\Windows">
-      <UniqueIdentifier>{6C2C011C-D321-4AE5-9E61-F3FED1837DA3}</UniqueIdentifier>
+    <Filter Include="Source\Module\Window\Windows">
+      <UniqueIdentifier>{012CF9D8-4592-48CD-BAA7-312E05469D46}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Platform">
       <UniqueIdentifier>{C020D25B-E76E-4CF8-A251-F2914A22CDEC}</UniqueIdentifier>
@@ -144,8 +147,8 @@ xmake version 3.0.5+dev.7ee27a5e5
     <Filter Include="Source\Service\FrameService">
       <UniqueIdentifier>{10216931-F564-4956-B588-F87A824B9F5E}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Service\Module">
-      <UniqueIdentifier>{9685543F-75B1-4C47-B5E4-7D4C2683CCE5}</UniqueIdentifier>
+    <Filter Include="Source\Service\RenderService">
+      <UniqueIdentifier>{8EE55435-E4BA-4349-B5B2-10A03D0667CA}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Service\WindowService">
       <UniqueIdentifier>{F5813989-8CA6-40CD-934F-8E5428750F46}</UniqueIdentifier>
@@ -205,6 +208,30 @@ xmake version 3.0.5+dev.7ee27a5e5
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Diagnosis\SourceInfo.h">
       <Filter>Source\Core\Diagnosis</Filter>
     </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\FileSystem\DeviceFile.h">
+      <Filter>Source\Core\FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\FileSystem\Directory.h">
+      <Filter>Source\Core\FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\FileSystem\FIFOFile.h">
+      <Filter>Source\Core\FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\FileSystem\File.h">
+      <Filter>Source\Core\FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\FileSystem\FileEntry.h">
+      <Filter>Source\Core\FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\FileSystem\FileSystem.h">
+      <Filter>Source\Core\FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\FileSystem\SocketFile.h">
+      <Filter>Source\Core\FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\FileSystem\Symlink.h">
+      <Filter>Source\Core\FileSystem</Filter>
+    </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Math\Math.h">
       <Filter>Source\Core\Math</Filter>
     </ClInclude>
@@ -253,6 +280,9 @@ xmake version 3.0.5+dev.7ee27a5e5
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Time\Clock.h">
       <Filter>Source\Core\Time</Filter>
     </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Time\DateTime.h">
+      <Filter>Source\Core\Time</Filter>
+    </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Time\Duration.h">
       <Filter>Source\Core\Time</Filter>
     </ClInclude>
@@ -262,95 +292,74 @@ xmake version 3.0.5+dev.7ee27a5e5
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Time\TimePoint.h">
       <Filter>Source\Core\Time</Filter>
     </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Clipboard\Clipboard.h">
-      <Filter>Source\Function\Clipboard</Filter>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\Clipboard\Clipboard.h">
+      <Filter>Source\Module\Clipboard</Filter>
     </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Color\Color.h">
-      <Filter>Source\Function\Color</Filter>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\Color\Color.h">
+      <Filter>Source\Module\Color</Filter>
     </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Config\Config.h">
-      <Filter>Source\Function\Config</Filter>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\Config\Config.h">
+      <Filter>Source\Module\Config</Filter>
     </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\ConsoleOld\Console1.h">
-      <Filter>Source\Function\ConsoleOld</Filter>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\ConsoleOld\Console1.h">
+      <Filter>Source\Module\ConsoleOld</Filter>
     </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\ConsoleOld\Windows1\WindowsConsole1.h">
-      <Filter>Source\Function\ConsoleOld\Windows1</Filter>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\ConsoleOld\Windows1\WindowsConsole1.h">
+      <Filter>Source\Module\ConsoleOld\Windows1</Filter>
     </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Console\Console.h">
-      <Filter>Source\Function\Console</Filter>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\Console\Console.h">
+      <Filter>Source\Module\Console</Filter>
     </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Console\Windows\WindowsConsole.h">
-      <Filter>Source\Function\Console\Windows</Filter>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\Console\Windows\WindowsConsole.h">
+      <Filter>Source\Module\Console\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Core\Time\DateTime.h">
-      <Filter>Source\Function\DateTime</Filter>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\Device\Device.h">
+      <Filter>Source\Module\Device</Filter>
     </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Device\Device.h">
-      <Filter>Source\Function\Device</Filter>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\Device\InputDevice\InputDevice.h">
+      <Filter>Source\Module\Device\InputDevice</Filter>
     </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Device\InputDevice\InputDevice.h">
-      <Filter>Source\Function\Device\InputDevice</Filter>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\Event\Event.h">
+      <Filter>Source\Module\Event</Filter>
     </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Event\Event.h">
-      <Filter>Source\Function\Event</Filter>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\GUID\GUID.h">
+      <Filter>Source\Module\GUID</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Core\FileSystem\DeviceFile.h">
-      <Filter>Source\Function\FileSystem</Filter>
+    <ClInclude Include="Source\Module\Module.h">
+      <Filter>Source\Module</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Core\FileSystem\Directory.h">
-      <Filter>Source\Function\FileSystem</Filter>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\Input\Input.h">
+      <Filter>Source\Module\Input</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Core\FileSystem\FIFOFile.h">
-      <Filter>Source\Function\FileSystem</Filter>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\JSON\JSON.h">
+      <Filter>Source\Module\JSON</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Core\FileSystem\File.h">
-      <Filter>Source\Function\FileSystem</Filter>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\Log\Log.h">
+      <Filter>Source\Module\Log</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Core\FileSystem\FileEntry.h">
-      <Filter>Source\Function\FileSystem</Filter>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\RHI\RHI.h">
+      <Filter>Source\Module\RHI</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Core\FileSystem\FileSystem.h">
-      <Filter>Source\Function\FileSystem</Filter>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\RHI\Vulkan\VulkanRHI.h">
+      <Filter>Source\Module\RHI\Vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Core\FileSystem\SocketFile.h">
-      <Filter>Source\Function\FileSystem</Filter>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\Resource\Image.h">
+      <Filter>Source\Module\Resource</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Core\FileSystem\Symlink.h">
-      <Filter>Source\Function\FileSystem</Filter>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\Settings\Settings.h">
+      <Filter>Source\Module\Settings</Filter>
     </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\GUID\GUID.h">
-      <Filter>Source\Function\GUID</Filter>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\SystemTray\SystemTray.h">
+      <Filter>Source\Module\SystemTray</Filter>
     </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\GlobalModule.h">
-      <Filter>Source\Function</Filter>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\Taskbar\Taskbar.h">
+      <Filter>Source\Module\Taskbar</Filter>
     </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Input\Input.h">
-      <Filter>Source\Function\Input</Filter>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\Window\Window.h">
+      <Filter>Source\Module\Window</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Function\Json\Json.h">
-      <Filter>Source\Function\JSON</Filter>
-    </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Log\Log.h">
-      <Filter>Source\Function\Log</Filter>
-    </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Resource\Image.h">
-      <Filter>Source\Function\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Settings\Settings.h">
-      <Filter>Source\Function\Settings</Filter>
-    </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\SystemTray\SystemTray.h">
-      <Filter>Source\Function\SystemTray</Filter>
-    </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Taskbar\Taskbar.h">
-      <Filter>Source\Function\Taskbar</Filter>
-    </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Window\Window.h">
-      <Filter>Source\Function\Window</Filter>
-    </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Window\Windows\WindowsWindow.h">
-      <Filter>Source\Function\Window\Windows</Filter>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\Window\Windows\WindowsWindow.h">
+      <Filter>Source\Module\Window\Windows</Filter>
     </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Platform\CoreType.h">
       <Filter>Source\Platform</Filter>
@@ -364,6 +373,12 @@ xmake version 3.0.5+dev.7ee27a5e5
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Service\FrameService\FrameService.h">
       <Filter>Source\Service\FrameService</Filter>
     </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Service\GlobalService.h">
+      <Filter>Source\Service</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Service\RenderService\RenderService.h">
+      <Filter>Source\Service\RenderService</Filter>
+    </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Service\Service.h">
       <Filter>Source\Service</Filter>
     </ClInclude>
@@ -373,10 +388,6 @@ xmake version 3.0.5+dev.7ee27a5e5
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\pch.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Service\GlobalService.h" />
-    <ClInclude Include="Source\Service\RenderService\RenderService.h" />
-    <ClInclude Include="Source\Function\RHI\RHI.h" />
-    <ClInclude Include="Source\Function\RHI\Vulkan\VulkanRHI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Application\Application.cpp">
@@ -387,6 +398,9 @@ xmake version 3.0.5+dev.7ee27a5e5
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Application\Launch\Windows\WindowsLaunch.cpp">
       <Filter>Source\Application\Launch\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Core\FileSystem\FileSystem.cpp">
+      <Filter>Source\Core\FileSystem</Filter>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Core\Memory\ByteArray.cpp">
       <Filter>Source\Core\Memory</Filter>
@@ -400,32 +414,38 @@ xmake version 3.0.5+dev.7ee27a5e5
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Core\String\String.cpp">
       <Filter>Source\Core\String</Filter>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Function\ConsoleOld\Console1.cpp">
-      <Filter>Source\Function\ConsoleOld</Filter>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Core\Time\DateTime.cpp">
+      <Filter>Source\Core\Time</Filter>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Function\ConsoleOld\Windows1\WindowsConsole1.cpp">
-      <Filter>Source\Function\ConsoleOld\Windows1</Filter>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Module\ConsoleOld\Console1.cpp">
+      <Filter>Source\Module\ConsoleOld</Filter>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Function\Console\Console.cpp">
-      <Filter>Source\Function\Console</Filter>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Module\ConsoleOld\Windows1\WindowsConsole1.cpp">
+      <Filter>Source\Module\ConsoleOld\Windows1</Filter>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Function\Console\Windows\WindowsConsole.cpp">
-      <Filter>Source\Function\Console\Windows</Filter>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Module\Console\Console.cpp">
+      <Filter>Source\Module\Console</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Core\FileSystem\FileSystem.cpp">
-      <Filter>Source\Function\FileSystem</Filter>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Module\Console\Windows\WindowsConsole.cpp">
+      <Filter>Source\Module\Console\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Function\Input\Input.cpp">
-      <Filter>Source\Function\Input</Filter>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Module\Input\Input.cpp">
+      <Filter>Source\Module\Input</Filter>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Function\Settings\Settings.cpp">
-      <Filter>Source\Function\Settings</Filter>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Module\RHI\RHI.cpp">
+      <Filter>Source\Module\RHI</Filter>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Function\Window\Window.cpp">
-      <Filter>Source\Function\Window</Filter>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Module\RHI\Vulkan\VulkanRHI.cpp">
+      <Filter>Source\Module\RHI\Vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Function\Window\Windows\WindowsWindow.cpp">
-      <Filter>Source\Function\Window\Windows</Filter>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Module\Settings\Settings.cpp">
+      <Filter>Source\Module\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Module\Window\Window.cpp">
+      <Filter>Source\Module\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Module\Window\Windows\WindowsWindow.cpp">
+      <Filter>Source\Module\Window\Windows</Filter>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Platform\Windows\WindowsPlatform.cpp">
       <Filter>Source\Platform\Windows</Filter>
@@ -433,16 +453,15 @@ xmake version 3.0.5+dev.7ee27a5e5
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Service\FrameService\FrameService.cpp">
       <Filter>Source\Service\FrameService</Filter>
     </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Service\RenderService\RenderService.cpp">
+      <Filter>Source\Service\RenderService</Filter>
+    </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Service\WindowService\WindowService.cpp">
       <Filter>Source\Service\WindowService</Filter>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\pch.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Core\Time\DateTime.cpp" />
-    <ClCompile Include="Source\Service\RenderService\RenderService.cpp" />
-    <ClCompile Include="Source\Function\RHI\RHI.cpp" />
-    <ClCompile Include="Source\Function\RHI\Vulkan\VulkanRHI.cpp" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

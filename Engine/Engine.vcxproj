@@ -73,7 +73,7 @@ xmake version 3.0.5+dev.7ee27a5e5
     </XmakeRunArgs>
     <XmakeConfigFlags>
     </XmakeConfigFlags>
-    <XmakeIncludeDirs>$(XmakeProjectDir)\Engine\Dependencies;$(XmakeProjectDir)\Engine\Dependencies\GoogleTest\include;$(XmakeProjectDir)\Engine\Source;$(XmakeProjectDir)\Engine\Source\Core;$(XmakeProjectDir)\Engine\Source\Platform;$(XmakeProjectDir)\Engine\Source\Function;$(XmakeProjectDir)\Engine\Source\Service;$(XmakeProjectDir)\Engine\Source\Application</XmakeIncludeDirs>
+    <XmakeIncludeDirs>$(XmakeProjectDir)\Engine\Dependencies;$(XmakeProjectDir)\Engine\Dependencies\GoogleTest\include;$(XmakeProjectDir)\Engine\Source;$(XmakeProjectDir)\Engine\Source\Core;$(XmakeProjectDir)\Engine\Source\Platform;$(XmakeProjectDir)\Engine\Source\Module;$(XmakeProjectDir)\Engine\Source\Service;$(XmakeProjectDir)\Engine\Source\Application</XmakeIncludeDirs>
     <XmakeForceIncludes>
     </XmakeForceIncludes>
     <XmakeLinkDirs>
@@ -114,7 +114,7 @@ xmake version 3.0.5+dev.7ee27a5e5
     </XmakeRunArgs>
     <XmakeConfigFlags>
     </XmakeConfigFlags>
-    <XmakeIncludeDirs>$(XmakeProjectDir)\Engine\Dependencies;$(XmakeProjectDir)\Engine\Dependencies\GoogleTest\include;$(XmakeProjectDir)\Engine\Source;$(XmakeProjectDir)\Engine\Source\Core;$(XmakeProjectDir)\Engine\Source\Platform;$(XmakeProjectDir)\Engine\Source\Function;$(XmakeProjectDir)\Engine\Source\Service;$(XmakeProjectDir)\Engine\Source\Application</XmakeIncludeDirs>
+    <XmakeIncludeDirs>$(XmakeProjectDir)\Engine\Dependencies;$(XmakeProjectDir)\Engine\Dependencies\GoogleTest\include;$(XmakeProjectDir)\Engine\Source;$(XmakeProjectDir)\Engine\Source\Core;$(XmakeProjectDir)\Engine\Source\Platform;$(XmakeProjectDir)\Engine\Source\Module;$(XmakeProjectDir)\Engine\Source\Service;$(XmakeProjectDir)\Engine\Source\Application</XmakeIncludeDirs>
     <XmakeForceIncludes>
     </XmakeForceIncludes>
     <XmakeLinkDirs>
@@ -155,7 +155,7 @@ xmake version 3.0.5+dev.7ee27a5e5
     </XmakeRunArgs>
     <XmakeConfigFlags>
     </XmakeConfigFlags>
-    <XmakeIncludeDirs>$(XmakeProjectDir)\Engine\Dependencies;$(XmakeProjectDir)\Engine\Dependencies\GoogleTest\include;$(XmakeProjectDir)\Engine\Source;$(XmakeProjectDir)\Engine\Source\Core;$(XmakeProjectDir)\Engine\Source\Platform;$(XmakeProjectDir)\Engine\Source\Function;$(XmakeProjectDir)\Engine\Source\Service;$(XmakeProjectDir)\Engine\Source\Application</XmakeIncludeDirs>
+    <XmakeIncludeDirs>$(XmakeProjectDir)\Engine\Dependencies;$(XmakeProjectDir)\Engine\Dependencies\GoogleTest\include;$(XmakeProjectDir)\Engine\Source;$(XmakeProjectDir)\Engine\Source\Core;$(XmakeProjectDir)\Engine\Source\Platform;$(XmakeProjectDir)\Engine\Source\Module;$(XmakeProjectDir)\Engine\Source\Service;$(XmakeProjectDir)\Engine\Source\Application</XmakeIncludeDirs>
     <XmakeForceIncludes>
     </XmakeForceIncludes>
     <XmakeLinkDirs>
@@ -196,7 +196,7 @@ xmake version 3.0.5+dev.7ee27a5e5
     </XmakeRunArgs>
     <XmakeConfigFlags>
     </XmakeConfigFlags>
-    <XmakeIncludeDirs>$(XmakeProjectDir)\Engine\Dependencies;$(XmakeProjectDir)\Engine\Dependencies\GoogleTest\include;$(XmakeProjectDir)\Engine\Source;$(XmakeProjectDir)\Engine\Source\Core;$(XmakeProjectDir)\Engine\Source\Platform;$(XmakeProjectDir)\Engine\Source\Function;$(XmakeProjectDir)\Engine\Source\Service;$(XmakeProjectDir)\Engine\Source\Application</XmakeIncludeDirs>
+    <XmakeIncludeDirs>$(XmakeProjectDir)\Engine\Dependencies;$(XmakeProjectDir)\Engine\Dependencies\GoogleTest\include;$(XmakeProjectDir)\Engine\Source;$(XmakeProjectDir)\Engine\Source\Core;$(XmakeProjectDir)\Engine\Source\Platform;$(XmakeProjectDir)\Engine\Source\Module;$(XmakeProjectDir)\Engine\Source\Service;$(XmakeProjectDir)\Engine\Source\Application</XmakeIncludeDirs>
     <XmakeForceIncludes>
     </XmakeForceIncludes>
     <XmakeLinkDirs>
@@ -266,6 +266,14 @@ xmake version 3.0.5+dev.7ee27a5e5
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Container\Stack.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Core.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Diagnosis\SourceInfo.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\FileSystem\DeviceFile.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\FileSystem\Directory.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\FileSystem\FIFOFile.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\FileSystem\File.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\FileSystem\FileEntry.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\FileSystem\FileSystem.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\FileSystem\SocketFile.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\FileSystem\Symlink.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Math\Math.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Math\Radian.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Math\Vector3.h" />
@@ -282,50 +290,42 @@ xmake version 3.0.5+dev.7ee27a5e5
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Thread\Thread.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Thread\WaitCondition.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Time\Clock.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Time\DateTime.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Time\Duration.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Time\Time.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Core\Time\TimePoint.h" />
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Clipboard\Clipboard.h" />
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Color\Color.h" />
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Config\Config.h" />
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\ConsoleOld\Console1.h" />
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\ConsoleOld\Windows1\WindowsConsole1.h" />
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Console\Console.h" />
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Console\Windows\WindowsConsole.h" />
-    <ClInclude Include="Source\Core\Time\DateTime.h" />
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Device\Device.h" />
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Device\InputDevice\InputDevice.h" />
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Event\Event.h" />
-    <ClInclude Include="Source\Core\FileSystem\DeviceFile.h" />
-    <ClInclude Include="Source\Core\FileSystem\Directory.h" />
-    <ClInclude Include="Source\Core\FileSystem\FIFOFile.h" />
-    <ClInclude Include="Source\Core\FileSystem\File.h" />
-    <ClInclude Include="Source\Core\FileSystem\FileEntry.h" />
-    <ClInclude Include="Source\Core\FileSystem\FileSystem.h" />
-    <ClInclude Include="Source\Core\FileSystem\SocketFile.h" />
-    <ClInclude Include="Source\Core\FileSystem\Symlink.h" />
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\GUID\GUID.h" />
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\GlobalModule.h" />
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Input\Input.h" />
-    <ClInclude Include="Source\Function\Json\Json.h" />
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Log\Log.h" />
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Resource\Image.h" />
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Settings\Settings.h" />
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\SystemTray\SystemTray.h" />
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Taskbar\Taskbar.h" />
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Window\Window.h" />
-    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Function\Window\Windows\WindowsWindow.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\Clipboard\Clipboard.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\Color\Color.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\Config\Config.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\ConsoleOld\Console1.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\ConsoleOld\Windows1\WindowsConsole1.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\Console\Console.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\Console\Windows\WindowsConsole.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\Device\Device.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\Device\InputDevice\InputDevice.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\Event\Event.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\GUID\GUID.h" />
+    <ClInclude Include="Source\Module\Module.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\Input\Input.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\JSON\JSON.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\Log\Log.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\RHI\RHI.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\RHI\Vulkan\VulkanRHI.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\Resource\Image.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\Settings\Settings.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\SystemTray\SystemTray.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\Taskbar\Taskbar.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\Window\Window.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Module\Window\Windows\WindowsWindow.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Platform\CoreType.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Platform\Platform.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Platform\Windows\WindowsPlatform.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Service\FrameService\FrameService.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Service\GlobalService.h" />
+    <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Service\RenderService\RenderService.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Service\Service.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\Service\WindowService\WindowService.h" />
     <ClInclude Include="$(XmakeProjectDir)\Engine\Source\pch.h" />
-    <ClInclude Include="Source\Function\RHI\RHI.h" />
-    <ClInclude Include="Source\Function\RHI\Vulkan\VulkanRHI.h" />
-    <ClInclude Include="Source\Service\GlobalService.h" />
-    <ClInclude Include="Source\Service\RenderService\RenderService.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Application\Application.cpp">
@@ -335,6 +335,9 @@ xmake version 3.0.5+dev.7ee27a5e5
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Application\Launch\Windows\WindowsLaunch.cpp">
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Core\FileSystem\FileSystem.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Core\Memory\ByteArray.cpp">
@@ -349,31 +352,37 @@ xmake version 3.0.5+dev.7ee27a5e5
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Core\String\String.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Function\ConsoleOld\Console1.cpp">
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Core\Time\DateTime.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Function\ConsoleOld\Windows1\WindowsConsole1.cpp">
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Module\ConsoleOld\Console1.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Function\Console\Console.cpp">
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Module\ConsoleOld\Windows1\WindowsConsole1.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Function\Console\Windows\WindowsConsole.cpp">
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Module\Console\Console.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
-    <ClCompile Include="Source\Core\FileSystem\FileSystem.cpp">
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Module\Console\Windows\WindowsConsole.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Function\Input\Input.cpp">
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Module\Input\Input.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Function\Settings\Settings.cpp">
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Module\RHI\RHI.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Function\Window\Window.cpp">
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Module\RHI\Vulkan\VulkanRHI.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Function\Window\Windows\WindowsWindow.cpp">
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Module\Settings\Settings.cpp">
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Module\Window\Window.cpp">
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Module\Window\Windows\WindowsWindow.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Platform\Windows\WindowsPlatform.cpp">
@@ -382,16 +391,15 @@ xmake version 3.0.5+dev.7ee27a5e5
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Service\FrameService\FrameService.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Service\RenderService\RenderService.cpp">
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\Service\WindowService\WindowService.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\Engine\Source\pch.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
-    <ClCompile Include="Source\Core\Time\DateTime.cpp" />
-    <ClCompile Include="Source\Function\RHI\RHI.cpp" />
-    <ClCompile Include="Source\Function\RHI\Vulkan\VulkanRHI.cpp" />
-    <ClCompile Include="Source\Service\RenderService\RenderService.cpp" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

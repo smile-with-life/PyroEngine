@@ -78,4 +78,4 @@ private:
 /// <summary>
 /// 最大帧率
 /// </summary>
-constexpr inline int32 MaxFPS = 240;
+constexpr inline int32 MAX_FPS = 240;
