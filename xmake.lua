@@ -13,6 +13,56 @@ set_allowedarchs("x64")
 -- 设置代码语言标准：最新
 set_languages "cxxlatest"
 
+rule("mode.Debug")
+    on_config(function(target)      
+        if is_mode("Debug") then
+            -- 设置符号信息：添加调试符号
+            target:set("symbols", "debug")
+            -- 设置优化级别：禁用优化
+            target:set("optimize", "none")
+            -- 设置警告级别：启用全部支持的警告
+            target:set("warnings", "everything")
+        end  
+    end)
+
+rule("mode.Development")
+    on_config(function(target)
+        if is_mode("Development") then
+            -- 设置符号信息：添加调试符号
+            target:set("symbols", "debug")
+            -- 设置优化级别：快速优化
+            target:set("optimize", "fast")
+            -- 设置警告级别：启用全部支持的警告
+            target:set("warnings", "everything")
+        end
+    end)
+
+rule("mode.Test")
+    on_config(function(target)
+        if is_mode("Test") then
+            -- 设置符号信息：添加调试符号
+            target:set("symbols", "debug")
+            -- 设置优化级别：最快运行速度的优化	
+            target:set("optimize", "fastest")
+            -- 设置警告级别：启用全部支持的警告
+            target:set("warnings", "less")
+        end
+    end)
+
+rule("mode.Release")
+    on_config(function(target)     
+        if is_mode("Release") then
+            -- 设置符号信息：设置符号不可见
+            target:set("symbols", "hidden")
+            -- 设置优化级别：最快运行速度的优化	
+            target:set("optimize", "fastest")
+            -- 剥夺调试符号信息：剥夺掉所有符号
+            target:set("strip",  "all")
+            -- 设置警告级别：禁用所有警告
+            target:set("warnings", "none")
+        end
+    end)
+
 -- 包含引擎工程描述文件
 includes "Engine/xmake.lua"
 includes "Sandbox/xmake.lua"
