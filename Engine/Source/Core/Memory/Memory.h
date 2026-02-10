@@ -2,7 +2,7 @@
 #include "Core.h"
 
 /// <summary>
-/// 内存资源类
+/// 内存资源基类
 /// </summary>
 class MemoryResource
 {
