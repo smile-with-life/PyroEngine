@@ -14,12 +14,17 @@ target "Engine"
     -- 添加头文件搜索目录
     add_includedirs {
         "Source",
+        "Source/Platform"
     }
     -- 添加头文件
     add_headerfiles{
+        -- 平台层
+        "Platform/*.h"
     }
     -- 添加源代码文件
     add_files{
+        -- 平台层
+        "Platform/*.cpp"
     }
 
     -- Windows设置
@@ -30,12 +35,17 @@ target "Engine"
         add_syslinks("kernel32","User32")
         -- 添加头文件
         add_headerfiles{
+            -- Platform 层
+            "Source/Platform/Windows/*.h"
         }
         -- 添加源代码文件
         add_files{
             -- Windows 入口
             "Source/Launch/Windows/WindowsLaunch.cpp",
-            "Source/Launch/Windows/WindowsExport.def"
+            "Source/Launch/Windows/WindowsExport.def",
+
+            -- Platform 层
+            "Source/Platform/Windows/*.cpp"
         }     
         -- Debug配置
         if is_mode("Debug") then
