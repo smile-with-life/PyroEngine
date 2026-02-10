@@ -19,12 +19,12 @@ target "Engine"
     -- 添加头文件
     add_headerfiles{
         -- 平台层
-        "Platform/*.h"
+        "Source/Platform/*.h"
     }
     -- 添加源代码文件
     add_files{
         -- 平台层
-        "Platform/*.cpp"
+        "Source/Platform/*.cpp"
     }
 
     -- Windows设置
