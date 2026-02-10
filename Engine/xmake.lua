@@ -14,7 +14,8 @@ target "Engine"
     -- 添加头文件搜索目录
     add_includedirs {
         "Source",
-        "Source/Platform"
+        "Source/Platform",
+        "Source/Core"
     }
     -- 添加头文件
     add_headerfiles{
