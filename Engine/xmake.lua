@@ -18,11 +18,15 @@ target "Engine"
     }
     -- 添加头文件
     add_headerfiles{
+        -- 预编译头文件
+        "Source/pch.h",
         -- 平台层
         "Source/Platform/*.h"
     }
     -- 添加源代码文件
     add_files{
+        -- 预编译文件(msvc专用)
+        "Source/pch.cpp",
         -- 平台层
         "Source/Platform/*.cpp"
     }
