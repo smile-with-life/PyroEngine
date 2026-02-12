@@ -561,7 +561,7 @@ public:
     /// 获取容器能够容纳的最大元素数量
     /// </summary>
     /// <returns>最大元素数量</returns>
-    size_type MaxSize() const
+    constexpr size_type MaxSize() const
     {
         return std::numeric_limits<size_type>::max();
     }
