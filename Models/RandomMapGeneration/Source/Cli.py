@@ -3,10 +3,10 @@ from __future__ import annotations
 import argparse
 import logging
 
-from RandomMapGeneration.Terrain3D import Terrain3dConfig
-from RandomMapGeneration.Terrain3D import generate_terrain_3d
-from RandomMapGeneration.ViewerFps import FpsViewer
-from RandomMapGeneration.VoxelWorld import VoxelWorld
+from Source.Terrain3D import Terrain3dConfig
+from Source.Terrain3D import generate_terrain_3d
+from Source.ViewerFps import FpsViewer
+from Source.VoxelWorld import VoxelWorld
 
 
 def main(argv: list[str] | None = None) -> int:

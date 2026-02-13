@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from RandomMapGeneration.Cli import main
+from Source.Cli import main
 
 
 if __name__ == "__main__":

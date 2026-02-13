@@ -23,20 +23,20 @@ python -m venv .venv
 运行 main.py 时，各文件的作用
 
 - main.py
-  - 程序入口，只负责调用 RandomMapGeneration/Cli.py 里的 main()
-- RandomMapGeneration/Cli.py
+  - 程序入口，只负责调用 Source/Cli.py 里的 main()
+- Source/Cli.py
   - 命令行参数解析（seed/width/depth/max-height、窗口大小、viewer-scale、viewer-voxel-stride 等）
   - 生成地形高度图（调用 Terrain3D.py）
   - 把高度图转换成体素世界（调用 VoxelWorld.py）
   - 启动第一人称窗口（调用 ViewerFps.py）
-- RandomMapGeneration/Terrain3D.py
+- Source/Terrain3D.py
   - Terrain3dConfig：地形生成参数（随机种子 seed 决定“随机地图但可复现”）
   - generate_terrain_3d：基于伪随机噪声生成 (x,z)->height 的高度图
-- RandomMapGeneration/VoxelWorld.py
+- Source/VoxelWorld.py
   - VoxelWorld：体素数据结构（分块存储、get/set 方块）
   - from_terrain：把高度图挤出为体素列（草/土/石）
   - raycast：射线拾取（用于准星选中、放置/破坏）
-- RandomMapGeneration/ViewerFps.py
+- Source/ViewerFps.py
   - FpsViewer：Tk 窗口 + 键盘控制（WASD、转头等）
   - 逐像素发射 raycast 做体素渲染（stride 越大越流畅但越糊）
   - F/G 破坏/放置方块（写回 VoxelWorld）

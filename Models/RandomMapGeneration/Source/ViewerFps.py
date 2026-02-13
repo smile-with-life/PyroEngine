@@ -4,10 +4,10 @@ import math
 import time
 import tkinter as tk
 
-from RandomMapGeneration.Terrain3D import Terrain3d
-from RandomMapGeneration.VoxelWorld import AIR
-from RandomMapGeneration.VoxelWorld import DIRT
-from RandomMapGeneration.VoxelWorld import VoxelWorld
+from Source.Terrain3D import Terrain3d
+from Source.VoxelWorld import AIR
+from Source.VoxelWorld import DIRT
+from Source.VoxelWorld import VoxelWorld
 
 
 class FpsViewer:

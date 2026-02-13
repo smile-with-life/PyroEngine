@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import unittest
 
-from RandomMapGeneration.Terrain3D import Terrain3dConfig
-from RandomMapGeneration.Terrain3D import generate_terrain_3d
+from Source.Terrain3D import Terrain3dConfig
+from Source.Terrain3D import generate_terrain_3d
 
 
 class TestTerrain3dGenerator(unittest.TestCase):

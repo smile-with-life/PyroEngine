@@ -2,14 +2,14 @@ from __future__ import annotations
 
 import unittest
 
-from RandomMapGeneration.Terrain3D import Terrain3d
-from RandomMapGeneration.Terrain3D import Terrain3dConfig
-from RandomMapGeneration.VoxelWorld import AIR
-from RandomMapGeneration.VoxelWorld import ChunkConfig
-from RandomMapGeneration.VoxelWorld import DIRT
-from RandomMapGeneration.VoxelWorld import GRASS
-from RandomMapGeneration.VoxelWorld import STONE
-from RandomMapGeneration.VoxelWorld import VoxelWorld
+from Source.Terrain3D import Terrain3d
+from Source.Terrain3D import Terrain3dConfig
+from Source.VoxelWorld import AIR
+from Source.VoxelWorld import ChunkConfig
+from Source.VoxelWorld import DIRT
+from Source.VoxelWorld import GRASS
+from Source.VoxelWorld import STONE
+from Source.VoxelWorld import VoxelWorld
 
 
 class TestVoxelWorld(unittest.TestCase):

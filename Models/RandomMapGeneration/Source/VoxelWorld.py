@@ -4,7 +4,7 @@ import dataclasses
 import math
 from typing import Iterable
 
-from RandomMapGeneration.Terrain3D import Terrain3d
+from Source.Terrain3D import Terrain3d
 
 
 AIR = 0
