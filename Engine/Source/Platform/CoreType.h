@@ -21,3 +21,4 @@ using char8 = char8_t;
 using char16 = char16_t;
 using char32 = char32_t;
 using ptrdiff = std::ptrdiff_t;
+using byte = std::byte;
