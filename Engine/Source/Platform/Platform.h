@@ -92,7 +92,7 @@
 
 // ==================== 平台扩展支持 ====================​​
 #ifdef PLATFORM_WINDOWS
-    
+    #include "Windows/WindowsPlatform.h"
 #elif PLATFORM_LINUX
     
 #elif PLATFORM_ANDROID
@@ -129,3 +129,49 @@
     #define BUILD_CONFIG BUILD_CONFIG_RELEASE
 #endif
 
+// ==================== 跨平台字符字面量 ====================​​
+#ifdef PLATFORM_WINDOWS
+    #define PLATFORM_NATIVE_UTF16 1
+#else
+    #define PLATFORM_NATIVE_UTF8 1
+#endif
+
+#ifdef PLATFORM_NATIVE_UTF8
+    using tchar = char;
+    #define TEXT(x) ## x
+#elif PLATFORM_NATIVE_UTF16
+    using tchar = wchar_t;
+    #define TEXT(x) L ## x
+#elif PLATFORM_NATIVE_UTF32
+    using tchar = char32_t;
+    #define TEXT(x)
+#endif
+
+inline int64 tcslen(const tchar* str)
+{
+    if (!str)
+        return 0;
+#if PLATFORM_NATIVE_UTF8
+    // UTF-8 字符数计算（跳过多字节）
+    int64 len = 0;
+    while (*str != 0)
+    {
+        uint8 c = static_cast<uint8>(*str);
+        len++;
+        // 跳过后续字节（多字节编码）
+        if ((c & 0x80) != 0)
+        {
+            if ((c & 0xE0) == 0xC0) str += 1;
+            else if ((c & 0xF0) == 0xE0) str += 2;
+            else if ((c & 0xF8) == 0xF0) str += 3;
+        }
+        str++;
+    }
+    return len;
+#else
+    // UTF-16 字符数计算（简化版，暂不处理代理对）
+    int64 len = 0;
+    while (*str != 0) { len++; str++; }
+    return len;
+#endif
+}
