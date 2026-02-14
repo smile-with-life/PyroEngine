@@ -316,7 +316,7 @@ public:
         m_capacity = m_size = other.m_size;
         if (m_size != 0)
         {
-            m_data = m_alloc.Allocate(m_capacity);
+            m_data = m_alloc.Allocate<Type>(m_capacity);
             for (size_type i = 0; i != m_size; i++)
             {
                 std::construct_at(&m_data[i], std::as_const(other.m_data[i]));
@@ -397,7 +397,7 @@ public:
     /// <param name="count">容器初始大小</param>
     constexpr explicit Array(size_type count)
     {
-        m_data = m_alloc.Allocate(count);
+        m_data = m_alloc.Allocate<Type>(count);
         m_capacity = m_size = count;
         for (size_type i = 0; i != count; i++)
         {
@@ -411,7 +411,7 @@ public:
     /// <param name="value">用于填充的初始值</param>
     constexpr Array(size_type count, const Type& value)
     {
-        m_data = m_alloc.Allocate(count);
+        m_data = m_alloc.Allocate<Type>(count);
         m_capacity = m_size = count;
         for (size_type i = 0; i != count; i++)
         {
@@ -428,7 +428,7 @@ public:
     constexpr Array(InputIt first, InputIt last)
     {
         size_type count = last - first;
-        m_data = m_alloc.Allocate(count);
+        m_data = m_alloc.Allocate<Type>(count);
         m_capacity = m_size = count;
         for (size_type i = 0; i != count; i++)
         {
@@ -455,7 +455,7 @@ public:
         auto first = ilist.begin();
         auto last = ilist.end();
         size_type count = last - first;
-        m_data = m_alloc.Allocate(count);
+        m_data = m_alloc.Allocate<Type>(count);
         m_capacity = m_size = count;
         for (size_type i = 0; i != count; i++)
         {
@@ -733,7 +733,7 @@ public:
         }
         else
         {
-            m_data = m_alloc.Allocate(m_size);
+            m_data = m_alloc.Allocate<Type>(m_size);
         }
         if (old_capacity != 0) [[likely]]
         {
