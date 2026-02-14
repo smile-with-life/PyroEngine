@@ -71,7 +71,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--viewer-scale", type=int, default=3, dest="viewer_scale")
     parser.add_argument("--viewer-voxel-stride", type=int, default=2, dest="viewer_voxel_stride")
     parser.add_argument("--viewer-yaw-deg", type=float, default=0.0, dest="viewer_yaw_deg")
-    parser.add_argument("--viewer-pitch-deg", type=float, default=-6.0, dest="viewer_pitch_deg")
+    parser.add_argument("--viewer-pitch-deg", type=float, default=6.0, dest="viewer_pitch_deg")
     parser.add_argument("--viewer-fov-deg", type=float, default=80.0, dest="viewer_fov_deg")
     parser.add_argument("--viewer-step", type=float, default=1.0, dest="viewer_step")
     parser.add_argument("--viewer-max-distance", type=float, default=None, dest="viewer_max_distance")

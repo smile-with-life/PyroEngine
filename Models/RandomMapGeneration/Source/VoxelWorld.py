@@ -128,6 +128,31 @@ class VoxelWorld:
         chunk = self._get_chunk(cx, cz)
         chunk.set_local(lx, y, lz, block_id)
 
+    def to_dense_r8(self) -> bytes:
+        width = self.world_width
+        height = self.cfg.size_y
+        depth = self.world_depth
+        out = bytearray(width * height * depth)
+        size_x = self.cfg.size_x
+        size_z = self.cfg.size_z
+        for (cx, cz), chunk in self.chunks.items():
+            base_x = cx * size_x
+            base_z = cz * size_z
+            for lz in range(size_z):
+                z = base_z + lz
+                if z < 0 or z >= depth:
+                    continue
+                z_base = z * height * width
+                for ly in range(height):
+                    row_base = z_base + ly * width
+                    chunk_row_base = (ly * size_z + lz) * size_x
+                    for lx in range(size_x):
+                        x = base_x + lx
+                        if x < 0 or x >= width:
+                            continue
+                        out[row_base + x] = chunk.blocks[chunk_row_base + lx]
+        return bytes(out)
+
     def top_solid_y(self, x: int, z: int) -> int:
         if not self.in_bounds_xz(x, z):
             return -1

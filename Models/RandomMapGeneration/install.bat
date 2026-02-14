@@ -38,20 +38,25 @@ if not defined PY (
   exit /b 1
 )
 
-if not exist ".venv\Scripts\python.exe" (
-  %PY% -m venv .venv
-  if errorlevel 1 exit /b 1
+set "VENV_DIR=.venv"
+if not exist "%VENV_DIR%\Scripts\python.exe" (
+  if exist "..\..\..\.venv\Scripts\python.exe" (
+    set "VENV_DIR=..\..\..\.venv"
+  ) else (
+    %PY% -m venv "%VENV_DIR%"
+    if errorlevel 1 exit /b 1
+  )
 )
 
-call ".venv\Scripts\activate.bat"
+call "%VENV_DIR%\Scripts\activate.bat"
 if errorlevel 1 exit /b 1
 
-.venv\Scripts\python.exe -m pip install --upgrade pip
+%VENV_DIR%\Scripts\python.exe -m pip install --upgrade pip
 if errorlevel 1 exit /b 1
 
-.venv\Scripts\python.exe -m pip install -r requirements.txt
+%VENV_DIR%\Scripts\python.exe -m pip install -r requirements.txt
 if errorlevel 1 exit /b 1
 
 echo.
 echo Installed. Run:
-echo   .venv\Scripts\python.exe main.py --seed 1 --width 256 --depth 256 --max-height 80
+echo   %VENV_DIR%\Scripts\python.exe main.py --seed 1 --width 256 --depth 256 --max-height 80
