@@ -13,15 +13,30 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "入门指南/1.PyroEngine 引擎介绍.md",
+                "file": "入门指南/7.基本知识.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "1.PyroEngine 引擎介绍"
+              "title": "7.基本知识"
+            }
+          },
+          {
+            "id": "062944d2c424e870",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "入门指南/7.基本知识.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "7.基本知识"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -94,7 +109,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "入门指南/1.PyroEngine 引擎介绍.md",
+                "file": "入门指南/7.基本知识.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +119,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "1.PyroEngine 引擎介绍 的反向链接列表"
+              "title": "7.基本知识 的反向链接列表"
             }
           },
           {
@@ -168,18 +183,23 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "497a7cb214ce7c93",
+  "active": "062944d2c424e870",
   "lastOpenFiles": [
+    "入门指南/6.构建配置.md",
     "代码规范/C++ 代码标准与规范.md",
-    "入门指南/3.代码递交规范.md",
     "代码规范/Python 代码标准与规范.md",
+    "入门指南/7.基本知识.md",
+    "入门指南/5.版本控制.md",
+    "attachments/Images/Mavuika_8.png",
+    "attachments/Images/Mavuika_7.png",
+    "attachments/Images/Mavuika_6.png",
+    "attachments/Images/image.png",
     "入门指南/4.PyroEngine 目录结构.md",
-    "入门指南/2.下载 PyroEngine 引擎源码.md",
     "入门指南/1.PyroEngine 引擎介绍.md",
-    "入门指南/5.基本知识.md",
+    "入门指南/3.代码递交规范.md",
+    "入门指南/2.下载 PyroEngine 引擎源码.md",
     "代码规范/PythonStyleGuide.md",
     "代码规范",
-    "attachments/Images/Mavuika_6.png",
     "attachments/Images/Mavuika_5.png",
     "attachments/Images/Mavuika_4.png",
     "attachments/Images/Mavuika_3.png",
@@ -195,9 +215,6 @@
     "随笔/为什么使用1.5倍增长因子而不是简单的倍增.md",
     "attachments/temps/Pasted image 20251005013450.png",
     "attachments/temps",
-    "attachments/temps/Pasted image 20251005013313.png",
-    "attachments/Mavuika_3.png",
-    "attachments/Mavuika_2.png",
     "随笔/未命名.md",
     "未命名.base",
     "未命名/测试.md",
