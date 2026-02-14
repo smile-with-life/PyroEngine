@@ -30,8 +30,8 @@ target "Sandbox"
         "Source/*.cpp"
     }
 
-    if is_os("windows") then
+    if is_plat("windows") then
         add_defines "PLATFORM_WINDOWS"
         add_syslinks("kernel32")  -- 链接 Windows API 库
-        add_ldflags("/SUBSYSTEM:WINDOWS") -- 指定窗口子系统
+        add_ldflags("/SUBSYSTEM:WINDOWS") -- 指定窗口子系统   
     end

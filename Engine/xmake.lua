@@ -11,51 +11,27 @@ target "Engine"
     set_dependir "$(projectdir)/Engine/Build/$(os)/$(mode)/Dep"
     -- 指定编译配置
     add_rules("mode.Debug", "mode.Development", "mode.Test", "mode.Release")
+    -- 预编译头文件
+    add_headerfiles("Source/pch.h")
+    -- 添加预编译文件(msvc专用)
+    add_files("Source/pch.cpp")
     -- 添加头文件搜索目录
     add_includedirs {
         "Source",
         "Source/Platform",
-        "Source/Core"
+        "Source/Core",
+        "Source/Module",
+        "Source/Service",
+        "Source/Application",
+        "Source/Launch"
     }
-    -- 添加头文件
-    add_headerfiles{
-        -- 预编译头文件
-        "Source/pch.h",
-        -- 平台层
-        "Source/Platform/*.h",
-        -- 核心层
-        "Source/Core/**.h"
-    }
-    -- 添加源代码文件
-    add_files{
-        -- 预编译文件(msvc专用)
-        "Source/pch.cpp",
-        -- 平台层
-        "Source/Platform/*.cpp",
-        -- 核心层
-        "Source/Core/**.cpp"
-    }
-
     -- Windows设置
     if is_plat("windows") then
         -- 添加宏定义
         add_defines "PLATFORM_WINDOWS"
         -- 链接 Windows API 库
         add_syslinks("kernel32","User32")
-        -- 添加头文件
-        add_headerfiles{
-            -- Platform 层
-            "Source/Platform/Windows/*.h"
-        }
-        -- 添加源代码文件
-        add_files{
-            -- Windows 入口
-            "Source/Launch/Windows/WindowsLaunch.cpp",
-            "Source/Launch/Windows/WindowsExport.def",
-
-            -- Platform 层
-            "Source/Platform/Windows/*.cpp"
-        }     
+        
         -- Debug配置
         if is_mode("Debug") then
             add_defines "BUILD_CONFIG_DEBUG=0"
@@ -77,3 +53,29 @@ target "Engine"
             set_runtimes "MD"
         end   
     end
+
+    -- 构建配置加载
+    on_load(function(target)
+        local files = os.files(path.join(os.scriptdir(),"Source/**.lua"))
+        for _, file in ipairs(files) do
+            local dir = path.directory(file)
+            local build = import("build",{ rootdir = dir })
+            if build.config then
+                local config = build.config()
+                if config.headers then
+                    for _, file in ipairs(config.headers) do
+                        target:add("headerfiles", path.join(os.scriptdir(), file))
+                    end
+                end
+                if config.files then
+                    for _, file in ipairs(config.files) do
+                        target:add("files", path.join(os.scriptdir(), file))
+                        print(file)
+                    end
+                end
+            end
+        end
+    end)
+    
+    
+    
