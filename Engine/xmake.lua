@@ -30,7 +30,7 @@ target "Engine"
         -- 添加宏定义
         add_defines "PLATFORM_WINDOWS"
         -- 链接 Windows API 库
-        add_syslinks("kernel32","User32")
+        add_syslinks("kernel32","User32", "shell32.lib")
         
         -- Debug配置
         if is_mode("Debug") then
