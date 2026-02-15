@@ -462,7 +462,7 @@ String String::LeftStr(int64 count)
     return String("");
 }
 
-String String::MidStr(int64 index, int64 count)
+String String::SubStr(int64 index, int64 count)
 {
     if (index < 0 || count <= 0 || index >= m_count) {
         return String("");
@@ -478,23 +478,6 @@ String String::MidStr(int64 index, int64 count)
     if (start >= 0 && end > start)
     {
         return String(m_data.substr(start, end - start).c_str());
-    }
-    return String("");
-}
-
-String String::SubStr(int64 start, int64 end)
-{
-    if (start < 0 || end < start || start >= m_count) {
-        return String("");
-    }
-
-    if (end > m_count) end = m_count;
-
-    int64 startPos = _IndexToPos(m_data, start);
-    int64 endPos = _IndexToPos(m_data, end);
-
-    if (startPos >= 0 && endPos > startPos) {
-        return String(m_data.substr(startPos, endPos - startPos).c_str());
     }
     return String("");
 }

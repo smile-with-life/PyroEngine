@@ -225,14 +225,7 @@ public:
     /// <param name="index">起始字符索引</param>
     /// <param name="count">要获取的字符数量</param>
     /// <returns>包含指定范围字符的新字符串</returns>
-    String MidStr(int64 index, int64 count);
-    /// <summary>
-    /// 返回一个字符串，包含原字符串从 start 到 end 之间的子串（不包括 start 和 end）
-    /// </summary>
-    /// <param name="start">起始字符索引</param>
-    /// <param name="end">结束字符索引</param>
-    /// <returns>包含指定范围字符的新字符串</returns>
-    String SubStr(int64 start, int64 end);
+    String SubStr(int64 index, int64 count);
     /// <summary>
     /// 返回一个字符串，包含原字符串最右侧的 count 个字符
     /// </summary>
