@@ -473,7 +473,7 @@ public:
     /// <exception cref="std::out_of_range">当index超出范围时抛出</exception>
     constexpr Type& At(size_type index)
     {
-        checkf(IsValidIndex(index));
+        check(IsValidIndex(index));
 
         return m_data[index];
     }
@@ -485,7 +485,7 @@ public:
     /// <exception cref="std::out_of_range">当index超出范围时抛出</exception>
     constexpr const Type& At(size_type index) const
     {
-        checkf(IsValidIndex(index));
+        check(IsValidIndex(index));
 
         return m_data[index];
     }
@@ -496,7 +496,7 @@ public:
     /// <exception cref="std::out_of_range">容器为空时抛出</exception>
     Type& Front()
     {
-        checkf(!IsEmpty());
+        check(!IsEmpty());
 
         return *m_data;
     }
@@ -507,7 +507,7 @@ public:
     /// <exception cref="std::out_of_range">容器为空时抛出</exception>
     constexpr const Type& Front() const
     {
-        checkf(!IsEmpty());
+        check(!IsEmpty());
 
         return *m_data;
     }
@@ -518,7 +518,7 @@ public:
     /// <exception cref="std::out_of_range">容器为空时抛出</exception>
     constexpr Type& Back()
     {
-        checkf(!IsEmpty());
+        check(!IsEmpty());
 
         return m_data[m_size - 1];
     }
@@ -529,7 +529,7 @@ public:
     /// <exception cref="std::out_of_range">容器为空时抛出</exception>
     constexpr const Type& Back() const
     {
-        checkf(!IsEmpty());
+        check(!IsEmpty());
 
         return m_data[m_size - 1];
     }
