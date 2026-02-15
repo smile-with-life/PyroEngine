@@ -67,7 +67,6 @@ public:
     /// 返回UTF-8字节数
     /// </summary>
     int32 Size() const;
-    
     /// <summary>
     /// 是否为 ASCII 字符
     /// </summary>
