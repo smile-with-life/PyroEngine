@@ -4,6 +4,9 @@
 
 #include <string>
 
+/// <summary>
+/// UTF-8 编码字符
+/// </summary>
 class Char
 {
 public:

@@ -10,6 +10,9 @@
 class String;
 using StringList = Array<String>;
 
+/// <summary>
+/// UTF-8 编码字符串
+/// </summary>
 class String
 {
 public:
