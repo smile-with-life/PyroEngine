@@ -3,11 +3,11 @@
 #include "CoreType.h"
 
 // ==================== 编译器检测 ====================
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && !defined(__clang__) 
     #define COMPILER_MSVC 1
     #define COMPILER_NAME "Microsoft Visual C++"
     #define COMPILER_MSVC_VERSION _MSC_VER
-#elif defined(__INTEL_COMPILER)
+#elif defined(__INTEL_COMPILER) || defined(__ICL) || defined(__ICC) || defined(__ECC)
     #define COMPILER_INTEL 1
     #define COMPILER_NAME "Intel C++"
     #define COMPILER_INTEL_VERSION __INTEL_COMPILER
@@ -107,13 +107,45 @@
 
 // ==================== 编译器扩展支持 ====================​​
 #ifdef COMPILER_MSVC
-
+    // 检查编译器版本
+    #if _MSC_VER < 1930
+        #error "MSVC version too low (" STRINGIZE(_MSC_VER) "). Please upgrade to VS 2022 17.0+ (_MSC_VER >= 1930) for full C++20 support."
+    #endif
+    // 编译器假设宏
+    #define ASSUME(expr) __assume(expr)
 #elif COMPILER_INTEL
-
+    // 检查编译器版本
+    #if __INTEL_COMPILER < 202100  // Intel oneAPI 2021.0+ 支持C++20
+        #error "Intel compiler version too low (" STRINGIZE(__INTEL_COMPILER) "). Please upgrade to Intel oneAPI 2021.0+ for full C++20 support."
+    #endif
+    // 编译器假设宏
+    #ifdef __INTEL_ASSUME
+        #define ASSUME(expr) __INTEL_ASSUME(expr)
+    #else
+        #define ASSUME(expr) ((void)0)
+    #endif
 #elif COMPILER_CLANG
-
+    // 检查编译器版本
+    #if __clang_major__ < 12
+        #error "Clang version too low (" STRINGIZE(__clang_major__) "." STRINGIZE(__clang_minor__) "). Please upgrade to Clang 12+ for full C++20 support."
+    #endif 
+    // 编译器假设宏
+    #define ASSUME(expr) __builtin_assume(expr)
 #elif COMPILER_GCC
-
+    // 检查编译器版本
+    #if __GNUC__ < 11
+        #error "GCC version too low (" STRINGIZE(__GNUC__) "." STRINGIZE(__GNUC_MINOR__) "). Please upgrade to GCC 11+ for full C++20 support."
+    #endif
+    // 编译器假设宏
+    #ifdef __has_builtin
+        #if __has_builtin(__builtin_unreachable)
+            #define ASSUME(expr) do { if (!(expr)) __builtin_unreachable(); } while(0)
+        #else
+            #define ASSUME(expr) ((void)0)
+        #endif
+    #else
+        #define ASSUME(expr) ((void)0)
+    #endif
 #else
     #error The compiler is not supported!
 #endif
