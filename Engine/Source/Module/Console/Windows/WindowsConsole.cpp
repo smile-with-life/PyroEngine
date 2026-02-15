@@ -1,4 +1,5 @@
 #include "pch.h"
+
 #include "WindowsConsole.h"
 
 /* static */
