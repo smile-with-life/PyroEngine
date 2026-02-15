@@ -51,7 +51,7 @@ public:
     /// </summary>
     /// <param name="size">字节数组大小</param>
     /// <param name="byte">填充值</param>
-    constexpr ByteArray(int64 size, byte byte)
+    constexpr ByteArray(int64 size, std::byte byte)
         : m_data(size, byte)
     {
         
@@ -61,7 +61,7 @@ public:
     /// </summary>
     /// <param name="data">原始数据指针</param>
     /// <param name="size">数据大小</param>
-    constexpr ByteArray(const byte* data, int64 size)
+    constexpr ByteArray(const std::byte* data, int64 size)
         : m_data(data, data + size)
     {
 
@@ -72,7 +72,7 @@ public:
     /// </summary>
     /// <param name="index">索引位置</param>
     /// <returns>指定位置的字节</returns>
-    constexpr byte At(int64 index) const
+    constexpr std::byte At(int64 index) const
     {
         return m_data.at(index);
     }
@@ -80,7 +80,7 @@ public:
     /// 访问第一个字节
     /// </summary>
     /// <returns>返回第一个字节的引用</returns>
-    byte& Front()
+    std::byte& Front()
     {
         return m_data.front();
     }
@@ -88,7 +88,7 @@ public:
     /// 访问第一个字节（const版本）
     /// </summary>
     /// <returns>返回第一个字节</returns>
-    constexpr byte Front() const
+    constexpr std::byte Front() const
     {
         return m_data.front();
     }
@@ -96,7 +96,7 @@ public:
     /// 访问最后一个字节
     /// </summary>
     /// <returns>返回最后一个字节的引用</returns>
-    constexpr byte& Back()
+    constexpr std::byte& Back()
     {
         return m_data.back();
     }
@@ -104,7 +104,7 @@ public:
     /// 访问最后一个字节（const版本）
     /// </summary>
     /// <returns>返回最后一个字节</returns>
-    constexpr byte Back() const
+    constexpr std::byte Back() const
     {
         return m_data.back();
     }
@@ -112,7 +112,7 @@ public:
     /// 获取底层容器指针
     /// </summary>
     /// <returns></returns>
-    constexpr byte* Data()
+    constexpr std::byte* Data()
     {
         return m_data.data();
     }
@@ -120,7 +120,7 @@ public:
     /// 获取底层容器指针（const版本）
     /// </summary>
     /// <returns></returns>
-    constexpr const byte* Data() const
+    constexpr const std::byte* Data() const
     {
         return m_data.data();
     }
@@ -200,7 +200,7 @@ public:
     /// 在末尾添加一个字节
     /// </summary>
     /// <param name="value">要添加的字节</param>
-    constexpr void Add(byte value)
+    constexpr void Add(std::byte value)
     {
         m_data.push_back(value);
     }
@@ -226,7 +226,7 @@ public:
     /// 用指定字节填充整个数组
     /// </summary>
     /// <param name="byte">填充值</param>
-    constexpr void Fill(byte byte)
+    constexpr void Fill(std::byte byte)
     {
         std::fill(m_data.begin(), m_data.end(), byte);
     }
@@ -279,7 +279,7 @@ public:
     /// </summary>
     /// <param name="index">插入位置</param>
     /// <param name="value">要插入的字节</param>
-    constexpr void Insert(int64 index, byte value)
+    constexpr void Insert(int64 index, std::byte value)
     {
         if (!IsValidIndex(index))
             return;
@@ -302,7 +302,7 @@ public:
    /// <param name="index">插入位置</param>
    /// <param name="data">原始数据指针</param>
    /// <param name="size">数据大小</param>
-    constexpr void Insert(int64 index, const byte* data, int64 size)
+    constexpr void Insert(int64 index, const std::byte* data, int64 size)
     {
         if (!IsValidIndex(index) || !data || size <= 0)
             return;
@@ -314,7 +314,7 @@ public:
     /// <param name="index">插入位置</param>
     /// <param name="count">插入数量</param>
     /// <param name="value">要插入的字节值</param>
-    constexpr void Insert(int64 index, int64 count, byte value)
+    constexpr void Insert(int64 index, int64 count, std::byte value)
     {
         if (!IsValidIndex(index) || count <= 0)
             return;
@@ -340,7 +340,7 @@ public:
     /// </summary>
     /// <param name="value">要查找的字节</param>
     /// <returns>存在返回true，否则false</returns>
-    constexpr bool Contains(byte value)
+    constexpr bool Contains(std::byte value)
     {
         return std::find(m_data.begin(), m_data.end(), value) != m_data.end();
     }
@@ -349,7 +349,7 @@ public:
     /// </summary>
     /// <param name="value">要统计的字节</param>
     /// <returns>出现次数</returns>
-    constexpr int64 Count(byte value)
+    constexpr int64 Count(std::byte value)
     {
         return static_cast<int64>(std::count(m_data.begin(), m_data.end(), value));
     }
@@ -359,7 +359,7 @@ public:
     /// <param name="value">要查找的字节</param>
     /// <param name="start">起始搜索位置</param>
     /// <returns>索引位置，未找到返回-1</returns>
-    constexpr int64 IndexOf(byte value, int64 start = 0)
+    constexpr int64 IndexOf(std::byte value, int64 start = 0)
     {
         if (start < 0 || start >= Size())
             return -1;
@@ -375,7 +375,7 @@ public:
     /// <param name="value">要查找的字节</param>
     /// <param name="start">起始搜索位置，-1表示从末尾开始</param>
     /// <returns>索引位置，未找到返回-1</returns>
-    constexpr int64 LastIndexOf(byte value, int64 start = -1)
+    constexpr int64 LastIndexOf(std::byte value, int64 start = -1)
     {
         if (IsEmpty())
             return -1;
@@ -419,14 +419,14 @@ public:
     /// <summary>
     /// 下标运算符
     /// </summary>
-    constexpr byte& operator[](int64 index)
+    constexpr std::byte& operator[](int64 index)
     {
         return m_data[index];
     }
     /// <summary>
     /// 下标运算符（const 版本）
     /// </summary>
-    constexpr byte operator[](int64 index) const
+    constexpr std::byte operator[](int64 index) const
     {
         return m_data[index];
     }
@@ -463,5 +463,5 @@ public:
         return left.m_data != right.m_data;
     }
 private:
-    std::vector<byte> m_data;
+    std::vector<std::byte> m_data;
 };
