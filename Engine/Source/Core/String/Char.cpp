@@ -35,15 +35,13 @@ Char& Char::operator=(Char&& other) noexcept
 
 Char::Char(char ch)
 {
-    // ASCII字符直接存储
-    if (static_cast<unsigned char>(ch) <= 0x7F)
+    if (ch == 0)
     {
-        m_data = std::string(1, ch);
+        m_data.clear();
     }
     else
     {
-        // 非ASCII char被视为扩展ASCII，转换为UTF-8
-        m_data = _EncodeUTF8(static_cast<uint32>(static_cast<unsigned char>(ch)));
+        m_data.push_back(ch);
     }
 }
 
@@ -493,7 +491,7 @@ Char Char::ToLower() const
     if (code >= 0x0401 && code <= 0x040F)
     {
         // Ё例外，需要特殊处理
-        if (code == 0x0401) return Char(0x0451);
+        if (code == 0x0401) return Char((uint32)0x0451);
         return Char(code + 0x50);
     }
 
@@ -539,12 +537,17 @@ Char Char::ToUpper() const
     if (code >= 0x0451 && code <= 0x045F)
     {
         // ё例外，需要特殊处理
-        if (code == 0x0451) return Char(0x0401);
+        if (code == 0x0451) return Char((uint32)0x0401);
         return Char(code - 0x50);
     }
 
     // 其他字符保持不变
     return *this;
+}
+
+Char::operator bool() const
+{
+    return !m_data.empty() && Unicode() != 0;
 }
 
 /* private */

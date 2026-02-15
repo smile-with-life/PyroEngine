@@ -179,8 +179,8 @@ String::String(const ByteArray& buffer)
 
     for (int64 i = 0; i < buffer.Size(); ++i)
     {
-        if (buffer[i] == '\0') break;
-        m_data.push_back(buffer[i]);
+        if (buffer[i] == (std::byte)'\0') break;
+        m_data.push_back((char)buffer[i]);
     }
 }
 
@@ -190,25 +190,10 @@ String& String::operator=(const ByteArray& buffer)
 
     for (int64 i = 0; i < buffer.Size(); ++i)
     {
-        if (buffer[i] == '\0') break;
-        m_data.push_back(buffer[i]);
+        if (buffer[i] == (std::byte)'\0') break;
+        m_data.push_back((char)buffer[i]);
     }
     return *this;
-}
-
-String::operator std::filesystem::path() const
-{
-    return std::filesystem::path(m_data);
-}
-
-String::operator const std::string() const
-{
-    return m_data;
-}
-
-String::operator bool() const
-{
-    return !m_data.empty();
 }
 
 String& String::Append(const String& str)
@@ -307,7 +292,6 @@ int64 String::LastIndexOf(const String& str) const
 
 int64 String::LastIndexOf(const Char& ch) const
 {
-    // �ж������ַ����Ƿ�Ϊ��
     if (!ch)
     {
         return -1;
@@ -354,7 +338,7 @@ String& String::RemoveLeft(int64 count)
     return *this;
 }
 
-String& String::RemoveMid(int64 index, int64 count)
+String& String::Remove(int64 index, int64 count)
 {
     if (count <= 0 || index >= m_count) return *this;
 
@@ -416,7 +400,7 @@ String& String::RemianLeft(int64 count)
     return *this;
 }
 
-String& String::RemianMid(int64 index, int64 count)
+String& String::Remian(int64 index, int64 count)
 {
     if (count <= 0 || index >= m_count)
     {
@@ -820,7 +804,7 @@ bool String::IsNumeric() const
     return hasDigit;
 }
 
-bool String::IsValid(int64 index) const
+bool String::IsValidIndex(int64 index) const
 {
     if (index < 0) return false;
 
@@ -1023,9 +1007,24 @@ const char* String::ToCString() const
     return m_data.c_str();
 }
 
+String::operator std::filesystem::path() const
+{
+    return std::filesystem::path(m_data);
+}
+
+String::operator const std::string() const
+{
+    return m_data;
+}
+
+String::operator bool() const
+{
+    return !m_data.empty();
+}
+
 Char String::operator[](int64 index)
 {
-    if (!IsValid(index))
+    if (!IsValidIndex(index))
     {
         return Char();  // 返回空字符
     }
@@ -1036,15 +1035,13 @@ Char String::operator[](int64 index)
 
 String& String::operator+=(const String& str)
 {
-    m_data += str.m_data;
-    m_count += str.m_count;  // 修复：没有更新m_count
+    Append(str);
     return *this;
 }
 
-String& String::operator+=(char ch)
+String& String::operator+=(Char ch)
 {
-    m_data += ch;
-    m_count += 1;  // 修复：没有更新m_count
+    Append(ch);
     return *this;
 }
 
@@ -1161,9 +1158,8 @@ std::ostream& operator<<(std::ostream& os, const String& str)
     return os << str.ToStdString();
 }
 
-
-
 /* private */
+
 int32 String::_GetCharLength(unsigned char firstByte) const
 {
     if ((firstByte & 0x80) == 0) return 1;      // 0xxxxxxx

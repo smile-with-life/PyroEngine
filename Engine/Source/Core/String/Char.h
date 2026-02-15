@@ -32,23 +32,23 @@ public:
     /// 移动构造函数
     /// </summary>
     /// <param name="other">要移动的对象</param>
-    Char(Char&& other);
+    Char(Char&& other) noexcept;
     /// <summary>
     /// 移动赋值运算符
     /// </summary>
     /// <param name="other">要移动的对象</param>
     /// <returns>this</returns>
-    Char& operator=(Char&& other);
+    Char& operator=(Char&& other) noexcept;
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="ch"></param>
+    Char(char ch);
     /// <summary>
     /// 构造函数，从 Unicode 码点构造字符
     /// </summary>
     /// <param name="unicode">Unicode 码点值，范围 0x0000 - 0x10FFFF</param>
     explicit Char(uint32 unicode);
-    /// <summary>
-    /// 构造函数，从 ASCII 字符构造
-    /// </summary>
-    /// <param name="ch">ASCII 字符（0x00 - 0x7F）</param>
-    explicit Char(char ch);
     /// <summary>
     /// 构造函数，从 UTF-8 编码的字符构造
     /// </summary>
@@ -134,6 +134,11 @@ public:
     /// </summary>
     /// <returns>大写形式的字符对象</returns>
     Char ToUpper() const; 
+public:
+    /// <summary>
+    /// 隐式转换为 bool 值，表示字符是否有效（非空且为有效的 UTF-8 字符）
+    /// </summary>
+    operator bool() const;
 private:
     /// <summary>
     /// 验证UTF-8字符串是否为有效的单个字符
