@@ -53,13 +53,13 @@ public:
     /// </summary>
     /// <param name="args">参数名（可带 - 或 / 前缀）</param>
     /// <returns>如果包含返回 true</returns>
-    bool HasArg(const String& arg);
+    bool HasArg(const String& arg) const;
     /// <summary>
     /// 获取指定参数的值
     /// </summary>
     /// <param name="args">参数名（可带 - 或 / 前缀）</param>
     /// <returns>参数值，如果不存在返回空字符串</returns>
-    String GetArgValue(const String& arg);
+    String GetArgValue(const String& arg) const;
     /// <summary>
     /// 获取所有参数的键名列表
     /// </summary>

@@ -85,13 +85,13 @@ bool CommandLineArgs::Parse(int32 argc, char** argv)
     return true;
 }
 
-bool CommandLineArgs::HasArg(const String& arg)
+bool CommandLineArgs::HasArg(const String& arg) const
 {
     String key = _NormalizeKey(arg);
     return m_data.Contains(key);
 }
 
-String CommandLineArgs::GetArgValue(const String& arg)
+String CommandLineArgs::GetArgValue(const String& arg) const
 {
     String key = _NormalizeKey(arg);
     return m_data.At(key);
