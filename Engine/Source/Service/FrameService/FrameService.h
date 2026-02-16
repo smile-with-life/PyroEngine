@@ -23,7 +23,6 @@ public:
     /// <summary>
     /// 初始化
     /// </summary>
-    /// <returns></returns>
     virtual void Init() override;
     /// <summary>
     /// 执行每一帧的更新逻辑
