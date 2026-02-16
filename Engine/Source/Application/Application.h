@@ -62,6 +62,10 @@ public:
     /// <returns></returns>
     virtual ApplicationInfo About();
     /// <summary>
+    /// 退出应用程序
+    /// </summary>
+    void Quit();
+    /// <summary>
     /// 是否退出
     /// </summary>
     /// <returns></returns>

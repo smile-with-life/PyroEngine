@@ -68,6 +68,11 @@ ApplicationInfo Application::About()
     return ApplicationInfo();
 }
 
+void Application::Quit()
+{
+    m_isQuit = true;
+}
+
 bool Application::IsQuit() const
 {
     return m_isQuit;
