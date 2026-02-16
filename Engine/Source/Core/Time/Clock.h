@@ -16,18 +16,18 @@ public:
     /// <summary>
     /// 默认构造函数
     /// </summary>
-    constexpr SystemClock() = default;
+    SystemClock() = default;
     /// <summary>
     /// 析构函数
     /// </summary>
-    constexpr ~SystemClock() = default;
+    ~SystemClock() = default;
 public:
     /// <summary>
     /// 将系统时钟时间点转换为 Unix 时间戳
     /// </summary>
     /// <param name="time">系统时钟的时间点</param>
     /// <returns>Unix 时间戳</returns>
-    constexpr static std::time_t ToTime(TimePoint<SystemClock> time)
+    static std::time_t ToTime(TimePoint<SystemClock> time)
     {
         return std::chrono::system_clock::to_time_t(time.m_time);
     }
@@ -35,7 +35,7 @@ public:
     /// 获取当前系统时间
     /// </summary>
     /// <returns>时间点</returns>
-    constexpr static TimePoint<SystemClock> Now()
+    static TimePoint<SystemClock> Now()
     {
         auto time = std::chrono::system_clock::now();
         return TimePoint<SystemClock>(time);
@@ -53,17 +53,17 @@ public:
     /// <summary>
     /// 默认构造函数
     /// </summary>
-    constexpr SteadyClock() = default;
+    SteadyClock() = default;
     /// <summary>
     /// 析构函数
     /// </summary>
-    constexpr ~SteadyClock() = default;
+    ~SteadyClock() = default;
 public:
     /// <summary>
     /// 获取当前单调时间
     /// </summary>
     /// <returns>时间点</returns>
-    constexpr static TimePoint<SteadyClock> Now()
+    static TimePoint<SteadyClock> Now()
     {
         auto time = std::chrono::steady_clock::now();
         return TimePoint<SteadyClock>(time);
