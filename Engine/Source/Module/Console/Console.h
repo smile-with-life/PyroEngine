@@ -7,8 +7,9 @@
 class Console
 {
 public:
-    Console() = default;
-
+    /// <summary>
+    /// 析构函数
+    /// </summary>
     virtual ~Console() = default;
 public:
     /// <summary>
@@ -28,4 +29,9 @@ public:
     /// </summary>
     /// <returns></returns>
     static Console& GetInstance();
+private:
+    /// <summary>
+    /// 默认构造函数
+    /// </summary>
+    Console() = default;
 };
