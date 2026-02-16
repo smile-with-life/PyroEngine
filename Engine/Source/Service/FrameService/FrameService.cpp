@@ -37,6 +37,8 @@ void FrameService::Tick()
         m_FPS = m_frameCount;
         m_lastUpdateTime = currentTime;
         m_frameCount = 0;
+
+        GLog->Info("当前帧数:{}", m_FPS);
     }
     // 最后更新上一帧结束时间
     m_lastFrameTime = currentTime;
