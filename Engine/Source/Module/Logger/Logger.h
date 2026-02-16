@@ -114,8 +114,8 @@ public:
     /// <param name="inner">格式字符串</param>
     /// <param name="location">源代码位置信息（自动由编译器填充）</param>
     template<class U> requires std::convertible_to <const U&, std::basic_string_view<char>>
-    consteval FormatWithSource(U&& inner, std::source_location location = std::source_location::current())
-        : m_inner(std::forward<U>(inner))
+    consteval FormatWithSource(U&& format, std::source_location location = std::source_location::current())
+        : m_format(std::forward<U>(format))
         , m_source(location)
     {
 
@@ -124,7 +124,7 @@ public:
     /// 拷贝构造函数
     /// </summary>
     constexpr FormatWithSource(const FormatWithSource& other)
-        : m_inner(other.m_inner)
+        : m_format(other.m_format)
         , m_source(other.m_location)
     {
 
@@ -136,7 +136,7 @@ public:
         requires std::convertible_to <const U&, std::basic_string_view<char>>
     constexpr FormatWithSource& operator=(const FormatWithSource<U>& other)
     {
-        m_inner = other.m_inner;
+        m_format = other.m_format;
         m_source = other.m_source;
         return *this;
     }

@@ -10,7 +10,7 @@ Logger& Logger::GetInstance()
 }
 
 /* public */
-void Logger::Log(LogLevel level, const String& message, SourceInfo source = SourceInfo::Current())
+void Logger::Log(LogLevel level, const String& message, SourceInfo source)
 {
     if (level >= m_level)
     {
@@ -24,32 +24,32 @@ void Logger::Log(LogLevel level, const String& message, SourceInfo source = Sour
     }
 }
 
-void Logger::Verbose(const String& message, SourceInfo source = SourceInfo::Current())
+void Logger::Verbose(const String& message, SourceInfo source)
 {
     Log(LogLevel::Verbose, message, source);
 }
 
-void Logger::Debug(const String& message, SourceInfo source = SourceInfo::Current())
+void Logger::Debug(const String& message, SourceInfo source)
 {
     Log(LogLevel::Debug, message, source);
 }
 
-void Logger::Info(const String& message, SourceInfo source = SourceInfo::Current())
+void Logger::Info(const String& message, SourceInfo source)
 {
     Log(LogLevel::Info, message, source);
 }
 
-void Logger::Warning(const String& message, SourceInfo source = SourceInfo::Current())
+void Logger::Warning(const String& message, SourceInfo source)
 {
     Log(LogLevel::Warning, message, source);
 }
 
-void Logger::Error(const String& message, SourceInfo source = SourceInfo::Current())
+void Logger::Error(const String& message, SourceInfo source)
 {
     Log(LogLevel::Error, message, source);
 }
 
-void Logger::Fatal(const String& message, SourceInfo source = SourceInfo::Current())
+void Logger::Fatal(const String& message, SourceInfo source)
 {
     Log(LogLevel::Fatal, message, source);
 }
