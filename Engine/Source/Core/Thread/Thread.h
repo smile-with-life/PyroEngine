@@ -21,6 +21,11 @@ public:
 
     ThreadId& operator=(ThreadId&& other) noexcept = default;
 public:
+    friend std::ostream& operator<<(std::ostream& os, const ThreadId& id)
+    {
+        return os << id.m_id;
+    }
+
     friend bool operator==(ThreadId left, ThreadId right) noexcept
     {
         return left.m_id == right.m_id;
