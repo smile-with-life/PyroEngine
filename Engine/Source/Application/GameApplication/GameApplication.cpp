@@ -21,7 +21,7 @@ int32 GameApplication::Init()
     GConsole->Write("Game Application Init");
     GFrameService->Init();
     GFrameService->SetMode(FramePacingMode::Fixed);
-    GFrameService->SetFixedFPS(120);
+    GFrameService->SetFixedFPS(60);
     return 0;
 }
 
