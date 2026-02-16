@@ -99,7 +99,9 @@ public:
     /// </summary>
     constexpr Duration operator++(int)
     {
-        return m_duration++;
+        Duration temp = *this;
+        m_duration++;
+        return temp;
     }
     /// <summary>
     /// 前置自减运算符
@@ -114,7 +116,9 @@ public:
     /// </summary>
     constexpr Duration operator--(int)
     {
-        return m_duration--;
+        Duration temp = *this;
+        m_duration--;
+        return temp;
     }
     /// <summary>
     /// 加法运算符
