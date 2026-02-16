@@ -125,7 +125,7 @@ public:
     /// </summary>
     constexpr FormatWithSource(const FormatWithSource& other)
         : m_format(other.m_format)
-        , m_source(other.m_location)
+        , m_source(other.m_source)
     {
 
     }
@@ -338,11 +338,12 @@ public:
     /// </summary>
     /// <returns>日志记录器实例的引用</returns>
     static Logger& GetInstance();
-private:
+protected:
     /// <summary>
     /// 默认构造函数
     /// </summary>
     Logger() = default;
+private:
     /// <summary>
     /// 本地日志输出实现
     /// <para>将日志消息写入实际输出目标（控制台、文件等）。</para>

@@ -77,7 +77,7 @@ TimeKind Logger::GetTimeKind() const
 /* private */
 void Logger::_NativeLog(const LogMessage& message)
 {
-    std::cout << "[" << SystemClock::ToTime(message.Time) << "] "
+    std::cout << "[" << DateTime(message.Time, m_timeKind) << "] "
         << "[" << message.Source.FileName << ":" << message.Source.Line << " " << message.Source.FunctionName << "] "
         << "[" << message.Id << "] "
         << "[" << static_cast<uint16>(message.Level) << "] "
