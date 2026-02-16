@@ -6,12 +6,12 @@
 // ================== 全局变量 ==================​​
 inline FrameService* GFrameService = nullptr;
 
-inline void AllocServer()
+inline void AllocCoreServer()
 {
     GFrameService = new FrameService();
 }
 
-inline void FreeServer()
+inline void FreeCoreServer()
 {
     if (!GFrameService) delete GFrameService;
 }
