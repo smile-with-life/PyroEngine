@@ -2,15 +2,6 @@
 #include "Core.h"
 #include "String/String.h"
 
-enum class ApplicationType
-{
-    None,
-    Game,
-    Editor,
-    App,
-    Server
-};
-
 /// <summary>
 /// 应用程序信息
 /// </summary>
@@ -34,6 +25,15 @@ struct ApplicationInfo
 class Application
 {
 public:
+    enum Type
+    {
+        None,
+        Game,
+        Editor,
+        App,
+        Server
+    };
+public:
     /// <summary>
     /// 默认构造函数
     /// </summary>
@@ -41,26 +41,26 @@ public:
     /// <summary>
     /// 析构函数
     /// </summary>
-    ~Application();
+    virtual ~Application();
 public:
     /// <summary>
     /// 初始化
     /// </summary>
     /// <returns></returns>
-    int32 Init();
+    virtual int32 Init();
     /// <summary>
     /// 执行每一帧的更新逻辑
     /// </summary>
-    void Tick();
+    virtual void Tick();
     /// <summary>
     /// 退出清理
     /// </summary>
-    void Exit();
+    virtual void Exit();
     /// <summary>
     /// 关于应用程序
     /// </summary>
     /// <returns></returns>
-    ApplicationInfo About();
+    virtual ApplicationInfo About();
     /// <summary>
     /// 是否退出
     /// </summary>
@@ -72,7 +72,7 @@ public:
     /// </summary>
     /// <param name="type">应用程序类型</param>
     /// <returns>创建的应用程序实例引用</returns>
-    static Application& Create(ApplicationType type = ApplicationType::None);
+    static Application& Create(Application::Type type = Application::None);
 private:
     // 退出标志
     bool m_isQuit = false;

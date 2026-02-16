@@ -3,11 +3,12 @@
 #include "Application.h"
 
 #include "Module.h"
+#include "GameApplication/GameApplication.h"
 
 static Application* ApplicationInstance = nullptr;
 
 /* static */
-Application& Application::Create(ApplicationType type)
+Application& Application::Create(Application::Type type)
 {
     // 清理旧实例
     if (ApplicationInstance)
@@ -19,16 +20,17 @@ Application& Application::Create(ApplicationType type)
     // 根据类型创建对应的应用程序
     switch (type)
     {
-    case ApplicationType::None:
+    case Type::None :
         ApplicationInstance = new Application();
         break;
-    case ApplicationType::Game:
+    case Type::Game :
+        ApplicationInstance = new GameApplication();
         break;
-    case ApplicationType::Editor:
+    case Type::Editor :
         break;
-    case ApplicationType::App:
+    case Type::App :
         break;
-    case ApplicationType::Server:
+    case Type::Server :
         break;
     }
     return *ApplicationInstance;
@@ -53,7 +55,6 @@ int32 Application::Init()
 
 void Application::Tick()
 {
-    GConsole->Write("Default Application Tick");
     m_isQuit = true;
 }
 
@@ -62,12 +63,13 @@ void Application::Exit()
     GConsole->Write("Default Application Exit");
 }
 
+ApplicationInfo Application::About()
+{
+    return ApplicationInfo();
+}
+
 bool Application::IsQuit() const
 {
     return m_isQuit;
 }
 
-ApplicationInfo Application::About()
-{
-    return ApplicationInfo();
-}
