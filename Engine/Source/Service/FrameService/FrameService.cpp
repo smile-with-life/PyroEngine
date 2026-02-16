@@ -13,16 +13,16 @@ void FrameService::Init()
 
 void FrameService::Tick()
 {   
-    // 获取当前时间
+    // 获取当前时间，当前帧结束时间
     auto currentTime = SteadyClock::Now();
-    // 计算本帧实际耗时
+    // 计算本帧实际耗时（不包含等待时间）
     auto deltaTime = ConvertType<Microseconds>(currentTime - m_lastFrameTime);
     // 判断是否为固定帧率模式
     if (m_mode == FramePacingMode::Fixed)
     {
         // 计算需要等待的时间
         auto waitTime = m_frameTime - deltaTime;
-        if (waitTime > Microseconds(1000))
+        if (waitTime > Microseconds(0))
         {
             // 等待剩余时间，保证一帧总耗时稳定
             Wait(waitTime);
@@ -85,7 +85,19 @@ int32 FrameService::GetCurrentFPS() const
 
 void FrameService::Wait(Microseconds time) const
 {
-    std::this_thread::sleep_for(std::chrono::duration<int64, typename Microseconds::period>(time));
+    
+    //std::this_thread::sleep_for(std::chrono::duration<int64, typename Microseconds::period>(time));
+    auto start = SteadyClock::Now();
+
+    while (1)
+    {
+        auto end = SteadyClock::Now();
+        auto duration = ConvertType<Microseconds>(end - start);
+        if (duration >= time)
+        {
+            break;
+        }
+    }
 }
 
 
