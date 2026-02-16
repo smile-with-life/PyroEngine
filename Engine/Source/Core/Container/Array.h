@@ -1462,7 +1462,7 @@ public:
     /// </summary>
     /// <param name="value">要查找的值</param>
     /// <returns>如果找到返回 true，否则返回 false</returns>
-    constexpr bool Contains(const Type& value)
+    constexpr bool Contains(const Type& value) const
     {
         for (size_type i = 0; i < m_size; ++i)
         {
