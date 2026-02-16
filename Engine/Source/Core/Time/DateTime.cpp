@@ -15,25 +15,6 @@ DateTime DateTime::CurrentUTC()
     return DateTime(now, TimeKind::UTC);
 }
 
-int32 DateTime::Compare(const DateTime& left, const DateTime& right)
-{
-    if (left.m_year != right.m_year) 
-        return left.m_year - right.m_year;
-    if (left.m_month != right.m_month) 
-        return left.m_month - right.m_month;
-    if (left.m_day != right.m_day) 
-        return left.m_day - right.m_day;
-    if (left.m_hour != right.m_hour) 
-        return left.m_hour - right.m_hour;
-    if (left.m_minute != right.m_minute) 
-        return left.m_minute - right.m_minute;
-    if (left.m_second != right.m_second) 
-        return left.m_second - right.m_second;
-    if (left.m_millisecond != right.m_millisecond) 
-        return left.m_millisecond - right.m_millisecond;
-    return 0;
-}
-
 bool DateTime::IsLeapYear(int32 year)
 {
     return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
@@ -221,7 +202,7 @@ int32 DateTime::MilliSecond() const
     return m_millisecond;
 }
 
-String DateTime::ToString()
+String DateTime::ToString() const
 {
     std::string result = std::format("{0}-{1}-{2} {3}:{4}:{5}", m_year, m_month, m_day, m_hour, m_minute, m_second);
     return String(result);
@@ -235,6 +216,11 @@ void DateTime::Swap(DateTime& other) noexcept
     std::swap(m_hour, other.m_hour);
     std::swap(m_minute, other.m_minute);
     std::swap(m_second, other.m_second);
+}
+
+std::ostream& operator<<(std::ostream& os, const DateTime& time)
+{
+    return os << time.ToString();
 }
 
 bool operator==(const DateTime& left, const DateTime& right)

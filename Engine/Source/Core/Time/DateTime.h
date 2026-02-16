@@ -185,13 +185,17 @@ public:
     /// 将当前 DateTime 对象转换为字符串表示
     /// </summary>
     /// <returns>格式为 "YYYY-MM-DD HH:MM:SS.ms" 的字符串</returns>
-    String ToString();
+    String ToString() const;
     /// <summary>
     /// 交换两个 DateTime 对象的内容
     /// </summary>
     /// <param name="other">要交换的另一个 DateTime 对象</param>
     void Swap(DateTime& other) noexcept;
 public:
+    /// <summary>
+    /// 将 DateTime 对象输出到输出流
+    /// </summary>
+    friend std::ostream& operator<<(std::ostream& os, const DateTime& time);
     /// <summary>
     /// 相等运算符
     /// </summary>
