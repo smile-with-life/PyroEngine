@@ -2,11 +2,13 @@
 
 #include "Core.h"
 #include "Console/Console.h"
+#include "Logger/Logger.h"
 
 inline Console* GConsole = nullptr;
-
+inline Logger* GLog = nullptr;
 
 inline void PreInitCoreModule()
 {
     GConsole = &Console::GetInstance();
+    GLog = &Logger::GetInstance();
 }
