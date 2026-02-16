@@ -65,6 +65,15 @@ public:
     template<class Clock, class Period>
     constexpr friend TimePoint<Clock> operator+(const TimePoint<Clock>& left, const Duration<Period>& right);
     /// <summary>
+    /// 时间点 + 时长 = 新的时间点
+    /// </summary>
+    template<class Period>
+    constexpr TimePoint operator+=(const Duration<Period>& right)
+    {
+        m_time += right.m_duration;
+        return *this;
+    }
+    /// <summary>
     /// 时间点 - 时间点 = 时间间隔（纳秒）
     /// </summary>
     template<class Clock>
@@ -74,6 +83,15 @@ public:
     /// </summary>
     template<class Clock, class Period>
     constexpr friend TimePoint operator-(const TimePoint& left, const Duration<Period>& right);
+    /// <summary>
+    /// 时间点 - 时长 = 新的时间点
+    /// </summary>
+    template<class Period>
+    constexpr TimePoint operator-=(const Duration<Period>& right)
+    {
+        m_time -= right.m_duration;
+        return *this;
+    }
     /// <summary>
     /// 相等运算符
     /// </summary>
@@ -134,7 +152,9 @@ private:
 template<class Clock, class Period>
 inline constexpr TimePoint<Clock> operator+(const TimePoint<Clock>& left, const Duration<Period>& right)
 {
-    return TimePoint<Clock>(left.m_time + right.m_duration);
+    TimePoint<Clock> result(left);
+    result += right;
+    return result;
 }
 
 template<class Clock>
@@ -148,5 +168,7 @@ inline constexpr Nanoseconds operator-(const TimePoint<Clock>& left, const TimeP
 template<class Clock, class Period>
 inline constexpr TimePoint<Clock> operator-(const TimePoint<Clock>& left, const Duration<Period>& right)
 {
-    return TimePoint(left.m_time - right.m_duration);
+    TimePoint<Clock> result(left);
+    result -= right;
+    return result;
 }
