@@ -21,6 +21,8 @@ target "Sandbox"
     add_runenvs("PATH","$(projectdir)/Engine/Build/$(os)/$(mode)/Bin")
     -- 设置运行目录
     set_rundir"$(projectdir)/Sandbox"
+    -- 设置运行参数列表
+    set_runargs("-type=Game", "-pause")
     -- 添加头文件
     add_headerfiles{
         "Source/*.h"

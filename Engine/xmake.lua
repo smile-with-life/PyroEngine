@@ -70,7 +70,6 @@ target "Engine"
                 if config.files then
                     for _, file in ipairs(config.files) do
                         target:add("files", path.join(os.scriptdir(), file))
-                        print(file)
                     end
                 end
             end
