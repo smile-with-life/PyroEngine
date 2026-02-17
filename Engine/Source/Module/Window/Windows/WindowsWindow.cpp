@@ -1,9 +1,10 @@
 #include "pch.h"
+
 #include "WindowsWindow.h"
+
 #include "String/Convert.h"
+
 /* static */
-
-
 Window* Window::Create()
 {
     return new WindowsWindow();
@@ -208,6 +209,11 @@ int32 WindowsWindow::GetPositionX() const
 int32 WindowsWindow::GetPositionY() const
 {
     return m_props.PositionY;
+}
+
+uint64 WindowsWindow::GetWindowId() const
+{
+    return m_windowId;
 }
 
 void* WindowsWindow::GetNativeHandle() const

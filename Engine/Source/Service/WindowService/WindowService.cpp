@@ -13,10 +13,9 @@ void WindowService::Tick()
     _ProcessDelayDestroy();
 
     // 处理窗口的消息
-    if (m_mainWindow)
+    if (m_mainWindowId)
     {
-        m_mainWindow->PumpMessage();
-        for (auto& [name, window] : m_subWindows)
+        for (auto& [windowId, window] : m_windows)
         {
             window->PumpMessage();
         }
@@ -26,6 +25,7 @@ void WindowService::Tick()
 void WindowService::Exit()
 {
     DestroyAllWindows();
+    _ProcessDelayDestroy();
 }
 
 bool WindowService::IsSupportDynamicReload()
@@ -33,136 +33,138 @@ bool WindowService::IsSupportDynamicReload()
     return false;
 }
 
-bool WindowService::CreateMainWindow(const WindowProps& props)
+uint64 WindowService::CreateMainWindow(const WindowProps& props)
 {
-    if (!m_mainWindow && !m_delayDestory.Contains("Main"))
+    if (m_mainWindowId) return 0;
+
+    SharedPtr<Window> mainWindow = SharedPtr<Window>(Window::Create(props));
+
+    m_mainWindowId = mainWindow->GetWindowId();
+
+    m_windows[m_mainWindowId] = mainWindow;
+
+    return m_mainWindowId;
+}
+
+uint64 WindowService::CreateSubWindow(const WindowProps& props)
+{
+    if (!m_mainWindowId) return 0;
+
+    SharedPtr<Window> window = SharedPtr<Window>(Window::Create(props));
+
+    uint64 windowId = window->GetWindowId();
+
+    m_windows[windowId] = window;
+
+    return windowId;
+}
+
+bool WindowService::DestroyWindow(uint64 windowId)
+{
+    if (!windowId || !m_windows.Contains(windowId))
+        return false;
+
+    if(!m_delayDestroyIds.Contains(windowId))
     {
-        m_mainWindow = ScopePtr<Window>(Window::Create(props));
+        _DelayDestroy(windowId);
         return true;
     }
     return false;
-}
-
-bool WindowService::DestroyMainWindow()
-{
-    if(m_mainWindow)
-    {
-        _DelayDestroy("Main");
-        return true;
-    }
-    return false;
-}
-
-bool WindowService::CreateSubWindow(const String& name, const WindowProps& props)
-{
-    if (name.IsEmpty()) 
-        return false;
-
-    if (m_subWindows.Contains(name))
-        return false;
-
-    // 创建子窗口
-    auto window = ScopePtr<Window>(Window::Create(props));
-
-    // 添加到管理
-    m_subWindows[name] = std::move(window);
-
-    return true;
-}
-
-bool WindowService::DestroySubWindow(const String& name)
-{
-    if (name.IsEmpty())
-        return false;
-
-    if (m_subWindows.Contains(name))
-    {
-        _DelayDestroy(name);
-        return true;
-    }
-
-    return false;
-}
-
-const Window* WindowService::GetWindow(const String& name)
-{
-    if (!m_delayDestory.Contains(name))
-    {
-        if (name == "Main")
-        {
-            return m_mainWindow.RawPtr();
-        }
-        else
-        {
-            if (m_subWindows.Contains(name))
-            {
-                return m_subWindows[name].RawPtr();
-            }
-        }
-    }
-
-    return nullptr;
-}
-
-int64 WindowService::GetWindowCount() const
-{
-    int64 count = 0;
-
-    // 计算有效的主窗口
-    if (m_mainWindow && !m_delayDestory.Contains("Main"))
-    {
-        count++;
-    }
-
-    // 计算有效的子窗口
-    for (const auto& [name, window] : m_subWindows)
-    {
-        if (!m_delayDestory.Contains(name))
-        {
-            count++;
-        }
-    }
-
-    return count;
 }
 
 void WindowService::DestroyAllWindows()
 {
-    for (const auto& [subName, _] : m_subWindows)
+    for (const auto& [windowId, _] : m_windows)
     {
-        m_delayDestory.Add(subName);
+        m_delayDestroyIds.Add(windowId);
     }
-    m_delayDestory.Add("Main");
 }
 
-void WindowService::_DelayDestroy(const String& name)
+uint64 WindowService::GetMainWindowId() const
 {
-    if (name == "Main")
+    return m_mainWindowId;
+}
+
+Array<uint64> WindowService::GetAllWindowIds() const
+{
+    Array<uint64> windowIds;
+    for (const auto& [windowId, _] : m_windows)
     {
-        for (const auto& [subName, _] : m_subWindows)
-        {
-            m_delayDestory.Add(subName);
-        }
-        m_delayDestory.Add(name);
+        windowIds.Add(windowId);
     }
-    else
+    return windowIds;
+}
+
+WeakPtr<Window> WindowService::GetWindow(uint64 windowId)
+{
+    if (windowId && m_windows.Contains(windowId) &&
+        !m_delayDestroyIds.Contains(windowId))
     {
-        m_delayDestory.Add(name);
+        return m_windows[windowId];
+    }
+    return WeakPtr<Window>();
+}
+
+WeakPtr<Window> WindowService::GetMainWindow()
+{
+    if (m_mainWindowId && !m_delayDestroyIds.Contains(m_mainWindowId))
+    {
+        return m_windows[m_mainWindowId];
+    }
+    return WeakPtr<Window>();
+}
+
+bool WindowService::IsWindowValid(uint64 windowId) const
+{
+    return m_windows.Contains(windowId) && !m_delayDestroyIds.Contains(windowId);
+}
+
+int64 WindowService::GetWindowCount() const
+{
+    // 排除正在销毁的窗口
+    int64 count = 0;
+    for (const auto& [windowId, _] : m_windows)
+    {
+        if (!m_delayDestroyIds.Contains(windowId))
+        {
+            count++;
+        }
+    }
+    return count;
+}
+
+void WindowService::_DelayDestroy(uint64 windowId)
+{
+    if (windowId)
+        return;
+
+    // 添加到延迟销毁队列
+    if (!m_delayDestroyIds.Contains(windowId))
+    {
+        m_delayDestroyIds.Add(windowId);
+    }
+
+    // 如果是主窗口，销毁所有子窗口
+    if (windowId == m_mainWindowId)
+    {
+        // 将除了主窗口之外的所有窗口都标记为销毁
+        for (const auto& [id, window] : m_windows)
+        {
+            if (id != m_mainWindowId && !m_delayDestroyIds.Contains(id))
+            {
+                m_delayDestroyIds.Add(id);
+            }
+        }
     }
 }
 
 void WindowService::_ProcessDelayDestroy()
 {
-    for (const auto& name : m_delayDestory)
+    for (const auto& windowId : m_delayDestroyIds)
     {
-        if (name == "Main")
-        {
-            m_mainWindow = nullptr;
-        }
-        else
-        {
-            m_subWindows.Erase(name);
-        }
+        if (windowId == m_mainWindowId)
+            m_mainWindowId = 0;
+        m_windows.Erase(windowId);
     }
-    m_delayDestory.Clear();
+    m_delayDestroyIds.Clear();
 }

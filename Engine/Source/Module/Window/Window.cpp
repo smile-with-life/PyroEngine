@@ -2,8 +2,11 @@
 
 #include "Window.h"
 
+std::atomic<uint64> Window::GenerateId = 1;
+
 Window::Window(WindowProps props)
     : m_props(props)
+    , m_windowId(GenerateId++)
 {
 
 }
@@ -146,6 +149,11 @@ int32 Window::GetPositionX() const
 int32 Window::GetPositionY() const
 {
     return 0;
+}
+
+uint64 Window::GetWindowId() const
+{
+    return uint64();
 }
 
 void* Window::GetNativeHandle() const

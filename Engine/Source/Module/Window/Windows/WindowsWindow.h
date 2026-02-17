@@ -96,6 +96,9 @@ public:
 	// 获取窗口垂直位置
 	virtual int32 GetPositionY() const override;
 
+    // 获取窗口 ID
+	virtual uint64 GetWindowId() const;
+
 	// 获取与窗口关联的原生操作系统句柄
 	virtual void* GetNativeHandle() const override;
 protected:
