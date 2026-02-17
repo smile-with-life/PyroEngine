@@ -147,6 +147,9 @@ class SharedPtr
 {
 public:
     template<class Type>
+    friend class WeakPtr;
+public:
+    template<class Type>
     struct RefCount
     {
         std::atomic<int32> count = 1;
