@@ -3,10 +3,12 @@
 #include "Core.h"
 #include "Platform.h"
 #include "Service.h"
+#include "Module.h"
 #include "Container/Map.h"
 #include "String/String.h"
 #include "Memory/RAII.h"
 #include "Window/Window.h"
+
 
 /// <summary>
 /// 窗口管理服务类
@@ -51,6 +53,8 @@ public:
     bool IsWindowValid(uint64 windowId) const;
 
     int64 GetWindowCount() const;  
+
+    void OnEvent(Event& event);
 private:
     /// <summary>
     /// 延迟销毁窗口

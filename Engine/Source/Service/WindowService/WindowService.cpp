@@ -4,7 +4,7 @@
 
 void WindowService::Init()
 {
-
+    GEventSystem->Subscribe("WindowCloseEvent", MemberFuncBind(OnEvent));
 }
 
 void WindowService::Tick()
@@ -24,6 +24,7 @@ void WindowService::Tick()
 
 void WindowService::Exit()
 {
+    GEventSystem->Unsubscribe("WindowCloseEvent", MemberFuncBind(WindowService::OnEvent));
     DestroyAllWindows();
     _ProcessDelayDestroy();
 }
@@ -133,9 +134,20 @@ int64 WindowService::GetWindowCount() const
     return count;
 }
 
+void WindowService::OnEvent(Event& event)
+{
+    switch (event.GetType())
+    {
+    case EventType("WindowCloseEvent") :
+        auto& closeEvent = static_cast<WindowCloseEvent&>(event);
+        _DelayDestroy(closeEvent.WindowId);
+        break;
+    }
+}
+
 void WindowService::_DelayDestroy(uint64 windowId)
 {
-    if (windowId)
+    if (!windowId)
         return;
 
     // 添加到延迟销毁队列
@@ -166,5 +178,12 @@ void WindowService::_ProcessDelayDestroy()
             m_mainWindowId = 0;
         m_windows.Erase(windowId);
     }
+
     m_delayDestroyIds.Clear();
+
+    if (!m_mainWindowId)
+    {
+        AppQuitEvent event;
+        GEventSystem->Publish(event);
+    }
 }

@@ -2,6 +2,7 @@
 
 #include "Core.h"
 #include "Application.h"
+#include "EventSystem/Event.h"
 
 class GameApplication : public Application
 {
@@ -33,6 +34,11 @@ public:
     /// </summary>
     /// <returns></returns>
     virtual ApplicationInfo About();
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="event"></param>
+    void OnEvent(Event& event);
 private:
 
 };

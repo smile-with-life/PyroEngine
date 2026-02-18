@@ -3,6 +3,7 @@
 #include "WindowsWindow.h"
 
 #include "String/Convert.h"
+#include "Module.h"
 
 /* static */
 Window* Window::Create()
@@ -308,6 +309,9 @@ LRESULT WindowsWindow::HandleMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM 
     }
     case WM_CLOSE:// 窗口关闭时发送
     {
+        WindowCloseEvent event;
+        event.WindowId = m_windowId;
+        GEventSystem->Publish(event);
         break;
     }
     case WM_NCCALCSIZE:// 计算窗口工作区的大小和位置时发送
