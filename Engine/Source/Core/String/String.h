@@ -636,3 +636,5 @@ private:
     // Unicode 字符数量
     int64 m_count;
 };
+
+using StringView = std::string_view;
