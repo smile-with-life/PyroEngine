@@ -51,6 +51,15 @@ public:
     /// <returns>this</returns>
     Set& operator=(Set&& other) = default;
     /// <summary>
+    /// 构造函数，由 std::set 构造
+    /// </summary>
+    /// <param name="vector">标准库容器</param>
+    constexpr Set(std::set<KeyType, ValueType> set)
+        : m_data(set)
+    {
+
+    }
+    /// <summary>
     /// 迭代器范围构造函数
     /// </summary>
     /// <typeparam name="InputIt">随机访问迭代器类型</typeparam>

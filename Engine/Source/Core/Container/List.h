@@ -51,6 +51,15 @@ public:
     /// <returns>this</returns>
     constexpr List& operator=(List&& other) = default;
     /// <summary>
+    /// 构造函数，由 std::list 构造
+    /// </summary>
+    /// <param name="vector">标准库容器</param>
+    constexpr List(std::list<Type> list)
+        : m_data(list)
+    {
+
+    }
+    /// <summary>
     /// 构造函数，创建指定大小的容器
     /// </summary>
     /// <param name="count">容器初始大小</param>

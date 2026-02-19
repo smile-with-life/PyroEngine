@@ -52,6 +52,15 @@ public:
     /// <returns>this</returns>
     Map& operator=(Map&& other) = default;
     /// <summary>
+    /// 构造函数，由 std::map 构造
+    /// </summary>
+    /// <param name="vector">标准库容器</param>
+    constexpr Map(std::map<KeyType, ValueType> map)
+        : m_data(map)
+    {
+
+    }
+    /// <summary>
     /// 迭代器范围构造函数
     /// </summary>
     /// <typeparam name="InputIt">随机访问迭代器类型</typeparam>

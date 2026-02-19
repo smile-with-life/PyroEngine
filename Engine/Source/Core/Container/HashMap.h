@@ -46,6 +46,15 @@ public:
     /// </summary>
     HashMap& operator=(HashMap&& other) = default;
     /// <summary>
+    /// 构造函数，由 std::unordered_map 构造
+    /// </summary>
+    /// <param name="vector">标准库容器</param>
+    constexpr HashMap(std::unordered_map<KeyType, ValueType> unordered_map)
+        : m_data(unordered_map)
+    {
+
+    }
+    /// <summary>
     /// 指定初始桶数量的构造函数
     /// </summary>
     constexpr explicit HashMap(size_type count)

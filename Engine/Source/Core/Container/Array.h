@@ -392,6 +392,15 @@ public:
         return *this;
     }
     /// <summary>
+    /// 构造函数，由 std::vector 构造
+    /// </summary>
+    /// <param name="vector">标准库容器</param>
+    constexpr Array(std::vector<Type> vector)
+        Array(vector.begin(), vector.end())
+    {
+        
+    }
+    /// <summary>
     /// 构造函数，创建指定大小的容器
     /// </summary>
     /// <param name="count">容器初始大小</param>

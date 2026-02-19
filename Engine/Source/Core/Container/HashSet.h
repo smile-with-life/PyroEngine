@@ -45,6 +45,15 @@ public:
     /// </summary>
     HashSet& operator=(HashSet&& other) = default;
     /// <summary>
+    /// 构造函数，由 std::unordered_set 构造
+    /// </summary>
+    /// <param name="vector">标准库容器</param>
+    constexpr HashSet(std::unordered_set<KeyType> unordered_set)
+        : m_data(unordered_set)
+    {
+
+    }
+    /// <summary>
     /// 指定初始桶数量的构造函数
     /// </summary>
     constexpr explicit HashSet(size_type count)

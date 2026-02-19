@@ -50,6 +50,15 @@ public:
     /// <returns>this</returns>
     Deque& operator=(Deque&& other) = default;
     /// <summary>
+    /// 构造函数，由 std::deque 构造
+    /// </summary>
+    /// <param name="vector">标准库容器</param>
+    constexpr Deque(std::deque<Type> deque)
+        : m_data(deque)
+    {
+
+    }
+    /// <summary>
     /// 构造函数，创建指定大小的容器
     /// </summary>
     /// <param name="count">容器初始大小</param>
