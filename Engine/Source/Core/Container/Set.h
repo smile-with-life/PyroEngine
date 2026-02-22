@@ -54,7 +54,7 @@ public:
     /// 构造函数，由 std::set 构造
     /// </summary>
     /// <param name="vector">标准库容器</param>
-    constexpr Set(std::set<KeyType, ValueType> set)
+    constexpr Set(std::set<KeyType> set)
         : m_data(set)
     {
 
