@@ -396,7 +396,7 @@ public:
     /// </summary>
     /// <param name="vector">标准库容器</param>
     constexpr Array(std::vector<Type> vector)
-        Array(vector.begin(), vector.end())
+        : Array(vector.begin(), vector.end())
     {
         
     }
