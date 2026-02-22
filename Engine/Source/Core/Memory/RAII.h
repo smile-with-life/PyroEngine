@@ -40,6 +40,12 @@ public:
         return *this;
     }
 
+    constexpr ScopePtr(std::nullptr_t) noexcept
+        : m_ptr(nullptr) 
+    {
+
+    }
+
     constexpr explicit ScopePtr(Type* ptr) noexcept
         : m_ptr(ptr)
     {
