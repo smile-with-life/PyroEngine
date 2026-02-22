@@ -6,6 +6,8 @@
 #include "Memory/ByteArray.h"
 
 #include <filesystem>
+#include <format>
+
 
 class String;
 using StringList = Array<String>;
@@ -638,3 +640,20 @@ private:
 };
 
 using StringView = std::string_view;
+
+/// <summary>
+/// 为 String 提供 format 格式化支持
+/// </summary>
+template<>
+struct std::formatter<String> 
+{
+    constexpr auto parse(std::format_parse_context& ctx) 
+    {
+        return ctx.begin(); 
+    }
+
+    auto format(const String& str, std::format_context& ctx) const 
+    {
+        return std::format_to(ctx.out(), "{}", str.ToStdString());
+    }
+};
