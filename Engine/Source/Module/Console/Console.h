@@ -23,6 +23,18 @@ public:
     /// </summary>
     /// <param name="content"></param>
     virtual void Write(const String& text);
+
+    /// <summary>
+    /// 写入格式化内容
+    /// </summary>
+    /// <typeparam name="...Args">格式化参数类型</typeparam>
+    /// <param name="format">格式字符串</param>
+    /// <param name="...args">格式化参数</param>
+    template<class... Args>
+    void Log(std::format_string<Args...> format, Args &&...args)
+    {
+        Write(std::format(format, std::forward<Args>(args)...));
+    }
 public:
     /// <summary>
     /// 获取控制台单例实例
