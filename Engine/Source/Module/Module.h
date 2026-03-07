@@ -6,12 +6,13 @@
 #include "EventSystem/EventSystem.h"
 
 inline Console* GConsole = nullptr;
-inline Logger* GLog = nullptr;
 inline EventSystem* GEventSystem = nullptr;
+inline Logger* GLog = nullptr;
+
 
 inline void PreInitCoreModule()
 {
     GConsole = &Console::GetInstance();
-    GLog = &Logger::GetInstance();
     GEventSystem = &EventSystem::GetInstance();
+    GLog = &Logger::GetInstance();
 }

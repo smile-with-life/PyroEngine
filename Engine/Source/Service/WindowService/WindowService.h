@@ -38,19 +38,19 @@ public:
 
     uint64 CreateSubWindow(const WindowProps& props = WindowProps());
 
-    bool DestroyWindow(uint64 windowId);
+    bool DestroyWindow(WindowId windowId);
 
     void DestroyAllWindows();
 
-    uint64 GetMainWindowId() const;
+    WindowId GetMainWindowId() const;
 
-    Array<uint64> GetAllWindowIds() const;
+    Array<WindowId> GetAllWindowIds() const;
 
-    WeakPtr<Window> GetWindow(uint64 windowId);
+    WeakPtr<Window> GetWindow(WindowId windowId);
 
     WeakPtr<Window> GetMainWindow();
 
-    bool IsWindowValid(uint64 windowId) const;
+    bool IsWindowValid(WindowId windowId) const;
 
     int64 GetWindowCount() const;  
 
@@ -61,14 +61,14 @@ private:
     /// 将窗口标记为待销毁，实际销毁操作在_ProcessDelayDestroy中执行
     /// </summary>
     /// <param name="windowId"></param>
-    void _DelayDestroy(uint64 windowId);
+    void _DelayDestroy(WindowId windowId);
     /// <summary>
     /// 处理延迟销毁的窗口
     /// 在每帧Tick时调用，执行实际的窗口销毁操作
     /// </summary>
     void _ProcessDelayDestroy();
 private:
-    Map<uint64, SharedPtr<Window>> m_windows;
-    uint64 m_mainWindowId = 0;                                               
-    Array<uint64> m_delayDestroyIds;                   
+    Map<WindowId, SharedPtr<Window>> m_windows;
+    WindowId m_mainWindowId = 0;
+    Array<WindowId> m_delayDestroyIds;
 };

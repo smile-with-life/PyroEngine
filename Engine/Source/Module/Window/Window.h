@@ -39,6 +39,8 @@ struct WindowProps
 	bool IsHasMaximizeButton = true;//是否有最大化按钮	
 };
 
+using WindowId = uint64;
+
 //窗口类 
 class Window
 {
@@ -133,7 +135,7 @@ public:
 	virtual int32 GetPositionY() const;
 
 	// 获取窗口 ID
-	virtual uint64 GetWindowId() const;
+	virtual WindowId GetWindowId() const;
 
 	// 获取与窗口关联的原生操作系统句柄
 	virtual void* GetNativeHandle() const;
@@ -144,7 +146,7 @@ public:
 protected:
 	WindowProps m_props;
 
-    uint64 m_windowId = 0;
+	WindowId m_windowId = 0;
 private:
-	static std::atomic<uint64> GenerateId;
+	static std::atomic<WindowId> GenerateId;
 };

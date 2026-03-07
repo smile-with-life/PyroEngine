@@ -60,7 +60,7 @@ uint64 WindowService::CreateSubWindow(const WindowProps& props)
     return windowId;
 }
 
-bool WindowService::DestroyWindow(uint64 windowId)
+bool WindowService::DestroyWindow(WindowId windowId)
 {
     if (!windowId || !m_windows.Contains(windowId))
         return false;
@@ -96,7 +96,7 @@ Array<uint64> WindowService::GetAllWindowIds() const
     return windowIds;
 }
 
-WeakPtr<Window> WindowService::GetWindow(uint64 windowId)
+WeakPtr<Window> WindowService::GetWindow(WindowId windowId)
 {
     if (windowId && m_windows.Contains(windowId) &&
         !m_delayDestroyIds.Contains(windowId))
@@ -115,7 +115,7 @@ WeakPtr<Window> WindowService::GetMainWindow()
     return WeakPtr<Window>();
 }
 
-bool WindowService::IsWindowValid(uint64 windowId) const
+bool WindowService::IsWindowValid(WindowId windowId) const
 {
     return m_windows.Contains(windowId) && !m_delayDestroyIds.Contains(windowId);
 }
@@ -145,7 +145,7 @@ void WindowService::OnEvent(Event& event)
     }
 }
 
-void WindowService::_DelayDestroy(uint64 windowId)
+void WindowService::_DelayDestroy(WindowId windowId)
 {
     if (!windowId)
         return;
