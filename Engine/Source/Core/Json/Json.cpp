@@ -91,6 +91,20 @@ Json& Json::operator=(const JsonString& value) noexcept
     return *this;
 }
 
+Json::Json(const char* value)
+    : m_type(JsonType::String)
+    , m_data(JsonString(value))
+{
+
+}
+
+Json& Json::operator=(const char* value) noexcept
+{
+    m_type = JsonType::String;
+    m_data = JsonString(value);
+    return *this;
+}
+
 Json::Json(const JsonArray& value)
     : m_type(JsonType::Array)
     , m_data(value)
@@ -290,6 +304,16 @@ const Json& Json::operator[](int32 index) const
 }
 
 Json& Json::operator[](const String& key)
+{
+    if (!IsObject())
+    {
+        throw std::runtime_error("JSON type mismatch: expected object");
+    }
+    auto& obj = _GetValue<JsonObject>();
+    return obj[key];
+}
+
+Json& Json::operator[](const char* key)
 {
     if (!IsObject())
     {

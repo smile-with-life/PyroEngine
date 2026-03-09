@@ -66,6 +66,10 @@ public:
 
     Json& operator=(const JsonString& value) noexcept;
 
+    Json(const char* value);
+
+    Json& operator=(const char* value) noexcept;
+
     Json(const JsonArray& value);
 
     Json& operator=(const JsonArray& value) noexcept;
@@ -137,6 +141,8 @@ public:
 
     // 对象访问操作
     Json& operator[](const String& key);
+
+    Json& operator[](const char* key);
 
     friend bool operator==(const Json& left, const Json& right);
 
