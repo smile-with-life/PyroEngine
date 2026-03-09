@@ -68,7 +68,8 @@ bool FileStream::ReadLine(ByteArray& buffer, uint8 delim)
     if (std::getline(m_file, line, static_cast<char>(delim)))
     {
         buffer.Resize(line.size());
-        std::copy(line.begin(), line.end(), buffer.Data());
+        std::copy(line.begin(), line.end(), reinterpret_cast<char*>(buffer.Data()));
+
         return true;
     }
 
