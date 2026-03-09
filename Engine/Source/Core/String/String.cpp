@@ -242,7 +242,7 @@ bool String::Contains(const Char& ch) const
 int64 String::IndexOf(const String& str) const
 {
     // �ж������ַ����Ƿ�Ϊ��
-    if (!str)
+    if (str.IsEmpty())
     {
         return -1;
     }
@@ -276,7 +276,7 @@ int64 String::IndexOf(const Char& ch) const
 int64 String::LastIndexOf(const String& str) const
 {
     // �ж������ַ����Ƿ�Ϊ��
-    if (!str)
+    if (str.IsEmpty())
     {
         return -1;
     }
@@ -1000,9 +1000,9 @@ String::operator const std::string() const
     return m_data;
 }
 
-String::operator bool() const
+String::operator ByteArray() const
 {
-    return !m_data.empty();
+    return ByteArray(reinterpret_cast<const std::byte*>(m_data.c_str()), m_data.size());
 }
 
 Char String::operator[](int64 index)

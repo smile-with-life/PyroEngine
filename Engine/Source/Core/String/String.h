@@ -399,9 +399,9 @@ public:
     /// </summary>
     operator const std::string() const;
     /// <summary>
-    /// 隐式转换为 bool 值，判断字符串是否非空
+    /// 隐式转换为字节数组
     /// </summary>
-    operator bool() const;
+    operator ByteArray() const;
     /// <summary>
     /// 将 String 对象输出到输出流
     /// </summary>
