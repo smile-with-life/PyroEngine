@@ -5,6 +5,7 @@
 #include "Iterator/Iterator.h"
 #include "Diagnosis/Debug.h"
 
+#include <vector>
 #include <utility>
 #include <type_traits>
 #include <limits>
