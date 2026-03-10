@@ -19,6 +19,9 @@ target "Sandbox"
     add_links("Engine")
     -- 添加程序运行时动态库加载路径
     add_runenvs("PATH","$(projectdir)/Engine/Build/$(os)/$(mode)/Bin")
+    local vulkan_sdk = "$(projectdir)/ThirdParty/packages/v/vulkan/1.4.335/Windows"
+    add_runenvs("VULKAN_SDK", vulkan_sdk)
+    add_runenvs("VK_LAYER_PATH", path.join(vulkan_sdk,"Bin"))
     -- 设置运行目录
     set_rundir"$(projectdir)/Sandbox"
     -- 设置运行参数列表

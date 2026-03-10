@@ -23,7 +23,7 @@ Symlink File::CreateSymlink(const String& path) const
     return Symlink(path, m_path);
 }
 
-FileStream File::CreateStream(OpenMode mode) const
+FileStream File::Open(OpenMode mode) const
 {
     return FileStream(m_path, mode);
 }

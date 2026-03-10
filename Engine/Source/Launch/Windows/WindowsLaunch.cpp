@@ -2,14 +2,14 @@
 
 #include "Core.h"
 #include "Platform.h"
+#include "Runtime.h"
 #include "String/String.h"
 #include "String/Convert.h"
 #include "String/TString.h"
-#include "Module/CommandLineArgs/CommandLineArgs.h"
 
 #include <shellapi.h>
 
-extern int32 EngineMain(const CommandLineArgs& cmdArgs);
+extern int32 EngineMain();
 
 /// <summary>
 /// 设置 Windows 环境
@@ -23,7 +23,7 @@ void SetWindowsEnvironment()
 /// <summary>
 /// 解析 Windows 命令行参数
 /// </summary>
-bool ProcessWindowsCommandLine(CommandLineArgs& cmdArgs)
+bool ProcessWindowsCommandLine()
 {
     // 获取完整的命令行字符串
     tchar* cmdLine = GetCommandLineW();
@@ -64,7 +64,7 @@ bool ProcessWindowsCommandLine(CommandLineArgs& cmdArgs)
     char** argv = const_cast<char**>(argPtrs.Data());
 
     // 调用 CommandLineArgs 的 Parse 方法
-    bool result = cmdArgs.Parse(argc, argv);
+    bool result = GCommandLineArgs->Parse(argc, argv);
 
     // 释放 CommandLineToArgvW 分配的内存
     LocalFree(targv);
@@ -75,11 +75,11 @@ bool ProcessWindowsCommandLine(CommandLineArgs& cmdArgs)
 /// <summary>
 /// 处理 SEH 异常的包装函数
 /// </summary>
-int32 EngineMainWrapper(const CommandLineArgs& cmdArgs)
+int32 EngineMainWrapper()
 {
     __try
     {
-        return EngineMain(cmdArgs);
+        return EngineMain();
     }
     __except (EXCEPTION_EXECUTE_HANDLER)
     {
@@ -108,12 +108,11 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     SetWindowsEnvironment();
 
     // 命令行解析
-    CommandLineArgs cmdArgs;
-    ProcessWindowsCommandLine(cmdArgs);   
+    ProcessWindowsCommandLine();   
  
     bool shouldPauseBeforeExit = false;
 
-    if (cmdArgs.HasArg("-pause"))
+    if (GCommandLineArgs->HasArg("-pause"))
     {
         shouldPauseBeforeExit = true;
     }
@@ -123,9 +122,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
     // 根据平台宏选择异常处理方式
 #ifdef PLATFORM_SEH_EXCEPTIONS
-    error = EngineMainWrapper(cmdArgs);
+    error = EngineMainWrapper();
 #else
-    error = EngineMain(cmdArgs);
+    error = EngineMain();
 #endif
     
     // 控制是否在退出前暂停进程

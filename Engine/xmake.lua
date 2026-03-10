@@ -15,13 +15,15 @@ target "Engine"
     add_headerfiles("Source/pch.h")
     -- 添加预编译文件(msvc专用)
     add_files("Source/pch.cpp")
+    -- 添加包
+    add_packages("vulkan")
     -- 添加头文件搜索目录
     add_includedirs {
         "Source",
         "Source/Platform",
         "Source/Core",
+        "Source/Runtime",
         "Source/Module",
-        "Source/Service",
         "Source/Application",
         "Source/Launch"
     }

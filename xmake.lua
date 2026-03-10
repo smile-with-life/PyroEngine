@@ -13,6 +13,11 @@ set_allowedarchs("x64")
 -- 设置代码语言标准：最新
 set_languages "cxxlatest"
 
+-- 添加依赖包仓库
+add_repositories("pyro-repo ThirdParty", { rootdir = os.scriptdir() })
+-- 添加依赖
+add_requires("vulkan", { system = false })
+
 rule("mode.Debug")
     on_config(function(target)      
         if is_mode("Debug") then

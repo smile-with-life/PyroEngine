@@ -371,3 +371,5 @@ Xmake.Custom.items
 /PyroEngine.sln
 /PyroEngine.sln
 .venv
+
+build

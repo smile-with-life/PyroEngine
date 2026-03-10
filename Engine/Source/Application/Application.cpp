@@ -2,7 +2,7 @@
 
 #include "Application.h"
 
-#include "Module.h"
+#include "Runtime.h"
 #include "GameApplication/GameApplication.h"
 
 static Application* ApplicationInstance = nullptr;

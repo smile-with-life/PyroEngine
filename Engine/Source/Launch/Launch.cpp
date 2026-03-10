@@ -1,25 +1,21 @@
 #include "pch.h"
 
 #include "Core.h"
-#include "Module.h"
+#include "Runtime.h"
 #include "Application.h"
-#include "CommandLineArgs/CommandLineArgs.h"
 
 /// <summary>
 /// 
 /// </summary>
 /// <param name="cmdArgs"></param>
 /// <returns></returns>
-int32 EngineMain(const CommandLineArgs& cmdArgs)
+int32 EngineMain()
 {
-    // 加载核心模块
-    PreInitCoreModule();
-
     // 解析命令行参数判断要启动的应用程序类型
     Application::Type type = Application::None;
-    if (cmdArgs.HasArg("-type"))
+    if (GCommandLineArgs->HasArg("-type"))
     {
-        String value = cmdArgs.GetArgValue("-type");
+        String value = GCommandLineArgs->GetArgValue("-type");
         if (value == "Game")
         {
             type = Application::Game;

@@ -2,7 +2,7 @@
 
 #include "Core.h"
 #include "Application.h"
-#include "EventSystem/Event.h"
+#include "Event/Event.h"
 
 class GameApplication : public Application
 {
@@ -39,6 +39,4 @@ public:
     /// </summary>
     /// <param name="event"></param>
     void OnEvent(Event& event);
-private:
-
 };
