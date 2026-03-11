@@ -636,7 +636,7 @@ private:
     // UTF-8 字符串
     std::string m_data;
     // Unicode 字符数量
-    int64 m_count;
+    int64 m_count = 0;
 };
 
 using StringView = std::string_view;

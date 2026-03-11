@@ -64,6 +64,8 @@ public:
     /// </summary>
     /// <returns>当前实际运行的帧率（FPS）</returns>
     int32 GetCurrentFPS() const;
+
+    void GetConfig();
 public:
     /// <summary>
     /// 获取帧率控制服务单例实例

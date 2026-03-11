@@ -9,15 +9,15 @@
 struct ApplicationInfo
 {
     // 应用名称
-    String name;
+    String Name;
     // 版本号
-    String version;
+    String Version;
     // 构建号
-    String buildNumber;
+    String BuildNumber;
     // 开发者
-    String developer;
+    String Developer;
     // 版权信息 
-    String copyright;
+    String Copyright;
 };
 
 /// <summary>
@@ -61,7 +61,7 @@ public:
     /// 关于应用程序
     /// </summary>
     /// <returns></returns>
-    virtual ApplicationInfo About();
+    ApplicationInfo About();
     /// <summary>
     /// 退出应用程序
     /// </summary>

@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "代码规范/C++ 代码标准与规范.md",
+                "file": "入门指南/3.代码递交规范.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "C++ 代码标准与规范"
+              "title": "3.代码递交规范"
             }
           }
         ],
@@ -109,7 +109,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "代码规范/C++ 代码标准与规范.md",
+                "file": "入门指南/3.代码递交规范.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -119,7 +119,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "C++ 代码标准与规范 的反向链接列表"
+              "title": "3.代码递交规范 的反向链接列表"
             }
           },
           {
@@ -185,13 +185,13 @@
   },
   "active": "062944d2c424e870",
   "lastOpenFiles": [
-    "入门指南/3.代码递交规范.md",
-    "入门指南/1.PyroEngine 引擎介绍.md",
-    "代码规范/C++ 代码标准与规范.md",
+    "入门指南/5.版本控制.md",
     "入门指南/7.基本知识.md",
     "入门指南/6.构建配置.md",
+    "代码规范/C++ 代码标准与规范.md",
+    "入门指南/3.代码递交规范.md",
+    "入门指南/1.PyroEngine 引擎介绍.md",
     "代码规范/Python 代码标准与规范.md",
-    "入门指南/5.版本控制.md",
     "attachments/Images/Mavuika_8.png",
     "attachments/Images/Mavuika_7.png",
     "attachments/Images/Mavuika_6.png",

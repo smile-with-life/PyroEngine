@@ -3,6 +3,8 @@
 #include "WindowManager.h"
 
 #include "Runtime.h"
+#include "Event/EventSystem.h"
+#include "ConfigManager/ConfigManager.h"
 
 /* ==================== static ==================== */
 WindowManager& WindowManager::GetInstance()
@@ -15,6 +17,8 @@ WindowManager& WindowManager::GetInstance()
 void WindowManager::Init()
 {
     GEventSystem->Subscribe("WindowCloseEvent", MemberFuncBind(OnEvent));
+
+    GetConfig();
 }
 
 void WindowManager::Tick()
@@ -147,6 +151,31 @@ void WindowManager::OnEvent(Event& event)
         auto& closeEvent = static_cast<WindowCloseEvent&>(event);
         _DelayDestroy(closeEvent.WindowId);
         break;
+    }
+}
+
+void WindowManager::GetConfig()
+{
+    if (GConfigManager->GetValue(".Engine/Engine", "Window"))
+    {
+        WindowProps props;
+        auto config = GConfigManager->GetValue(".Engine/Engine", "Window");
+        if (config["Title"]) props.Title = config["Title"].AsString();
+        if (config["Width"]) props.Width = config["Width"].AsInt();
+        if (config["Height"]) props.Height = config["Height"].AsInt();
+        if (config["PositionX"]) props.PositionX = config["PositionX"].AsInt();
+        if (config["PositionY"]) props.PositionY = config["PositionY"].AsInt();
+        if (config["Opacity"]) props.Opacity = config["Opacity"].AsFloat();
+        if (config["IsVSync"]) props.IsVSync = config["IsVSync"].AsBool();
+        if (config["IsDisplayTaskbar"]) props.IsDisplayTaskbar = config["IsDisplayTaskbar"].AsBool();
+        if (config["IsTopmost"]) props.IsTopmost = config["IsTopmost"].AsBool();
+        if (config["IsVisible"]) props.IsVisible = config["IsVisible"].AsBool();
+        if (config["IsAcceptInput"]) props.IsAcceptInput = config["IsAcceptInput"].AsBool();
+        if (config["IsHasResizeBorder"]) props.IsHasResizeBorder = config["IsHasResizeBorder"].AsBool();
+        if (config["IsSupportDragFile"]) props.IsSupportDragFile = config["IsSupportDragFile"].AsBool();
+        if (config["IsHasTitlebar"]) props.IsHasTitlebar = config["IsHasTitlebar"].AsBool();
+        
+        CreateMainWindow(props);
     }
 }
 

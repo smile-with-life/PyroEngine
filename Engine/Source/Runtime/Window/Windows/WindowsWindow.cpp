@@ -2,8 +2,10 @@
 
 #include "WindowsWindow.h"
 
-#include "String/Convert.h"
 #include "Runtime.h"
+#include "String/Convert.h"
+#include "Event/Event.h"
+#include "Event/EventSystem.h"
 
 /* ==================== static ==================== */
 Window* Window::Create()
@@ -663,20 +665,11 @@ void WindowsWindow::_CreatePlatformWindow()
     if (m_props.IsHasTitlebar)
     {
         WindowStyle |= WS_CAPTION;// 窗口具有标题栏
+        WindowStyle |= WS_SYSMENU;// 窗口的标题栏上有一个窗口菜单
+        WindowStyle |= WS_MINIMIZEBOX;// 窗口具有最小化按钮
+        WindowStyle |= WS_MAXIMIZEBOX;// 窗口具有最大化按钮
     }
 
-    if (m_props.IsHasWindowMenu)
-    {
-        WindowStyle |= WS_SYSMENU;// 窗口的标题栏上有一个窗口菜单
-        if (m_props.IsHasMinimizeButton)
-        {
-            WindowStyle |= WS_MINIMIZEBOX;// 窗口具有最小化按钮
-        }
-        if (m_props.IsHasMaximizeButton)
-        {
-            WindowStyle |= WS_MAXIMIZEBOX;// 窗口具有最大化按钮
-        }
-    }
     auto str = Convert::ToNativeString(m_props.Title);
     // 创建窗口
     m_hWnd = ::CreateWindowExW(WindowExStyle,   // 窗口扩展样式
@@ -691,10 +684,7 @@ void WindowsWindow::_CreatePlatformWindow()
         NULL,                                   // 菜单的句柄
         GWindowsInstance,                       // 应用程序句柄
         this);                                  // 传给窗口过程函数的参数
-    if (!m_props.IsHasCloseButton) // 窗口是否具有关闭按钮
-    {
-        EnableMenuItem(GetSystemMenu(m_hWnd, false), SC_CLOSE, MF_GRAYED);
-    }
+
     // 设置透明度
     SetOpacity(m_props.Opacity);
 

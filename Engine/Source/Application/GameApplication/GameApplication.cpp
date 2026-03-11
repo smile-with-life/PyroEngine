@@ -4,6 +4,11 @@
 
 #include "Runtime.h"
 #include "Json/Json.h"
+#include "FileSystem/FileSystem.h"
+#include "Console/Console.h"
+#include "Event/EventSystem.h"
+#include "Window/WindowManager.h"
+#include "FrameService/FrameService.h"
 
 /* ==================== public ==================== */
 GameApplication::GameApplication()
@@ -25,11 +30,8 @@ int32 GameApplication::Init()
     GEventSystem->Subscribe("AppQuitEvent", MemberFuncBind(GameApplication::OnEvent));
     // 窗口服务初始化
     GWindowManager->Init();
-    GWindowManager->CreateMainWindow();
     // 帧率控制服务初始化
     GFrameService->Init();
-    GFrameService->SetMode(FramePacingMode::Fixed);
-    GFrameService->SetFixedFPS(60);
     
     GConsole->Write("Game Application Init End");
     return 0;
@@ -55,11 +57,6 @@ void GameApplication::Exit()
     GEventSystem->Unsubscribe("AppQuitEvent", MemberFuncBind(OnEvent));
 
     GConsole->Write("Game Application Exit End");
-}
-
-ApplicationInfo GameApplication::About()
-{
-    return ApplicationInfo();
 }
 
 void GameApplication::OnEvent(Event& event)

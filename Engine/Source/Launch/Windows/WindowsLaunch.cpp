@@ -6,6 +6,7 @@
 #include "String/String.h"
 #include "String/Convert.h"
 #include "String/TString.h"
+#include "CommandLineArgs/CommandLineArgs.h"
 
 #include <shellapi.h>
 
@@ -107,11 +108,11 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     // 设置 Windows 环境
     SetWindowsEnvironment();
 
-    // 命令行解析
+    // 将平台命令行参数解析为引擎通用命令行参数
     ProcessWindowsCommandLine();   
  
+    // 解析命令行参数判断是否支持在退出前暂停程序
     bool shouldPauseBeforeExit = false;
-
     if (GCommandLineArgs->HasArg("-pause"))
     {
         shouldPauseBeforeExit = true;

@@ -245,34 +245,9 @@ void Json::Swap(Json& other) noexcept
     std::swap(m_data, other.m_data);
 }
 
-Json::operator JsonBool()
+Json::operator bool() const
 {
-    return _GetValue<JsonInt>();
-}
-
-Json::operator JsonInt()
-{
-    return _GetValue<JsonInt>();
-}
-
-Json::operator JsonFloat()
-{
-    return _GetValue<JsonFloat>();
-}
-
-Json::operator JsonString()
-{
-    return _GetValue<JsonString>();
-}
-
-Json::operator JsonArray()
-{
-    return _GetValue<JsonArray>();
-}
-
-Json::operator JsonObject()
-{
-    return _GetValue<JsonObject>();
+    return !IsNull();
 }
 
 Json& Json::operator[](int32 index)
@@ -313,6 +288,16 @@ Json& Json::operator[](const String& key)
     return obj[key];
 }
 
+const Json& Json::operator[](const String& key) const
+{
+    if (!IsObject())
+    {
+        throw std::runtime_error("JSON type mismatch: expected object");
+    }
+    auto& obj = _GetValue<JsonObject>();
+    return obj.At(key);
+}
+
 Json& Json::operator[](const char* key)
 {
     if (!IsObject())
@@ -321,6 +306,23 @@ Json& Json::operator[](const char* key)
     }
     auto& obj = _GetValue<JsonObject>();
     return obj[key];
+}
+
+const Json& Json::operator[](const char* key) const
+{
+    if (!IsObject())
+    {
+        throw std::runtime_error("JSON type mismatch: expected object");
+    }
+    auto& obj = _GetValue<JsonObject>();
+    if(obj.Contains(key))
+    {
+        return obj.At(key);
+    }
+    else
+    {
+        return Json();
+    }
 }
 
 std::ostream& operator<<(std::ostream& os, const Json& json)
@@ -362,6 +364,42 @@ bool operator==(const Json& left, const Json& right)
 bool operator!=(const Json& left, const Json& right)
 {
     return !(left == right);
+}
+
+bool operator==(const Json& left, std::nullptr_t)
+{
+    if (left.IsNull())
+    {
+        return true;
+    }
+    return false;
+}
+
+bool operator!=(const Json& left, std::nullptr_t)
+{
+    if (left.IsNull())
+    {
+        return false;
+    }
+    return true;
+}
+
+bool operator==(std::nullptr_t, const Json& right)
+{
+    if (right.IsNull())
+    {
+        return true;
+    }
+    return false;
+}
+
+bool operator!=(std::nullptr_t, const Json& right)
+{
+    if (right.IsNull())
+    {
+        return false;
+    }
+    return true;
 }
 
 String Json::_EscapeChar(const String& str) const

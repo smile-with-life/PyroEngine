@@ -1,16 +1,22 @@
 #pragma once
 
 #include "Core.h"
-#include "Console/Console.h"
-#include "Logger/Logger.h"
-#include "CommandLineArgs/CommandLineArgs.h"
-#include "Event/EventSystem.h"
-#include "FrameService/FrameService.h"
-#include "Window/WindowManager.h"
 
-inline CommandLineArgs* GCommandLineArgs = &CommandLineArgs::GetInstance();
-inline Console* GConsole = &Console::GetInstance();
-inline EventSystem* GEventSystem = &EventSystem::GetInstance();
-inline Logger* GLog = &Logger::GetInstance();
-inline FrameService* GFrameService = &FrameService::GetInstance();
-inline WindowManager* GWindowManager = &WindowManager::GetInstance();
+class CommandLineArgs;
+class ConfigManager;
+class Console;
+class EventSystem;
+class Logger;
+class FrameService;
+class WindowManager;
+
+/* ==================== 无依赖的基础服务 ==================== */
+extern CommandLineArgs* const GCommandLineArgs;
+extern ConfigManager* const GConfigManager;
+extern Console* const GConsole;
+extern EventSystem* const GEventSystem;
+extern Logger* const GLog;
+
+/* ==================== 有依赖的基础服务 ==================== */
+extern FrameService* const GFrameService;
+extern WindowManager* const GWindowManager;

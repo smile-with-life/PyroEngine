@@ -112,24 +112,7 @@ public:
 
     void Swap(Json& other) noexcept;
 public:
-    // 隐式转换 bool
-    operator JsonBool();
-
-    // 隐式转换 int32
-    operator JsonInt();
-
-    // 隐式转换 double
-    operator JsonFloat();
-
-    // 隐式转换 string
-    operator JsonString();
-
-    // 隐式转换 array
-    operator JsonArray();
-
-    // 隐式转换 object
-    operator JsonObject();
-
+    operator bool() const;
     // 控制台打印操作
     friend std::ostream& operator<<(std::ostream& os, const Json& json);
 
@@ -142,11 +125,23 @@ public:
     // 对象访问操作
     Json& operator[](const String& key);
 
+    const Json& operator[](const String& key) const;
+
     Json& operator[](const char* key);
+
+    const Json& operator[](const char* key) const;
 
     friend bool operator==(const Json& left, const Json& right);
 
     friend bool operator!=(const Json& left, const Json& right);
+
+    friend bool operator==(const Json& left, std::nullptr_t);
+
+    friend bool operator!=(const Json& left, std::nullptr_t);
+
+    friend bool operator==(std::nullptr_t, const Json& right);
+
+    friend bool operator!=(std::nullptr_t, const Json& right);
 public:
     static Json Parse(const String& jsonString);
 

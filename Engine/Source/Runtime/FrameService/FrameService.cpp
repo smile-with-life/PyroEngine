@@ -3,6 +3,8 @@
 #include "FrameService.h"
 
 #include "Runtime.h"
+#include "Logger/Logger.h"
+#include "ConfigManager/ConfigManager.h"
 
 /* ==================== static ==================== */
 FrameService& FrameService::GetInstance()
@@ -17,6 +19,8 @@ void FrameService::Init()
     m_frameTime = Microseconds(1000000) / m_fixedFPS;
     m_lastFrameTime = SteadyClock::Now();
     m_lastUpdateTime = SteadyClock::Now();
+
+    GetConfig();
 }
 
 void FrameService::Tick()
@@ -84,6 +88,20 @@ void FrameService::SetFixedFPS(int32 fps)
 int32 FrameService::GetCurrentFPS() const
 {
     return m_FPS;
+}
+
+void FrameService::GetConfig()
+{
+    if (GConfigManager->GetValue(".Engine/Engine", "Frame"))
+    {
+        auto config = GConfigManager->GetValue(".Engine/Engine", "Frame");
+        if (config["Mode"])
+        {
+            if (config["Mode"].AsString() == "Fixed") SetMode(FramePacingMode::Fixed);
+            if (config["Mode"].AsString() == "Unlocked") SetMode(FramePacingMode::Unlocked);
+        }
+        if (config["FPS"]) SetFixedFPS(config["FPS"].AsInt());
+    }
 }
 
 /* ==================== private ==================== */

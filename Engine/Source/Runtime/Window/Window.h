@@ -33,10 +33,6 @@ struct WindowProps
 	bool IsHasResizeBorder = true;//是否有可用于调整大小的边框
 	bool IsSupportDragFile = false;//是否支持拖拽文件
 	bool IsHasTitlebar = true;//是否有标题栏
-	bool IsHasWindowMenu = true;// 是否有窗口菜单
-	bool IsHasCloseButton = true;//是否有关闭按钮
-	bool IsHasMinimizeButton = true;//是否有最小化按钮
-	bool IsHasMaximizeButton = true;//是否有最大化按钮	
 };
 
 using WindowId = uint64;

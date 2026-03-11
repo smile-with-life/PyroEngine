@@ -3,6 +3,7 @@
 #include "Core.h"
 #include "Runtime.h"
 #include "Application.h"
+#include "CommandLineArgs/CommandLineArgs.h"
 
 /// <summary>
 /// 

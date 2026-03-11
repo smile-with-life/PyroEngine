@@ -30,11 +30,6 @@ public:
     /// </summary>
     virtual void Exit();
     /// <summary>
-    /// 关于应用程序
-    /// </summary>
-    /// <returns></returns>
-    virtual ApplicationInfo About();
-    /// <summary>
     /// 
     /// </summary>
     /// <param name="event"></param>

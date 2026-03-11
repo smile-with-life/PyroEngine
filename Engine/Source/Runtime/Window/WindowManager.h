@@ -53,6 +53,8 @@ public:
     int64 GetWindowCount() const;  
 
     void OnEvent(Event& event);
+
+    void GetConfig();
 public:
     /// <summary>
     /// 
