@@ -40,3 +40,16 @@ target "Sandbox"
         add_syslinks("kernel32")  -- 链接 Windows API 库
         add_ldflags("/SUBSYSTEM:WINDOWS") -- 指定窗口子系统   
     end
+
+    -- 构建完成后执行拷贝
+    after_build(function(target)
+        -- 定义源目录和目标目录（相对于项目根目录）
+        local config_dir = path.join(os.projectdir(), "Engine/Config")
+        local saved_dir  = path.join(os.scriptdir(), "Config/.Engine")
+
+        -- 确保目标目录存在
+        os.mkdir(saved_dir)
+
+        -- 递归拷贝 Config 下所有文件到 Saved
+        os.cp(path.join(config_dir, "**"), saved_dir)
+    end)
