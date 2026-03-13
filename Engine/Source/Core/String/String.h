@@ -220,20 +220,20 @@ public:
     /// </summary>
     /// <param name="count">要获取的字符数量</param>
     /// <returns>包含左侧 count 个字符的新字符串</returns>
-    String LeftStr(int64 count);
+    String LeftStr(int64 count) const;
     /// <summary>
     /// 返回一个字符串，包含原字符串从 index 位置开始的 count 个字符
     /// </summary>
     /// <param name="index">起始字符索引</param>
     /// <param name="count">要获取的字符数量</param>
     /// <returns>包含指定范围字符的新字符串</returns>
-    String SubStr(int64 index, int64 count);
+    String SubStr(int64 index, int64 count) const;
     /// <summary>
     /// 返回一个字符串，包含原字符串最右侧的 count 个字符
     /// </summary>
     /// <param name="count">要获取的字符数量</param>
     /// <returns>包含右侧 count 个字符的新字符串</returns>
-    String RightStr(int64 count);
+    String RightStr(int64 count) const;
     /// <summary>
     /// 移除字符串左侧的空白字符
     /// </summary>

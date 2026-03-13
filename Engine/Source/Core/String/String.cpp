@@ -449,7 +449,7 @@ String& String::RemianRight(int64 count)
     return *this;
 }
 
-String String::LeftStr(int64 count)
+String String::LeftStr(int64 count) const
 {
     if (count <= 0) return String("");
     if (count >= m_count) return *this;
@@ -462,7 +462,7 @@ String String::LeftStr(int64 count)
     return String("");
 }
 
-String String::SubStr(int64 index, int64 count)
+String String::SubStr(int64 index, int64 count) const
 {
     if (index < 0 || count <= 0 || index >= m_count) {
         return String("");
@@ -482,7 +482,7 @@ String String::SubStr(int64 index, int64 count)
     return String("");
 }
 
-String String::RightStr(int64 count)
+String String::RightStr(int64 count) const
 {
     if (count <= 0) return String("");
     if (count >= m_count) return *this;
