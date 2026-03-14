@@ -81,4 +81,6 @@ public:
 private:
     // 退出标志
     bool m_isQuit = false;
+
+    ApplicationInfo m_info;
 };

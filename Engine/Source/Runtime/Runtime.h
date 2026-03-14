@@ -15,8 +15,8 @@ extern CommandLineArgs* const GCommandLineArgs;
 extern ConfigManager* const GConfigManager;
 extern Console* const GConsole;
 extern EventSystem* const GEventSystem;
-extern Logger* const GLog;
 
 /* ==================== 有依赖的基础服务 ==================== */
+extern Logger* const GLog;
 extern FrameService* const GFrameService;
 extern WindowManager* const GWindowManager;

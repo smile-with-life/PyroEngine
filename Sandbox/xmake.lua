@@ -45,7 +45,7 @@ target "Sandbox"
     after_build(function(target)
         -- 定义源目录和目标目录（相对于项目根目录）
         local config_dir = path.join(os.projectdir(), "Engine/Config")
-        local saved_dir  = path.join(os.scriptdir(), "Config/.Engine")
+        local saved_dir  = path.join(os.scriptdir(), "Config/Engine")
 
         -- 确保目标目录存在
         os.mkdir(saved_dir)

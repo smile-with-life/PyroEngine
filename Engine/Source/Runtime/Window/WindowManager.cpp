@@ -4,7 +4,7 @@
 
 #include "Runtime.h"
 #include "Event/EventSystem.h"
-#include "ConfigManager/ConfigManager.h"
+#include "Config/ConfigManager.h"
 
 /* ==================== static ==================== */
 WindowManager& WindowManager::GetInstance()
@@ -156,24 +156,23 @@ void WindowManager::OnEvent(Event& event)
 
 void WindowManager::GetConfig()
 {
-    if (GConfigManager->GetValue(".Engine/Engine", "Window"))
+    if (GConfigManager->Contains("Window"))
     {
         WindowProps props;
-        auto config = GConfigManager->GetValue(".Engine/Engine", "Window");
-        if (config["Title"]) props.Title = config["Title"].AsString();
-        if (config["Width"]) props.Width = config["Width"].AsInt();
-        if (config["Height"]) props.Height = config["Height"].AsInt();
-        if (config["PositionX"]) props.PositionX = config["PositionX"].AsInt();
-        if (config["PositionY"]) props.PositionY = config["PositionY"].AsInt();
-        if (config["Opacity"]) props.Opacity = config["Opacity"].AsFloat();
-        if (config["IsVSync"]) props.IsVSync = config["IsVSync"].AsBool();
-        if (config["IsDisplayTaskbar"]) props.IsDisplayTaskbar = config["IsDisplayTaskbar"].AsBool();
-        if (config["IsTopmost"]) props.IsTopmost = config["IsTopmost"].AsBool();
-        if (config["IsVisible"]) props.IsVisible = config["IsVisible"].AsBool();
-        if (config["IsAcceptInput"]) props.IsAcceptInput = config["IsAcceptInput"].AsBool();
-        if (config["IsHasResizeBorder"]) props.IsHasResizeBorder = config["IsHasResizeBorder"].AsBool();
-        if (config["IsSupportDragFile"]) props.IsSupportDragFile = config["IsSupportDragFile"].AsBool();
-        if (config["IsHasTitlebar"]) props.IsHasTitlebar = config["IsHasTitlebar"].AsBool();
+        auto config = GConfigManager->GetConfig("Window");
+        config.GetValue("this->Title", props.Title);
+        config.GetValue("this->Width", props.Width);
+        config.GetValue("this->Height", props.Height);
+        config.GetValue("this->PositionX", props.PositionX);
+        config.GetValue("this->PositionY", props.PositionY);
+        config.GetValue("this->Opacity", props.Opacity);
+        config.GetValue("this->IsVSync", props.IsVSync);
+        config.GetValue("this->IsDisplayTaskbar", props.IsDisplayTaskbar);
+        config.GetValue("this->IsTopmost", props.IsTopmost);
+        config.GetValue("this->IsAcceptInput", props.IsAcceptInput);
+        config.GetValue("this->IsHasResizeBorder", props.IsHasResizeBorder);
+        config.GetValue("this->IsSupportDragFile", props.IsSupportDragFile);
+        config.GetValue("this->IsHasTitlebar", props.IsHasTitlebar);
         
         CreateMainWindow(props);
     }

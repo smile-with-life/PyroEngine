@@ -3,7 +3,7 @@
 #include "Runtime.h"
 
 #include "CommandLineArgs/CommandLineArgs.h"
-#include "ConfigManager/ConfigManager.h"
+#include "Config/ConfigManager.h"
 #include "Console/Console.h"
 #include "Event/EventSystem.h"
 #include "Logger/Logger.h"

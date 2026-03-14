@@ -5,7 +5,7 @@
 #include "Runtime.h"
 #include "GameApplication/GameApplication.h"
 #include "Console/Console.h"
-#include "ConfigManager/ConfigManager.h"
+#include "Config/ConfigManager.h"
 
 static Application* ApplicationInstance = nullptr;
 
@@ -68,13 +68,14 @@ void Application::Exit()
 ApplicationInfo Application::About()
 {
     ApplicationInfo info;
-    if (GConfigManager->HasConfig("ApplicationInfo"))
+    if (GConfigManager->Contains("AppInfo"))
     {
-        info.Name = GConfigManager->GetValue("ApplicationInfo", "Name").AsString();
-        info.Version = GConfigManager->GetValue("ApplicationInfo", "Version").AsString();
-        info.BuildNumber = GConfigManager->GetValue("ApplicationInfo", "BuildNumber").AsString();
-        info.Developer = GConfigManager->GetValue("ApplicationInfo", "Developer").AsString();
-        info.Copyright = GConfigManager->GetValue("ApplicationInfo", "Copyright").AsString();
+        auto config = GConfigManager->GetConfig("AppInfo");
+        config.GetValue("this->Name", m_info.Name);
+        config.GetValue("this->Version", m_info.Version);
+        config.GetValue("this->BuildNumber", m_info.BuildNumber);
+        config.GetValue("this->Developer", m_info.Developer);
+        config.GetValue("this->Copyright", m_info.Copyright);
     }
 
     return info;

@@ -4,7 +4,7 @@
 
 #include "Runtime.h"
 #include "Logger/Logger.h"
-#include "ConfigManager/ConfigManager.h"
+#include "Config/ConfigManager.h"
 
 /* ==================== static ==================== */
 FrameService& FrameService::GetInstance()
@@ -92,15 +92,19 @@ int32 FrameService::GetCurrentFPS() const
 
 void FrameService::GetConfig()
 {
-    if (GConfigManager->GetValue(".Engine/Engine", "Frame"))
+    if (GConfigManager->Contains("Frame"))
     {
-        auto config = GConfigManager->GetValue(".Engine/Engine", "Frame");
-        if (config["Mode"])
+        auto config = GConfigManager->GetConfig("Frame");
+
+        String mode;
+        if (config.GetValue("this->Mode", mode))
         {
-            if (config["Mode"].AsString() == "Fixed") SetMode(FramePacingMode::Fixed);
-            if (config["Mode"].AsString() == "Unlocked") SetMode(FramePacingMode::Unlocked);
+            if (mode == "Fixed") SetMode(FramePacingMode::Fixed);
+            if (mode == "Unlocked") SetMode(FramePacingMode::Unlocked);
         }
-        if (config["FPS"]) SetFixedFPS(config["FPS"].AsInt());
+        int32 fps = 0;
+        config.GetValueOrDefault("this->FPS", fps, 30);
+        SetFixedFPS(fps);
     }
 }
 
