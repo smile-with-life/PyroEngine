@@ -45,6 +45,7 @@ bool FileStream::Read(ByteArray& buffer, uint64 size)
     if (!m_file.is_open() || !m_file.good())
         return false;
 
+    buffer.Clear();
     buffer.Resize(size);
     m_file.read(reinterpret_cast<char*>(buffer.Data()), static_cast<std::streamsize>(size));
 
@@ -64,6 +65,7 @@ bool FileStream::ReadLine(ByteArray& buffer, uint8 delim)
     if (!m_file.is_open() || !m_file.good())
         return false;
 
+    buffer.Clear();
     std::string line;
     if (std::getline(m_file, line, static_cast<char>(delim)))
     {
@@ -81,6 +83,7 @@ bool FileStream::ReadAll(ByteArray& buffer)
     if (!m_file.is_open() || !m_file.good())
         return false;
 
+    buffer.Clear();
     // 保存当前位置
     std::streampos currentPos = m_file.tellg();
 
