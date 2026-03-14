@@ -182,6 +182,8 @@ String::String(const ByteArray& buffer)
         if (buffer[i] == (std::byte)'\0') break;
         m_data.push_back((char)buffer[i]);
     }
+
+    m_count = _CalcCharCount(m_data);
 }
 
 String& String::operator=(const ByteArray& buffer)
@@ -193,6 +195,7 @@ String& String::operator=(const ByteArray& buffer)
         if (buffer[i] == (std::byte)'\0') break;
         m_data.push_back((char)buffer[i]);
     }
+    m_count = _CalcCharCount(m_data);
     return *this;
 }
 
