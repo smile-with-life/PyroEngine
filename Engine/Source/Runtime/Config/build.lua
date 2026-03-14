@@ -1,10 +1,10 @@
 function config()
     local config = {
         headers = {
-            "Source/Runtime/ConfigManager/*.h"
+            "Source/Runtime/Config/*.h"
         },
         files = {
-            "Source/Runtime/ConfigManager/*.cpp"
+            "Source/Runtime/Config/*.cpp"
         }
     }
     return config
