@@ -8,22 +8,22 @@
 /* ==================== FileSystem ==================== */
 String FileSystem::AbsolutePath(const String& path)
 {
-    return String(std::filesystem::absolute(path).string());
+    return String(std::filesystem::absolute(path).generic_string());
 }
 
 String FileSystem::ParentPath(const String& path)
 {
-    return String(std::filesystem::path(std::filesystem::absolute(path)).parent_path().string());
+    return String(std::filesystem::path(std::filesystem::absolute(path)).parent_path().generic_string());
 }
 
 String FileSystem::RootPath(const String& path)
 {
-    return String(std::filesystem::absolute(path).root_path().string());
+    return String(std::filesystem::absolute(path).root_path().generic_string());
 }
 
 String FileSystem::FileName(const String& path)
 {
-    return String(std::filesystem::path(path).filename().string());
+    return String(std::filesystem::path(path).filename().generic_string());
 }
 
 FileError FileSystem::Copy(const String& filePath, const String& newPath, FileOption option)
@@ -188,7 +188,7 @@ FileError FileSystem::CreateDirectory(const String& path)
 
 String FileSystem::CurrentPath()
 {
-    return String(std::filesystem::current_path().string());
+    return String(std::filesystem::current_path().generic_string());
 }
 
 bool FileSystem::SetCurrentPath(const String& path)
