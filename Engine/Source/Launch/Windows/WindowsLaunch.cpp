@@ -7,10 +7,36 @@
 #include "String/Convert.h"
 #include "String/TString.h"
 #include "CommandLineArgs/CommandLineArgs.h"
+#include "Logger/Logger.h"
 
 #include <shellapi.h>
 
 extern int32 EngineMain();
+
+// 显卡切换策略
+// 在拥有双显卡（如集成+独立）的笔记本电脑上，引导系统使用高性能的 NVIDIA 或 AMD 独立显卡来运行本程序
+extern "C" { _declspec(dllexport) uint32 NvOptimusEnablement = 0x00000001; }
+extern "C" { _declspec(dllexport) uint32 AmdPowerXpressRequestHighPerformance = 0x00000001; }
+
+/// <summary>
+/// CRT 参数校验错误处理函数
+/// </summary>
+/// <param name="Expression">触发非法的表达式</param>
+/// <param name="Function">出错的函数名</param>
+/// <param name="File">出错的文件名</param>
+/// <param name="Line">出错的行号</param>
+/// <param name="Reserved">保留参数（不使用）</param>
+void InvalidParamHandler(const tchar* Expression, const tchar* Function, const tchar* File, uint32 Line, uintptr_t Reserved)
+{
+    String expression = Convert::ToString(TString(Expression));
+    String function = Convert::ToString(TString(Function));
+    String file = Convert::ToString(TString(File));
+    GLog->Fatal("\nCRT: Invalid Param:\n -Expression: {}\n -Function: {}\n -File: {}\n -Line: {}",
+        expression.IsEmpty() ? "Unknown" : expression,
+        function.IsEmpty() ? "Unknown" : function,
+        file.IsEmpty() ? "Unknown" : file,
+        Line);
+}
 
 /// <summary>
 /// 设置 Windows 环境
@@ -18,7 +44,20 @@ extern int32 EngineMain();
 /// </summary>
 void SetWindowsEnvironment()
 {
+    // 所有 CRT（C 运行时）的参数错误、非法调用，都执行自定义的回调函数
+    // 而不是弹出系统默认的“应用程序已停止工作”弹窗
+    _set_invalid_parameter_handler(InvalidParamHandler);
 
+    // 判断是否启用调试功能
+    if (GIsDebugMode)
+    {
+        // 关闭 CRT 断言的弹窗，直接输出到日志
+        _CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_DEBUG);
+
+        // 关闭 CRT 调试模式下的“内存填充”机制（默认会把释放的内存填 0xFD 等）
+        // @ 注释-不知道会不会用到
+        // _CrtSetDebugFillThreshold(0);
+    }
 }
 
 /// <summary>
