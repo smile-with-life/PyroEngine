@@ -10,9 +10,15 @@
 #include <type_traits>
 #include <limits>
 
+template <typename Type>
+class ArrayConstIterator;
+
 template <class Type>
 class ArrayIterator
 {
+public:
+    template <typename Type>
+    friend class ArrayConstIterator;
 public:
     using iterator_concept = ContiguousIteratorTag;
     using iterator_category = RandomAccessIteratorTag;
@@ -146,6 +152,9 @@ template <class Type>
 class ArrayConstIterator
 {
 public:
+    template <typename Type>
+    friend class ArrayIterator;
+public:
     using iterator_concept = ContiguousIteratorTag;
     using iterator_category = RandomAccessIteratorTag;
     using difference_type = ptrdiff;
@@ -154,6 +163,12 @@ public:
 public:
     constexpr ArrayConstIterator() noexcept
         : m_ptr()
+    {
+
+    }
+
+    constexpr ArrayConstIterator(const ArrayIterator<Type>& other) noexcept
+        : m_ptr(other.m_ptr)
     {
 
     }
