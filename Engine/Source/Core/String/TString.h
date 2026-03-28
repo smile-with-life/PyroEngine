@@ -66,12 +66,8 @@ public:
     /// 判断是否为空字符串
     /// </summary>
     /// <returns></returns>
-    bool IsEmpty() const;
+    bool IsEmpty() const; 
 public:
-    /// <summary>
-    /// 隐式转换问 bool 值
-    /// </summary>
-    operator bool() const;
     /// <summary>
     /// 隐式转换问 const tchar* 值
     /// </summary>

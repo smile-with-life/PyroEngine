@@ -82,11 +82,6 @@ bool TString::IsEmpty() const
     return Length() == 0;
 }
 
-TString::operator bool() const
-{
-    return !IsEmpty();
-}
-
 TString::operator const tchar* () const
 {
     return m_data.Data();
