@@ -1,8 +1,43 @@
 #pragma once
 
 #include "Core.h"
+#include "Runtime.h"
 #include "Application.h"
 #include "Event/Event.h"
+#include "Input/InputSystem.h"
+#include "Console/Console.h"
+#include "Window/Window.h"
+#include "Function/Render/RenderTest.h"
+
+class TestInputHandler : public IGenericInputHandler
+{
+public:
+    TestInputHandler() = default;
+
+    virtual ~TestInputHandler() = default;
+
+    TestInputHandler(uint32 priority)
+        : m_priority(priority)
+    {
+
+    }
+public:
+    virtual bool HandleInput(const InputData& input) override
+    {
+        if (input.Type == InputType::Keyboard)
+        {
+            GConsole->Log("Input Type: [Keyboard] Input Data: [{}]", (int32)std::get<KeyInput>(input.Data).Code);
+        }
+        return true;
+    }
+
+    virtual uint32 GetPriority() const override
+    {
+        return m_priority;
+    }
+private:
+    uint32 m_priority = 0;
+};
 
 class GameApplication : public Application
 {
@@ -30,8 +65,21 @@ public:
     /// </summary>
     virtual void Exit();
     /// <summary>
-    /// 
+    /// 创建主窗口
+    /// </summary>
+    virtual void CreateMainWindow();
+    /// <summary>
+    /// 事件处理函数
     /// </summary>
     /// <param name="event"></param>
-    void OnEvent(Event& event);
+    virtual void OnEvent(Event& event);
+    /// <summary>
+    /// 处理窗口关闭事件
+    /// </summary>
+    /// <param name="event"></param>
+    virtual void OnAppQuitEvent(AppQuitEvent& event);
+private:
+    TestInputHandler m_handler = {};
+
+    WindowId m_mainWindowId = 0;
 };

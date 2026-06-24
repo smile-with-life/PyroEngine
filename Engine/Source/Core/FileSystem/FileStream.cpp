@@ -214,3 +214,13 @@ bool FileStream::IsValid() const
 
     return m_file.good();
 }
+
+void operator<<(ByteArray& buffer, FileStream& stream)
+{
+    stream.ReadAll(buffer);
+}
+
+void operator>>(ByteArray& buffer, FileStream& stream)
+{
+    stream.WriteAll(buffer);
+}

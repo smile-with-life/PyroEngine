@@ -9,7 +9,7 @@ Config::Config(const Json& json)
 
 }
 
-bool Config::GetValue(const String& expression, int32& value)
+bool Config::GetValue(const String& expression, int32& value) const
 {
     if (_ParseExpression(expression))
     {
@@ -27,7 +27,7 @@ bool Config::GetValue(const String& expression, int32& value)
     }
 }
 
-bool Config::GetValue(const String& expression, int64& value)
+bool Config::GetValue(const String& expression, int64& value) const
 {
     if (_ParseExpression(expression))
     {
@@ -45,7 +45,7 @@ bool Config::GetValue(const String& expression, int64& value)
     }
 }
 
-bool Config::GetValue(const String& expression, float& value)
+bool Config::GetValue(const String& expression, float& value) const
 {
     if (_ParseExpression(expression))
     {
@@ -63,7 +63,7 @@ bool Config::GetValue(const String& expression, float& value)
     }
 }
 
-bool Config::GetValue(const String& expression, double& value)
+bool Config::GetValue(const String& expression, double& value) const
 {
     if (_ParseExpression(expression))
     {
@@ -81,7 +81,7 @@ bool Config::GetValue(const String& expression, double& value)
     }
 }
 
-bool Config::GetValue(const String& expression, bool& value)
+bool Config::GetValue(const String& expression, bool& value) const
 {
     if (_ParseExpression(expression))
     {
@@ -99,7 +99,7 @@ bool Config::GetValue(const String& expression, bool& value)
     }
 }
 
-bool Config::GetValue(const String& expression, String& value)
+bool Config::GetValue(const String& expression, String& value) const
 {
     if (_ParseExpression(expression))
     {
@@ -117,7 +117,25 @@ bool Config::GetValue(const String& expression, String& value)
     }
 }
 
-void Config::GetValueOrDefault(const String& expression, int32& value, int32 defaultValue)
+bool Config::GetValue(const String& expression, Config& value) const
+{
+    if (_ParseExpression(expression))
+    {
+        const Json* target = _Navigate();
+        if (target && target->IsObject())
+        {
+            value = Config(*target);
+            return true;
+        }
+        return false;
+    }
+    else
+    {
+        throw std::runtime_error("Config Expression Format Error!");
+    }
+}
+
+void Config::GetValueOrDefault(const String& expression, int32& value, int32 defaultValue) const
 {
     if (!GetValue(expression, value))
     {
@@ -125,7 +143,7 @@ void Config::GetValueOrDefault(const String& expression, int32& value, int32 def
     }
 }
 
-void Config::GetValueOrDefault(const String& expression, int64& value, int64 defaultValue)
+void Config::GetValueOrDefault(const String& expression, int64& value, int64 defaultValue) const
 {
     if (!GetValue(expression, value))
     {
@@ -133,7 +151,7 @@ void Config::GetValueOrDefault(const String& expression, int64& value, int64 def
     }
 }
 
-void Config::GetValueOrDefault(const String& expression, float& value, float defaultValue)
+void Config::GetValueOrDefault(const String& expression, float& value, float defaultValue) const
 {
     if (!GetValue(expression, value))
     {
@@ -141,7 +159,7 @@ void Config::GetValueOrDefault(const String& expression, float& value, float def
     }
 }
 
-void Config::GetValueOrDefault(const String& expression, double& value, double defaultValue)
+void Config::GetValueOrDefault(const String& expression, double& value, double defaultValue) const
 {
     if (!GetValue(expression, value))
     {
@@ -149,7 +167,7 @@ void Config::GetValueOrDefault(const String& expression, double& value, double d
     }
 }
 
-void Config::GetValueOrDefault(const String& expression, bool& value, bool defaultValue)
+void Config::GetValueOrDefault(const String& expression, bool& value, bool defaultValue) const
 {
     if (!GetValue(expression, value))
     {
@@ -157,11 +175,162 @@ void Config::GetValueOrDefault(const String& expression, bool& value, bool defau
     }
 }
 
-void Config::GetValueOrDefault(const String& expression, String& value, String defaultValue)
+void Config::GetValueOrDefault(const String& expression, String& value, String defaultValue) const
 {
     if (!GetValue(expression, value))
     {
         value = defaultValue;
+    }
+}
+
+void Config::GetValueOrDefault(const String& expression, Config& value, Config defaultValue) const
+{
+    if (!GetValue(expression, value))
+    {
+        value = defaultValue;
+    }
+}
+
+void Config::GetArray(const String& expression, Array<int32>& array) const
+{
+    array.Clear();
+    if (!_ParseExpression(expression)) 
+    {
+        throw std::runtime_error("Config Expression Format Error!");
+    }
+
+    const Json* target = _Navigate();
+    if (!target || !target->IsArray()) return;
+
+    for (int64 i = 0; i < target->Size(); ++i) 
+    {
+        const Json& item = (*target)[i];
+        if (item.IsInt()) {
+            array.Add(item.AsInt());
+        }
+    }
+}
+
+void Config::GetArray(const String& expression, Array<int64>& array) const
+{
+    array.Clear();
+    if (!_ParseExpression(expression)) 
+    {
+        throw std::runtime_error("Config Expression Format Error!");
+    }
+
+    const Json* target = _Navigate();
+    if (!target || !target->IsArray()) return;
+
+    for (int64 i = 0; i < target->Size(); ++i)
+    {
+        const Json& item = (*target)[i];
+        if (item.IsInt()) {
+            array.Add(item.AsInt());
+        }
+    }
+}
+
+void Config::GetArray(const String& expression, Array<float>& array) const
+{
+    array.Clear();
+    if (!_ParseExpression(expression)) 
+    {
+        throw std::runtime_error("Config Expression Format Error!");
+    }
+
+    const Json* target = _Navigate();
+    if (!target || !target->IsArray()) return;
+
+    for (int64 i = 0; i < target->Size(); ++i) 
+    {
+        const Json& item = (*target)[i];
+        if (item.IsFloat()) 
+        {
+            array.Add(item.AsFloat());
+        }
+    }
+}
+
+void Config::GetArray(const String& expression, Array<double>& array) const
+{
+    array.Clear();
+    if (!_ParseExpression(expression)) 
+    {
+        throw std::runtime_error("Config Expression Format Error!");
+    }
+
+    const Json* target = _Navigate();
+    if (!target || !target->IsArray()) return;
+
+    for (int64 i = 0; i < target->Size(); ++i) 
+    {
+        const Json& item = (*target)[i];
+        if (item.IsFloat()) 
+        {
+            array.Add(item.AsFloat());
+        }
+    }
+}
+
+void Config::GetArray(const String& expression, Array<bool>& array) const
+{
+    array.Clear();
+    if (!_ParseExpression(expression)) 
+    {
+        throw std::runtime_error("Config Expression Format Error!");
+    }
+
+    const Json* target = _Navigate();
+    if (!target || !target->IsArray()) return;
+
+    for (int64 i = 0; i < target->Size(); ++i) 
+    {
+        const Json& item = (*target)[i];
+        if (item.IsBool()) 
+        {
+            array.Add(item.AsBool());
+        }
+    }
+}
+
+void Config::GetArray(const String& expression, Array<String>& array) const
+{
+    array.Clear();
+    if (!_ParseExpression(expression)) 
+    {
+        throw std::runtime_error("Config Expression Format Error!");
+    }
+
+    const Json* target = _Navigate();
+    if (!target || !target->IsArray()) return;
+
+    for (size_t i = 0; i < target->Size(); ++i) 
+    {
+        const Json& item = (*target)[i];
+        if (item.IsString()) {
+            array.Add(item.AsString());
+        }
+    }
+}
+
+void Config::GetArray(const String& expression, Array<Config>& array) const
+{
+    array.Clear();
+    if (!_ParseExpression(expression))
+    {
+        throw std::runtime_error("Config Expression Format Error!");
+    }
+
+    const Json* target = _Navigate();
+    if (!target || !target->IsArray()) return;
+
+    for (size_t i = 0; i < target->Size(); ++i)
+    {
+        const Json& item = (*target)[i];
+        if (item.IsObject()) {
+            array.Add(Config(item.AsObject()));
+        }
     }
 }
 
@@ -171,7 +340,7 @@ bool Config::IsValid() const
 }
 
 /* ==================== private ==================== */
-bool Config::_ParseExpression(const String& expression)
+bool Config::_ParseExpression(const String& expression) const
 {
     m_steps.clear();
     if (expression == "this")

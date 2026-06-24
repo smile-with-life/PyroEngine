@@ -12,19 +12,45 @@ class Spin
 {
 public:
     Spin() noexcept = default;
+
     ~Spin() = default;
 
-    Spin(const Spin&) = delete;
-    Spin& operator=(const Spin&) = delete;
+    Spin(const Spin& other) = delete;
 
+    Spin& operator=(const Spin& other) = delete;
+
+    Spin(Spin&& other) noexcept = delete;
+
+    Spin& operator=(Spin&& other) noexcept = delete;  
+public:
     void Lock()
     {
         while (m_flag.test_and_set());
     }
 
+    bool TryLock()
+    {
+        return !m_flag.test_and_set();
+    }
+
     void Unlock()
     {
         m_flag.clear();
+    }
+public:
+    void lock()
+    {
+        Lock();
+    }
+
+    bool try_lock()
+    {
+        return TryLock();
+    }
+
+    void unlock()
+    {
+        Unlock();
     }
 private:
     std::atomic_flag m_flag;
@@ -37,11 +63,17 @@ class Mutex
 {
 public:
     Mutex() noexcept = default;
+
     ~Mutex() = default;
 
-    Mutex(const Mutex&) = delete;
-    Mutex& operator=(const Mutex&) = delete;
+    Mutex(const Mutex& other) = delete;
 
+    Mutex& operator=(const Mutex& other) = delete;
+
+    Mutex(Mutex&& other) noexcept = delete;
+
+    Mutex& operator=(Mutex&& other) noexcept = delete;
+public:
     void Lock()
     {
         m_mutex.lock();
@@ -56,6 +88,21 @@ public:
     {
         m_mutex.unlock();
     }
+public:
+    void lock()
+    {
+        Lock();
+    }
+
+    bool try_lock()
+    {
+        return TryLock();
+    }
+
+    void unlock()
+    {
+        Unlock();
+    }
 private:
     std::mutex m_mutex;
 };
@@ -67,11 +114,17 @@ class RWMutex
 {
 public:
     RWMutex() noexcept = default;
+
     ~RWMutex() = default;
 
     RWMutex(const RWMutex&) = delete;
+
     RWMutex& operator=(const RWMutex&) = delete;
 
+    RWMutex(RWMutex&& other) noexcept = delete;
+
+    RWMutex& operator=(RWMutex&& other) noexcept = delete;
+public:
     void LockRead()
     {
         m_mutex.lock_shared();
@@ -101,6 +154,36 @@ public:
     {
         m_mutex.unlock();
     }
+public:
+    void lock_shared()
+    {
+        LockRead();
+    }
+
+    bool try_lock_shared()
+    {
+        return TryLockRead();
+    }
+
+    void unlock_shared()
+    {
+        UnlockRead();
+    }
+
+    void lock()
+    {
+        LockWrite();
+    }
+
+    bool try_lock()
+    {
+        return TryLockWrite();
+    }
+
+    void unlock()
+    {
+        UnlockWrite();
+    }
 private:
     std::shared_mutex m_mutex;
 };
@@ -114,7 +197,6 @@ enum class LockStrategy
     DeferLock,      // 不获得Mutex的所有权
     TryToLock,      // 尝试获得Mutex的所有权而不阻塞
     AdoptLock       // 领养调用方线程已拥有Mutex的所有权
-
 };
 
 /// <summary>
@@ -136,6 +218,7 @@ public:
     }
 
     MutexLock(const MutexLock& other) = delete;
+
     MutexLock& operator=(const MutexLock& other) = delete;
 
     MutexLock(MutexLock&& other) noexcept
@@ -192,12 +275,6 @@ public:
         }// switch
     }
 public:
-    void Swap(MutexLock& other) noexcept
-    {
-        std::swap(m_mutex, other.m_mutex);
-        std::swap(m_ownFlag, other.m_ownFlag);
-    }
-
     void Lock()
     {
         if (!m_mutex)
@@ -209,7 +286,7 @@ public:
         {
             throw std::system_error(std::make_error_code(std::errc::resource_deadlock_would_occur), "Resource deadlock would occur");
         }
-        m_mutex->lock();
+        m_mutex->Lock();
         m_ownFlag = true;
     }
 
@@ -224,7 +301,7 @@ public:
         {
             throw std::system_error(std::make_error_code(std::errc::resource_deadlock_would_occur), "Resource deadlock would occur");
         }
-        m_ownFlag = m_mutex->tryLock();
+        m_ownFlag = m_mutex->TryLock();
         return m_ownFlag;
     }
 
@@ -237,6 +314,27 @@ public:
 
         m_mutex->Unlock();
         m_ownFlag = false;
+    }
+
+    void Swap(MutexLock& other) noexcept
+    {
+        std::swap(m_mutex, other.m_mutex);
+        std::swap(m_ownFlag, other.m_ownFlag);
+    }
+public:
+    void lock()
+    {
+        Lock();
+    }
+
+    void try_lock()
+    {
+        TryLock();
+    }
+
+    void unlock()
+    {
+        Unlock();
     }
 public:
     MutexType* Release()
@@ -279,9 +377,8 @@ public:
         }
     }
 
-
-
     ReadLock(const ReadLock& other) = delete;
+
     ReadLock& operator=(const ReadLock& other) = delete;
 
     ReadLock(ReadLock&& other) noexcept
@@ -292,13 +389,13 @@ public:
         other.m_ownFlag = false;
     }
 
-    ReadLock& operator=(ReadLock&& other)
+    ReadLock& operator=(ReadLock&& other) noexcept
     {
         if (this != std::addressof(other))
         {
             if (m_ownFlag)
             {
-                m_mutex->unlockRead();
+                m_mutex->UnlockRead();
             }
 
             m_mutex = other.m_mutex;
@@ -341,12 +438,6 @@ public:
         }
     }
 public:
-    void Swap(ReadLock& other)
-    {
-        std::swap(m_mutex, other.m_mutex);
-        std::swap(m_ownFlag, other.m_ownFlag);
-    }
-
     void Lock()
     {
         if (!m_mutex)
@@ -386,6 +477,27 @@ public:
 
         m_mutex->UnlockRead();
         m_ownFlag = false;
+    }
+
+    void Swap(ReadLock& other)
+    {
+        std::swap(m_mutex, other.m_mutex);
+        std::swap(m_ownFlag, other.m_ownFlag);
+    }
+public:
+    void lock()
+    {
+        Lock();
+    }
+
+    bool try_lock()
+    {
+        return TryLock();
+    }
+
+    void unlock()
+    {
+        Unlock();
     }
 public:
     MutexType* Release()
@@ -448,7 +560,7 @@ public:
         case LockStrategy::TryToLock:
         {
             m_mutex = std::addressof(mutex);
-            m_ownFlag(m_mutex->TryLockWrite());
+            m_ownFlag = m_mutex->TryLockWrite();
             break;
         }
         case LockStrategy::AdoptLock:
@@ -461,6 +573,7 @@ public:
     }
 
     WriteLock(const WriteLock& other) = delete;
+
     WriteLock& operator=(const WriteLock& other) = delete;
 
     WriteLock(WriteLock&& other) noexcept
@@ -471,7 +584,7 @@ public:
         other.m_ownFlag = false;
     }
 
-    WriteLock& operator=(WriteLock&& other)
+    WriteLock& operator=(WriteLock&& other) noexcept
     {
         if (this != std::addressof(other))
         {
@@ -486,12 +599,6 @@ public:
             other.m_ownFlag = false;
         }
         return *this;
-    }
-
-    void Swap(WriteLock& other)
-    {
-        std::swap(m_mutex, other.m_mutex);
-        std::swap(m_ownFlag, other.m_ownFlag);
     }
 public:
     void Lock()
@@ -533,6 +640,27 @@ public:
 
         m_mutex->UnlockWrite();
         m_ownFlag = false;
+    }
+
+    void Swap(WriteLock& other)
+    {
+        std::swap(m_mutex, other.m_mutex);
+        std::swap(m_ownFlag, other.m_ownFlag);
+    }
+public:
+    void lock()
+    {
+        Lock();
+    }
+
+    bool try_lock()
+    {
+        return TryLock();
+    }
+
+    void unlock()
+    {
+        Unlock();
     }
 public:
     MutexType* Release()

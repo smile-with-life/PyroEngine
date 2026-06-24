@@ -1,10 +1,10 @@
 function config()
     local config = {
         headers = {
-            "Source/Module/*.h"
+            "Source/Core/Concept/**.h"
         },
         files = {
-            "Source/Module/*.cpp"
+            "Source/Core/Concept/**.cpp"
         }
     }
     return config

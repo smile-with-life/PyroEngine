@@ -1,0 +1,33 @@
+{
+    "GameObjects": [
+        {
+            "Name": "Cube",
+            "Transform": {
+                "Position": {
+                    "X": 0,
+                    "Y": 0,
+                    "Z": 0
+                },
+                "Rotation": {
+                    "W": 0.46944212913513184,
+                    "X": 0,
+                    "Y": 0,
+                    "Z": 0.88296324014663696
+                },
+                "scale": {
+                    "X": 1,
+                    "Y": 1,
+                    "Z": 1
+                }
+            },
+            "Components": [
+                {
+                    "$typeName": "MeshComponent",
+                    "$context": {
+                        "Mesh": "Mesh/cube.obj"
+                    }
+                }
+            ]
+        }
+    ]
+}

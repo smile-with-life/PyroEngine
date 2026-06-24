@@ -38,6 +38,8 @@ class Json
 public:
     Json() noexcept = default;
 
+    ~Json() = default;
+
     Json(const Json& other) = default;
 
     Json& operator=(const Json& other) = default;
@@ -80,6 +82,12 @@ public:
 
     Json(JsonType type);
 public:
+    bool Contains(const String& key) const;
+
+    Array<String> AllKeys() const;
+
+    int64 Size() const;
+
     String Dump() const;
 
     JsonType Type() const;
@@ -112,7 +120,8 @@ public:
 
     void Swap(Json& other) noexcept;
 public:
-    operator bool() const;
+    explicit operator bool() const;
+
     // 控制台打印操作
     friend std::ostream& operator<<(std::ostream& os, const Json& json);
 
@@ -130,6 +139,9 @@ public:
     Json& operator[](const char* key);
 
     const Json& operator[](const char* key) const;
+
+    // 追加赋值（数组专用）
+    Json& operator+=(const Json& value);
 
     friend bool operator==(const Json& left, const Json& right);
 

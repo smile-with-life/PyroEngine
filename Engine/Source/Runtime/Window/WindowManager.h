@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core.h"
-#include "Platform.h"
 #include "Container/Map.h"
 #include "String/String.h"
 #include "Memory/RAII.h"
@@ -32,42 +31,33 @@ public:
     /// </summary>
     void Exit();
 public:
-    uint64 CreateMainWindow(const WindowProps& props = WindowProps());
-
-    uint64 CreateSubWindow(const WindowProps& props = WindowProps());
+    uint64 CreateWindow(const WindowProps& props = WindowProps());
 
     bool DestroyWindow(WindowId windowId);
 
     void DestroyAllWindows();
 
-    WindowId GetMainWindowId() const;
-
     Array<WindowId> GetAllWindowIds() const;
 
-    WeakPtr<Window> GetWindow(WindowId windowId);
-
-    WeakPtr<Window> GetMainWindow();
+    ViewPtr<Window> GetWindow(WindowId windowId);
 
     bool IsWindowValid(WindowId windowId) const;
 
-    int64 GetWindowCount() const;  
+    uint64 GetWindowCount() const;  
 
     void OnEvent(Event& event);
-
-    void GetConfig();
 public:
     /// <summary>
-    /// 
+    /// 获取窗口管理器实例
     /// </summary>
     /// <returns></returns>
     static WindowManager& GetInstance();
 protected:
     /// <summary>
-    /// 
+    /// 默认构造函数
     /// </summary>
     WindowManager() = default;
 private:
-    
     /// <summary>
     /// 延迟销毁窗口
     /// 将窗口标记为待销毁，实际销毁操作在_ProcessDelayDestroy中执行
@@ -84,10 +74,6 @@ private:
     /// 
     /// </summary>
     Map<WindowId, SharedPtr<Window>> m_windows;
-    /// <summary>
-    /// 
-    /// </summary>
-    WindowId m_mainWindowId = 0;
     /// <summary>
     /// 
     /// </summary>

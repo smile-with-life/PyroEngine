@@ -67,3 +67,12 @@ String File::FileEXT() const
     }
     return String();
 }
+
+String File::Path() const
+{
+    if (IsValid())
+    {
+        return String(std::filesystem::path(m_path).string());
+    }
+    return String();
+}

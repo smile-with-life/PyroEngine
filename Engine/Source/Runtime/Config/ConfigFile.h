@@ -141,19 +141,19 @@ private:
     void _ParseConfig(const Json& json);
 private:
     /// <summary>
-    /// 配置名
+    /// 配置文件名
     /// </summary>
     String m_name;
     /// <summary>
-    /// 配置版本
+    /// 配置文件版本
     /// </summary>
     String m_version;
     /// <summary>
-    /// 配置生成者
+    /// 配置文件生成者
     /// </summary>
     String m_generator;
     /// <summary>
-    /// 配置数据
+    /// 配置文件数据
     /// </summary>
     Map<ConfigKey, Config> m_data;
 };

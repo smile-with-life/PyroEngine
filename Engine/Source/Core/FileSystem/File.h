@@ -27,7 +27,7 @@ public:
     // 创建指向 FilePath 的符号链接
     Symlink CreateSymlink(const String& path) const;
 
-    FileStream Open(OpenMode mode = OpenMode::Default) const;
+    [[nodiscard]] FileStream Open(OpenMode mode = OpenMode::Default) const;
 
     /// <summary>
     /// 通过截断或零填充更改常规文件的大小
@@ -43,4 +43,6 @@ public:
     String FileStem() const;
 
     String FileEXT() const;
+
+    String Path() const;
 };

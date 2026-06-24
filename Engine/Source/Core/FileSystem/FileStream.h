@@ -60,8 +60,11 @@ public:
 
     bool IsEOF() const;
 
-
     bool IsValid() const;
+public:
+    friend void operator<<(ByteArray& buffer, FileStream& stream);
+
+    friend void operator>>(ByteArray& buffer, FileStream& stream);
 public:
     /// <summary>
     /// 文件流

@@ -10,14 +10,14 @@
 #include <type_traits>
 #include <limits>
 
-template <typename Type>
-class ArrayConstIterator;
+
+
 
 template <class Type>
 class ArrayIterator
 {
 public:
-    template <typename Type>
+    template <class Type>
     friend class ArrayConstIterator;
 public:
     using iterator_concept = ContiguousIteratorTag;
@@ -151,9 +151,6 @@ private:
 template <class Type>
 class ArrayConstIterator
 {
-public:
-    template <typename Type>
-    friend class ArrayIterator;
 public:
     using iterator_concept = ContiguousIteratorTag;
     using iterator_category = RandomAccessIteratorTag;
@@ -830,16 +827,51 @@ public:
         {
             Reserve(m_size + 1);
         }
-        // 移动元素以腾出位置
+        // 如果是在末尾插入，直接构造
+        if (index == m_size)
+        {
+            std::construct_at(&m_data[index], std::forward<Args>(args)...);
+            ++m_size;
+            return iterator(m_data + index);
+        }
+
+        // 在中间插入，需要移动元素
+
+        // 1. 首先在末尾构造一个占位元素（如果还有空间）
+        if (m_size < m_capacity)
+        {
+            std::construct_at(&m_data[m_size]);
+        }
+
+        // 2. 向后移动元素 [index, m_size-1] -> [index+1, m_size]
         for (size_type i = m_size; i > index; --i)
         {
-            std::construct_at(&m_data[i], std::move(m_data[i - 1]));
-            std::destroy_at(&m_data[i - 1]);
+            // 使用移动赋值
+            m_data[i] = std::move(m_data[i - 1]);
         }
-        // 就地构造新元素
+
+        // 3. 析构原位置的元素
+        std::destroy_at(&m_data[index]);
+
+        // 4. 在新位置构造元素
         std::construct_at(&m_data[index], std::forward<Args>(args)...);
+
         ++m_size;
         return iterator(m_data + index);
+    }
+
+    template<class... Args>
+    constexpr iterator EmplaceBack(Args&&... args)
+    {
+        // 直接实现在末尾构造的逻辑，不调用 Emplace
+        if (m_size >= m_capacity)
+        {
+            Reserve(m_size + 1);
+        }
+
+        std::construct_at(&m_data[m_size], std::forward<Args>(args)...);
+        ++m_size;
+        return iterator(m_data + m_size - 1);
     }
     /// <summary>
     /// 在末尾追加另一个容器的所有元素(拷贝语义)
@@ -1422,6 +1454,21 @@ public:
     constexpr void Erase(size_type start, size_type end)
     {
         Erase(cbegin() + start, cbegin() + end);
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="value"></param>
+    constexpr void Remove(const Type& value)
+    {
+        for (size_type i = 0; i < m_size; ++i)
+        {
+            if (m_data[i] == value)
+            {
+                Erase(i);
+                return;
+            }
+        }
     }
     /// <summary>
     /// 在容器末尾添加一个元素(拷贝语义)

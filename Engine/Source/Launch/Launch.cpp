@@ -4,6 +4,7 @@
 #include "Runtime.h"
 #include "Application.h"
 #include "CommandLineArgs/CommandLineArgs.h"
+#include "Logger/Logger.h"
 
 /// <summary>
 /// 
@@ -12,43 +13,51 @@
 /// <returns></returns>
 int32 EngineMain()
 {
-    // 解析命令行参数判断要启动的应用程序类型
-    Application::Type type = Application::None;
-    if (GCommandLineArgs->HasArg("-type"))
+    int32 error = 0;
+    try
     {
-        String value = GCommandLineArgs->GetArgValue("-type");
-        if (value == "Game")
+        // 解析命令行参数判断要启动的应用程序类型
+        Application::Type type = Application::None;
+        if (GCommandLineArgs->HasArg("-type"))
         {
-            type = Application::Game;
+            String value = GCommandLineArgs->GetArgValue("-type");
+            if (value == "Game")
+            {
+                type = Application::Game;
+            }
+            if (value == "Editor")
+            {
+                type = Application::Editor;
+            }
+            if (value == "App")
+            {
+                type = Application::App;
+            }
+            if (value == "Server")
+            {
+                type = Application::Server;
+            }
         }
-        if (value == "Editor")
+
+        // 获取应用程序单例
+        Application& app = Application::Create(type);
+
+        // 应用程序初始化
+        error = app.Init();
+
+        // 应用程序主循环
+        while (!app.IsQuit())
         {
-            type = Application::Editor;
+            app.Tick();
         }
-        if (value == "App")
-        {
-            type = Application::App;
-        }
-        if (value == "Server")
-        {
-            type = Application::Server;
-        }
+
+        // 应用程序退出清理
+        app.Exit();
     }
-
-    // 获取应用程序单例
-    Application& app = Application::Create(type);
-
-    // 应用程序初始化
-    int32 error = app.Init();
-
-    // 应用程序主循环
-    while (!app.IsQuit())
+    catch(std::exception exception)
     {
-        app.Tick();
+        GLog->Fatal("An Exception Occurred {}", exception.what());
     }
-
-    // 应用程序退出清理
-    app.Exit();
 
     return error;
 }

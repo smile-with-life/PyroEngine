@@ -16,7 +16,10 @@ set_languages "cxxlatest"
 -- 添加依赖包仓库
 add_repositories("pyro-repo ThirdParty", { rootdir = os.scriptdir() })
 -- 添加依赖
-add_requires("vulkan", { system = false })
+add_requires("vulkan", { system = false})
+add_requires("cef", { system = false})
+add_requires("tinyobj", { system = false})
+add_requires("stduuid", { system = false})
 
 rule("mode.Debug")
     on_config(function(target)      

@@ -6,6 +6,9 @@
 #include "String/Convert.h"
 #include "Event/Event.h"
 #include "Event/EventSystem.h"
+#include "Input/InputSystem.h"
+
+#include <windowsx.h>
 
 /* ==================== static ==================== */
 Window* Window::Create()
@@ -106,7 +109,7 @@ void WindowsWindow::CloseWindow()
     if (m_hWnd && IsWindow(m_hWnd))
     {
         // 发送WM_CLOSE消息，让窗口有机会处理清理工作
-        ::SendMessage(m_hWnd, WM_CLOSE, 0, 0);
+        ::SendMessageW(m_hWnd, WM_CLOSE, 0, 0);
     }
 }
 
@@ -249,7 +252,7 @@ LRESULT CALLBACK WindowsWindow::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
         return windowPtr->HandleMessage(hwnd, msg, wParam, lParam);
     }
     // 无实例时使用默认处理
-    return DefWindowProc(hwnd, msg, wParam, lParam);
+    return ::DefWindowProcW(hwnd, msg, wParam, lParam);
 }
 
 LRESULT WindowsWindow::HandleMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -326,6 +329,7 @@ LRESULT WindowsWindow::HandleMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM 
     }
     case WM_WINDOWPOSCHANGING:// 当窗口的位置或大小已经改变后发送
     {
+
         break;
     }
     case WM_MOVE:// 移动窗口后发送
@@ -346,6 +350,10 @@ LRESULT WindowsWindow::HandleMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM 
         m_props.Width = LOWORD(lParam);
         m_props.Height = HIWORD(lParam);
 
+        WindowResizeEvent event;
+        event.Width = m_props.Width;
+        event.Height = m_props.Height;
+        GEventSystem->Publish(event);
         break;
     }
     case WM_SIZING:// 窗口大小改变时发送
@@ -445,7 +453,7 @@ LRESULT WindowsWindow::HandleMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM 
     {
         break;
     }
-    // 键盘
+    // ==================== 键盘 ==================== 
     case WM_CHAR:// 当 TranslateMessage 函数翻译 WM_KEYDOWN 消息时发送（按下键的字符代码）
     {
         break;
@@ -459,68 +467,89 @@ LRESULT WindowsWindow::HandleMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM 
         break;
     }
     case WM_KEYDOWN:// 非系统键按下时发送
+    case WM_SYSKEYDOWN:// 系统键按下时发送
     {
+        KeyCode code = Win32KeyToKeyCode(wParam);
+        if (code != KeyCode::None)
+        {
+            InputData input { 
+                .Type = InputType::Keyboard, 
+                .Data = KeyInput{ code, KeyState::Down } 
+            };
+            InputSystem::GetInstance().DeferredProcessInput(GetWindowId(), input);
+        }
         break;
     }
     case WM_KEYUP:// 非系统键抬起时发送 
-    {
-        break;
-    }
-    case WM_SYSKEYDOWN:// 系统键按下时发送
-    {
-        break;
-    }
     case WM_SYSKEYUP:// 系统键抬起时发送
     {
+        KeyCode code = Win32KeyToKeyCode(wParam);
+        if (code != KeyCode::None)
+        {
+            InputData input {
+                .Type = InputType::Keyboard,
+                .Data = KeyInput{ code, KeyState::Up }
+            };
+            InputSystem::GetInstance().DeferredProcessInput(GetWindowId(), input);
+        }
         break;
     }
-    // 鼠标
-    case WM_LBUTTONDBLCLK:// 在工作区双击鼠标左键时发送
-    {
-        break;
-    }
-    case WM_MBUTTONDBLCLK:// 在工作区双击鼠标中键时发送
-    {
-        break;
-    }
-    case WM_RBUTTONDBLCLK:// 在工作区双击鼠标右键时发送
-    {
-        break;
-    }
-    case WM_XBUTTONDBLCLK:// 在工作区双击鼠标扩展按键时发送
-    {
-        break;
-    }
+    // ==================== 鼠标 ==================== 
     case WM_LBUTTONDOWN:// 在工作区按下鼠标左键时发送
-    {
-        break;
-    }
     case WM_MBUTTONDOWN:// 在工作区按下鼠标中键时发送
-    {
-        break;
-    }
     case WM_RBUTTONDOWN:// 在工作区按下鼠标右键时发送
-    {
-        break;
-    }
     case WM_XBUTTONDOWN:// 在工作区按下鼠标扩展按键时发送
     {
+        MouseCode code = Win32MouseToMouseCode(msg);
+        InputData input {
+            .Type = InputType::Mouse,
+            .Data = MouseInput {
+                code,
+                MouseState::Down,
+                GET_X_LPARAM(lParam),
+                GET_Y_LPARAM(lParam),
+                0
+            }
+        };
+        InputSystem::GetInstance().DeferredProcessInput(GetWindowId(), input);
         break;
     }
     case WM_LBUTTONUP:// 在工作区抬起鼠标左键时发送
-    {
-        break;
-    }
-    case WM_MBUTTONUP:// 在工作区抬起鼠标中键时发送 
-    {
-        break;
-    }
+    case WM_MBUTTONUP:// 在工作区抬起鼠标中键时发送
     case WM_RBUTTONUP:// 在工作区抬起鼠标右键时发送
-    {
-        break;
-    }
     case WM_XBUTTONUP:// 在工作区抬起鼠标扩展按键时发送
     {
+        MouseCode code = Win32MouseToMouseCode(msg);
+        InputData input {
+            .Type = InputType::Mouse,
+            .Data = MouseInput {
+                code,
+                MouseState::Up,
+                GET_X_LPARAM(lParam),
+                GET_Y_LPARAM(lParam),
+                0
+            }
+        };
+        InputSystem::GetInstance().DeferredProcessInput(GetWindowId(), input);
+        break;
+    }
+    case WM_LBUTTONDBLCLK:// 在工作区双击鼠标左键时发送
+    case WM_MBUTTONDBLCLK:// 在工作区双击鼠标中键时发送
+    case WM_RBUTTONDBLCLK:// 在工作区双击鼠标右键时发送
+    case WM_XBUTTONDBLCLK:// 在工作区双击鼠标扩展按键时发送
+    {
+        MouseCode code = Win32MouseToMouseCode(msg);
+        InputData input {
+            .Type = InputType::Mouse,
+            .Data = MouseInput {
+                code,
+                MouseState::DoubleClick,
+                GET_X_LPARAM(lParam),
+                GET_Y_LPARAM(lParam),
+                0
+            }
+        };
+        InputSystem::GetInstance().DeferredProcessInput(GetWindowId(), input);
         break;
     }
     case WM_MOUSEHOVER:// 当鼠标悬停在窗口的工作区上时发送
@@ -532,6 +561,37 @@ LRESULT WindowsWindow::HandleMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM 
         break;
     }
     case WM_MOUSEMOVE:// 鼠标在窗口的工作区移动时发送
+    {
+        InputData input {
+            .Type = InputType::Mouse,
+            .Data = MouseInput {
+                MouseCode::None,
+                MouseState::Move,
+                GET_X_LPARAM(lParam),
+                GET_Y_LPARAM(lParam),
+                0
+            }
+        };
+        InputSystem::GetInstance().DeferredProcessInput(GetWindowId(), input);
+        break;
+    }
+    case WM_MOUSEWHEEL:// 鼠标滚轮垂直滚动
+    {
+        const short delta = GET_WHEEL_DELTA_WPARAM(wParam);
+        InputData input {
+            .Type = InputType::Mouse,
+            .Data = MouseInput {
+                MouseCode::Scroll,
+                MouseState::Move,
+                GET_X_LPARAM(lParam),
+                GET_Y_LPARAM(lParam),
+                (float)delta / WHEEL_DELTA
+            }
+        };
+        InputSystem::GetInstance().DeferredProcessInput(GetWindowId(), input);
+        break;
+    }
+    case WM_MOUSEHWHEEL:// 鼠标滚轮水平滚动
     {
         break;
     }
@@ -595,14 +655,8 @@ LRESULT WindowsWindow::HandleMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM 
     {
         break;
     }
-    case WM_MOUSEWHEEL:// 鼠标滚轮垂直滚动
-    {
-        break;
-    }
-    case WM_MOUSEHWHEEL:// 鼠标滚轮水平滚动
-    {
-        break;
-    }
+    
+    
     case WM_NCHITTEST:// 鼠标当前坐标
     {
         break;

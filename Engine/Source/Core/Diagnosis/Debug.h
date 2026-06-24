@@ -38,13 +38,15 @@
     /// <summary>
     /// 用于必须执行的验证，表达式始终执行
     /// </summary>
-    #define verify(expr) CHECK_IMPL(expr)  // 两者相同
+    #define verify(expr) CHECK_IMPL(expr)
 #endif
 
 /// <summary>
 /// 代码路径不应该被执行
 /// </summary>
 #define codeNoEntry() ASSUME(false)
+
+
 
 /// <summary>
 /// 代码不应该被重复执行

@@ -7,20 +7,16 @@
     #define COMPILER_MSVC 1
     #define COMPILER_NAME "Microsoft Visual C++"
     #define COMPILER_MSVC_VERSION _MSC_VER
-#elif defined(__INTEL_COMPILER) || defined(__ICL) || defined(__ICC) || defined(__ECC)
-    #define COMPILER_INTEL 1
-    #define COMPILER_NAME "Intel C++"
-    #define COMPILER_INTEL_VERSION __INTEL_COMPILER
 #elif defined(__clang__)
     #define COMPILER_CLANG 1
     #define COMPILER_NAME "Clang"
     #define COMPILER_CLANG_VERSION (__clang_major__ * 10000 + __clang_minor__ * 100 + __clang_patchlevel__)
-#elif defined(__GNUC__)
+#elif defined(__GNUC__) && !defined(__clang__)
     #define COMPILER_GCC 1
     #define COMPILER_NAME "GCC"
     #define COMPILER_GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
 #else
-    #error The compiler is not supported!
+    #error "使用不支持的编译器，当前仅支持 MSVC Clang GCC 三大主流编译器"
 #endif
 
 // ==================== CPU架构检测 ====================
@@ -37,7 +33,7 @@
     #define CPU_ARCH_ARM
     #define CPU_ARCH_NAME "ARM"
 #else
-    #error The CPU architecture is not supported!
+    #error "当前 CPU 架构不被支持"
 #endif
 
 // ==================== 数据位宽检测 ====================
@@ -49,7 +45,7 @@
 #endif
 
 #if !defined(DATA_BIT_64)
-    #error "The engine requires a 64-bit CPU architecture"
+    #error "当前引擎仅支持 64 位架构 CPU"
 #endif
 
 // ==================== DLL 导入导出指令定义 ====================
@@ -76,8 +72,7 @@
     #define PLATFORM_NAME "Mac"
     #include <stddef.h>
 #else
-    #define DLLEXPORT
-    #define DLLIMPORT
+    #error "当前平台不被支持，目前仅支持 Windows Linux Android IOS Mac 平台"
 #endif
 
 // ==================== 符号导出控制 ====================​​
@@ -94,7 +89,7 @@
 #ifdef PLATFORM_WINDOWS
     #include "Windows/WindowsPlatform.h"
 #elif PLATFORM_LINUX
-    
+
 #elif PLATFORM_ANDROID
     
 #elif PLATFORM_IOS
@@ -102,39 +97,28 @@
 #elif PLATFORM_MAC
     
 #else
-    #error The platform is not supported!
+    #error "当前平台不被支持，目前仅支持 Windows Linux Android IOS Mac 平台"
 #endif
 
 // ==================== 编译器扩展支持 ====================​​
 #ifdef COMPILER_MSVC
     // 检查编译器版本
     #if _MSC_VER < 1930
-        #error "MSVC version too low (" STRINGIZE(_MSC_VER) "). Please upgrade to VS 2022 17.0+ (_MSC_VER >= 1930) for full C++20 support."
+        #error "MSVC 版本过低，请升级到 VS 2022 17.0 以获得完整的 C++20 支持"
     #endif
     // 编译器假设宏
     #define ASSUME(expr) __assume(expr)
-#elif COMPILER_INTEL
-    // 检查编译器版本
-    #if __INTEL_COMPILER < 202100  // Intel oneAPI 2021.0+ 支持C++20
-        #error "Intel compiler version too low (" STRINGIZE(__INTEL_COMPILER) "). Please upgrade to Intel oneAPI 2021.0+ for full C++20 support."
-    #endif
-    // 编译器假设宏
-    #ifdef __INTEL_ASSUME
-        #define ASSUME(expr) __INTEL_ASSUME(expr)
-    #else
-        #define ASSUME(expr) ((void)0)
-    #endif
 #elif COMPILER_CLANG
     // 检查编译器版本
     #if __clang_major__ < 12
-        #error "Clang version too low (" STRINGIZE(__clang_major__) "." STRINGIZE(__clang_minor__) "). Please upgrade to Clang 12+ for full C++20 support."
+        #error "Clang 版本过低，请升级到 Clang 12+ 以获得完整的 C++20 支持"
     #endif 
     // 编译器假设宏
     #define ASSUME(expr) __builtin_assume(expr)
 #elif COMPILER_GCC
     // 检查编译器版本
     #if __GNUC__ < 11
-        #error "GCC version too low (" STRINGIZE(__GNUC__) "." STRINGIZE(__GNUC_MINOR__) "). Please upgrade to GCC 11+ for full C++20 support."
+        #error "GCC 版本过低，请升级到 GCC 11+ 以获得完整的 C++20 支持"
     #endif
     // 编译器假设宏
     #ifdef __has_builtin
@@ -147,7 +131,7 @@
         #define ASSUME(expr) ((void)0)
     #endif
 #else
-    #error The compiler is not supported!
+    #error "使用不支持的编译器，当前仅支持 MSVC Clang GCC 三大主流编译器"
 #endif
 
 // ==================== 构建配置检测 ====================​​
@@ -206,4 +190,12 @@ inline int64 tcslen(const tchar* str)
     while (*str != 0) { len++; str++; }
     return len;
 #endif
+}
+
+namespace Platform
+{
+/// <summary>
+/// 平台异常中止函数
+/// </summary>
+void PlatformAbort();
 }

@@ -17,13 +17,16 @@ target "Engine"
     add_files("Source/pch.cpp")
     -- 添加包
     add_packages("vulkan")
+    add_packages("cef")
+    add_packages("tinyobj")
+    add_packages("stduuid")
     -- 添加头文件搜索目录
     add_includedirs {
         "Source",
         "Source/Platform",
         "Source/Core",
         "Source/Runtime",
-        "Source/Module",
+        "Source/Feature",
         "Source/Application",
         "Source/Launch"
     }

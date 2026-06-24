@@ -3,6 +3,7 @@
 #include "Core.h"
 #include "Platform.h"
 #include "Runtime.h"
+#include "Diagnosis/Error.h"
 #include "String/String.h"
 #include "String/Convert.h"
 #include "String/TString.h"
@@ -126,6 +127,18 @@ int32 EngineMainWrapper()
         DWORD code = GetExceptionCode();
 
         // @ 实现 错误处理
+        
+        // 弹窗显示引擎错误内容
+        if (strlen(ExceptionErrorBuffer) != 0)
+        {
+            wchar_t ExceptionErrorBufferW[512] = { 0 };
+            MultiByteToWideChar(CP_UTF8, 0, ExceptionErrorBuffer, -1, ExceptionErrorBufferW, 512);
+            MessageBoxW(nullptr, ExceptionErrorBufferW, L"Engine Crash", MB_OK | MB_ICONERROR);
+        }
+        else
+        {
+            MessageBoxW(nullptr, L"Undefined Error", L"Engine Crash", MB_OK | MB_ICONERROR);
+        }
 
         return static_cast<int32>(code);
     }

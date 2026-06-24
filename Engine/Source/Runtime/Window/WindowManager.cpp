@@ -17,8 +17,6 @@ WindowManager& WindowManager::GetInstance()
 void WindowManager::Init()
 {
     GEventSystem->Subscribe("WindowCloseEvent", MemberFuncBind(OnEvent));
-
-    GetConfig();
 }
 
 void WindowManager::Tick()
@@ -27,13 +25,11 @@ void WindowManager::Tick()
     _ProcessDelayDestroy();
 
     // 处理窗口的消息
-    if (m_mainWindowId)
+    for (auto& [windowId, window] : m_windows)
     {
-        for (auto& [windowId, window] : m_windows)
-        {
-            window->PumpMessage();
-        }
+        window->PumpMessage();
     }
+    
 }
 
 void WindowManager::Exit()
@@ -43,22 +39,8 @@ void WindowManager::Exit()
     _ProcessDelayDestroy();
 }
 
-uint64 WindowManager::CreateMainWindow(const WindowProps& props)
+uint64 WindowManager::CreateWindow(const WindowProps& props)
 {
-    if (m_mainWindowId) return 0;
-
-    SharedPtr<Window> mainWindow = SharedPtr<Window>(Window::Create(props));
-
-    m_mainWindowId = mainWindow->GetWindowId();
-
-    m_windows[m_mainWindowId] = mainWindow;
-
-    return m_mainWindowId;
-}
-
-uint64 WindowManager::CreateSubWindow(const WindowProps& props)
-{
-    if (!m_mainWindowId) return 0;
 
     SharedPtr<Window> window = SharedPtr<Window>(Window::Create(props));
 
@@ -90,11 +72,6 @@ void WindowManager::DestroyAllWindows()
     }
 }
 
-uint64 WindowManager::GetMainWindowId() const
-{
-    return m_mainWindowId;
-}
-
 Array<uint64> WindowManager::GetAllWindowIds() const
 {
     Array<uint64> windowIds;
@@ -105,23 +82,14 @@ Array<uint64> WindowManager::GetAllWindowIds() const
     return windowIds;
 }
 
-WeakPtr<Window> WindowManager::GetWindow(WindowId windowId)
+ViewPtr<Window> WindowManager::GetWindow(WindowId windowId)
 {
     if (windowId && m_windows.Contains(windowId) &&
         !m_delayDestroyIds.Contains(windowId))
     {
         return m_windows[windowId];
     }
-    return WeakPtr<Window>();
-}
-
-WeakPtr<Window> WindowManager::GetMainWindow()
-{
-    if (m_mainWindowId && !m_delayDestroyIds.Contains(m_mainWindowId))
-    {
-        return m_windows[m_mainWindowId];
-    }
-    return WeakPtr<Window>();
+    return ViewPtr<Window>();
 }
 
 bool WindowManager::IsWindowValid(WindowId windowId) const
@@ -129,7 +97,7 @@ bool WindowManager::IsWindowValid(WindowId windowId) const
     return m_windows.Contains(windowId) && !m_delayDestroyIds.Contains(windowId);
 }
 
-int64 WindowManager::GetWindowCount() const
+uint64 WindowManager::GetWindowCount() const
 {
     // 排除正在销毁的窗口
     int64 count = 0;
@@ -154,30 +122,6 @@ void WindowManager::OnEvent(Event& event)
     }
 }
 
-void WindowManager::GetConfig()
-{
-    if (GConfigManager->Contains("Window"))
-    {
-        WindowProps props;
-        auto config = GConfigManager->GetConfig("Window");
-        config.GetValue("this->Title", props.Title);
-        config.GetValue("this->Width", props.Width);
-        config.GetValue("this->Height", props.Height);
-        config.GetValue("this->PositionX", props.PositionX);
-        config.GetValue("this->PositionY", props.PositionY);
-        config.GetValue("this->Opacity", props.Opacity);
-        config.GetValue("this->IsVSync", props.IsVSync);
-        config.GetValue("this->IsDisplayTaskbar", props.IsDisplayTaskbar);
-        config.GetValue("this->IsTopmost", props.IsTopmost);
-        config.GetValue("this->IsAcceptInput", props.IsAcceptInput);
-        config.GetValue("this->IsHasResizeBorder", props.IsHasResizeBorder);
-        config.GetValue("this->IsSupportDragFile", props.IsSupportDragFile);
-        config.GetValue("this->IsHasTitlebar", props.IsHasTitlebar);
-        
-        CreateMainWindow(props);
-    }
-}
-
 /* ==================== private ==================== */
 void WindowManager::_DelayDestroy(WindowId windowId)
 {
@@ -189,33 +133,18 @@ void WindowManager::_DelayDestroy(WindowId windowId)
     {
         m_delayDestroyIds.Add(windowId);
     }
-
-    // 如果是主窗口，销毁所有子窗口
-    if (windowId == m_mainWindowId)
-    {
-        // 将除了主窗口之外的所有窗口都标记为销毁
-        for (const auto& [id, window] : m_windows)
-        {
-            if (id != m_mainWindowId && !m_delayDestroyIds.Contains(id))
-            {
-                m_delayDestroyIds.Add(id);
-            }
-        }
-    }
 }
 
 void WindowManager::_ProcessDelayDestroy()
 {
     for (const auto& windowId : m_delayDestroyIds)
     {
-        if (windowId == m_mainWindowId)
-            m_mainWindowId = 0;
         m_windows.Erase(windowId);
     }
 
     m_delayDestroyIds.Clear();
 
-    if (!m_mainWindowId)
+    if (m_windows.IsEmpty())
     {
         AppQuitEvent event;
         GEventSystem->Publish(event);

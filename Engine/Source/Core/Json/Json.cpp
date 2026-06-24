@@ -162,6 +162,43 @@ Json::Json(JsonType type)
     }
 }
 
+
+bool Json::Contains(const String& key) const
+{
+    if (!IsObject())
+    {
+        return false;
+    }
+    auto& obj = _GetValue<JsonObject>();
+    return obj.Contains(key);
+}
+
+Array<String> Json::AllKeys() const
+{
+    ::Array<String> result;
+    if (!IsObject())
+    {
+        return result;
+    }
+    auto& obj = _GetValue<JsonObject>();
+    for (const auto& [key, value] : obj)
+    {
+        result.Add(key);
+    }
+
+    return result;
+}
+
+int64 Json::Size() const
+{
+    if (!IsArray())
+    {
+        return -1;
+    }
+    auto& arr = _GetValue<JsonArray>();
+    return arr.Size();
+}
+
 String Json::Dump() const
 {
     std::ostringstream oss;

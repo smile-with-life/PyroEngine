@@ -91,3 +91,24 @@ public:
 public:
     uint64 WindowId = 0;
 };
+
+class WindowResizeEvent : public Event
+{
+public:
+	WindowResizeEvent() = default;
+
+	virtual ~WindowResizeEvent() = default;
+public:
+	virtual Type GetType() const override
+	{
+		return EventType("WindowResizeEvent");
+	}
+
+	virtual EventCategory GetCategory() const override
+	{
+		return EventCategory::Window;
+	}
+public:
+	uint32 Width;
+	uint32 Height;
+};

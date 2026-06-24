@@ -48,33 +48,51 @@ public:
     /// <param name="value"></param>
     explicit Config(const Json& json);
 public:
-    bool GetValue(const String& expression, int32& value);
+    bool GetValue(const String& expression, int32& value) const;
 
-    bool GetValue(const String& expression, int64& value);
+    bool GetValue(const String& expression, int64& value) const;
 
-    bool GetValue(const String& expression, float& value);
+    bool GetValue(const String& expression, float& value) const;
 
-    bool GetValue(const String& expression, double& value);
+    bool GetValue(const String& expression, double& value) const;
 
-    bool GetValue(const String& expression, bool& value);
+    bool GetValue(const String& expression, bool& value) const;
 
-    bool GetValue(const String& expression, String& value);
+    bool GetValue(const String& expression, String& value) const;
 
-    void GetValueOrDefault(const String& expression, int32& value, int32 defaultValue);
+    bool GetValue(const String& expression, Config& value) const;
 
-    void GetValueOrDefault(const String& expression, int64& value, int64 defaultValue);
+    void GetValueOrDefault(const String& expression, int32& value, int32 defaultValue) const;
 
-    void GetValueOrDefault(const String& expression, float& value, float defaultValue);
+    void GetValueOrDefault(const String& expression, int64& value, int64 defaultValue) const;
 
-    void GetValueOrDefault(const String& expression, double& value, double defaultValue);
+    void GetValueOrDefault(const String& expression, float& value, float defaultValue) const;
 
-    void GetValueOrDefault(const String& expression, bool& value, bool defaultValue);
+    void GetValueOrDefault(const String& expression, double& value, double defaultValue) const;
 
-    void GetValueOrDefault(const String& expression, String& value, String defaultValue);
+    void GetValueOrDefault(const String& expression, bool& value, bool defaultValue) const;
+
+    void GetValueOrDefault(const String& expression, String& value, String defaultValue) const;
+
+    void GetValueOrDefault(const String& expression, Config& value, Config defaultValue) const;
+
+    void GetArray(const String& expression, Array<int32>& array) const;
+
+    void GetArray(const String& expression, Array<int64>& array) const;
+
+    void GetArray(const String& expression, Array<float>& array) const;
+
+    void GetArray(const String& expression, Array<double>& array) const;
+
+    void GetArray(const String& expression, Array<bool>& array) const;
+
+    void GetArray(const String& expression, Array<String>& array) const;
+
+    void GetArray(const String& expression, Array<Config>& array) const;
 public:
     bool IsValid() const;
 private:
-    bool _ParseExpression(const String& expression);
+    bool _ParseExpression(const String& expression) const;
 
     const Json* _Navigate() const;
 private:
@@ -85,6 +103,6 @@ private:
     /// <summary>
     /// 步骤序列
     /// </summary>
-    std::vector<std::variant<Member, ArrayIndex>> m_steps;
+    mutable std::vector<std::variant<Member, ArrayIndex>> m_steps;
 };
 
